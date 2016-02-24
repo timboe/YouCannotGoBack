@@ -1,0 +1,19 @@
+{
+  "uuid": "9bfc6335-e968-4dd1-8aaf-2bc03b98d490",
+  "shortName": "YouCannotGoBack",
+  "longName": "YouCannotGoBack",
+  "companyName": "MakeAwesomeHappen",
+  "versionLabel": "1.0",
+  "sdkVersion": "3",
+  "targetPlatforms": ["aplite", "basalt", "chalk"],
+  "enableMultiJS": true,
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
