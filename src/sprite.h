@@ -3,12 +3,19 @@
 #include "game.h"
 
 #define SIZE 8
+// real max floor currently 8
+#define MAX_FLOOR 4
+#define N_SMALL_CLUTTER 10
+#define N_MED_CLUTTER 2
+#define N_BIG_CLUTTER 2
+#define MAX_CLUTTER (N_SMALL_CLUTTER+N_MED_CLUTTER+N_BIG_CLUTTER)
 
 void initSprite();
 void deinitSprite();
 
 GBitmap* getOuterWall(int _d);
 GBitmap* getFloor();
+GBitmap* getClutter();
 
 extern GBitmap* m_outerCorner[4];
 extern GBitmap* m_innerCorner[4];

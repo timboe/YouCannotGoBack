@@ -1,11 +1,14 @@
 #include "game.h"
 #include "sprite.h"
+#include "generate.h"
 #include "levels/start.h"
 #include "levels/stairs.h"
 
 Dungeon_t m_dungeon = {0};
 Player_t m_player = {0};
 GameState_t m_gameState = kIdle;
+Clutter_t m_clutter = {0};
+ItemStore_t m_items = {0};
 int m_frame = 0;
 
 static AppTimer* s_gameLoopTimer = NULL;
@@ -30,7 +33,11 @@ void gameClickConfigHandler(ClickRecognizerRef _recognizer, void* _context) {
 }
 
 bool newRoom() {
-  ++m_dungeon.m_room;
+  if ( ++m_dungeon.m_room == m_dungeon.m_roomsPerLevel[ m_dungeon.m_level ] ) {
+    ++m_dungeon.m_level;
+    m_dungeon.m_room = 0;
+  };
+  m_clutter.m_nClutter = 0;
   switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
     case kStart: initStart(); break;
     case kStairs: initStairs(); break;
@@ -40,16 +47,10 @@ bool newRoom() {
   return false;
 }
 
-bool newLevel() {
-  ++m_dungeon.m_level;
-  m_dungeon.m_room = -1;
-  m_gameState = kNewRoom;
-  return false;
-}
-
 void gameLoop(void* data) {
   if (++m_frame == ANIM_FPS) m_frame = 0;
   bool requestRedraw = false;
+  if (m_frame == 0) APP_LOG(APP_LOG_LEVEL_INFO,"used:%i free:%i",heap_bytes_used(), heap_bytes_free());
 
   #ifdef DEBUG_MODE
   ++s_FPS;
@@ -57,7 +58,6 @@ void gameLoop(void* data) {
 
   switch (m_gameState) {
     case kIdle: break;
-    case kNewLevel: requestRedraw = newLevel(); break;
     case kNewRoom: requestRedraw = newRoom(); break;
     case kMovePlayer: requestRedraw = movePlayer(); break;
     case kAwaitInput: requestRedraw = (m_frame == 0 || m_frame == ANIM_FPS/2 ? true : false);
@@ -71,7 +71,7 @@ void gameLoop(void* data) {
     default: break;
   }
 
-  if (1 || requestRedraw == true) layer_mark_dirty(s_dungeonLayer);
+  if (requestRedraw == true) layer_mark_dirty(s_dungeonLayer);
 
   s_gameLoopTimer = app_timer_register(ANIM_DELAY, gameLoop, NULL);
 }
@@ -94,39 +94,26 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
   // Draw FPS indicator (dbg only)
   #ifdef DEBUG_MODE
   static char FPSBuffer[5];
-  snprintf(FPSBuffer, 5, "%i", s_lastSecondFPS);
-  GRect _fpsRect = GRect( 100, 155, 30, 15);
+  snprintf(FPSBuffer, 10, "%i/%i %i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS);
+  GRect _fpsRect = GRect( 80, 155, 100, 15);
   graphics_context_set_text_color(_ctx, GColorWhite);
-  graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+  graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
   #endif
 }
 
 bool movePlayer() {
   if (m_frame % 3 == 0 && ++m_player.m_frame == MAX_FRAMES) m_player.m_frame = 0;
+
   if      (m_player.m_target.x > m_player.m_position.x) m_player.m_position.x += PLAYER_SPEED;
   if      (m_player.m_target.y > m_player.m_position.y) m_player.m_position.y += PLAYER_SPEED;
   else if (m_player.m_target.y < m_player.m_position.y) m_player.m_position.y -= PLAYER_SPEED;
-  if (m_player.m_target.x == m_player.m_position.x && m_player.m_target.y == m_player.m_position.y) m_gameState = kLevelSpecific;
+  if (m_player.m_target.x == m_player.m_position.x && m_player.m_target.y == m_player.m_position.y) {
+    m_player.m_frame = 0;
+    m_gameState = kLevelSpecific;
+  }
   return true;
 }
 
-void generate() {
-
-  m_dungeon.m_seed = time(NULL);
-  srand(m_dungeon.m_seed);
-
-  m_dungeon.m_level = 0;
-  m_dungeon.m_room = -1; // Will be incremented on kNewLevel
-
-  for (int _level = 0; _level < MAX_LEVELS; ++ _level) {
-    m_dungeon.m_roomPerLevel[_level] = MIN_ROOMS + (rand() % (MAX_ROOMS - MIN_ROOMS));
-    for (int _room = 0; _room < m_dungeon.m_roomPerLevel[_level]; ++_room) {
-      //TODO choose rooms
-      m_dungeon.m_rooms[_level][_room] = 1;
-    }
-  }
-  m_gameState = kNewRoom;
-}
 
 void gameWindowLoad(Window* _window) {
   GRect _b = layer_get_bounds( window_get_root_layer(_window) );

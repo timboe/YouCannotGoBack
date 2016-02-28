@@ -7,6 +7,15 @@ void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
+// void renderClutter(Layer* _thisLayer, GContext* _ctx) {
+//
+// }
+//void renderClutter(Layer* _thisLayer, GContext* _ctx) {
+  //for (int _c = 0; _c < m_clutter.m_nClutter; ++_c) {
+  //  drawBitmap(_ctx, getClutter(), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
+  //}
+//}
+
 void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
   GRect _r = gbitmap_get_bounds(_bitmap);
   _r.origin = _p;
@@ -14,7 +23,6 @@ void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
 }
 
 void renderWalls(Layer* _thisLayer, GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
-  srand(m_dungeon.m_seed);
   drawBitmap(_ctx, m_outerCorner[0], 1, 0);
   drawBitmap(_ctx, m_outerCorner[1], 15, 0);
   drawBitmap(_ctx, m_outerCorner[2], 1, 18);
@@ -64,25 +72,16 @@ void renderWalls(Layer* _thisLayer, GContext* _ctx, bool _l, bool _rA, bool _rB,
 }
 
 void renderFloor(Layer* _thisLayer, GContext* _ctx, int mode) {
-  srand(m_dungeon.m_seed);
-  for (int _x = 3; _x < 15; _x += 2) {
-    for (int _y = 2; _y < 18; _y += 2) {
-      if (mode == 1) { // miss out stairs if doing next level
-        if ((_x == 9 && _y == 8) || (_x == 9 && _y == 10)) {
-          rand(); // keep the floor pattern the same
-          continue;
-        }
-      }
+  for (int _y = 2; _y < 18; _y += 2) {
+    for (int _x = 3; _x < 15; _x += 2) {
       drawBitmap(_ctx, getFloor(), _x, _y);
     }
   }
   // Extra bits where the doors can go
-  if (mode == 0) {
-    drawBitmap(_ctx, m_LDoorstep, 2, 8);
-    drawBitmap(_ctx, m_RDoorstep, 15, 4);
-    drawBitmap(_ctx, m_RDoorstep, 15, 8);
-    drawBitmap(_ctx, m_RDoorstep, 15, 12);
-  }
+  drawBitmap(_ctx, m_LDoorstep, 2, 8);
+  drawBitmap(_ctx, m_RDoorstep, 15, 4);
+  drawBitmap(_ctx, m_RDoorstep, 15, 8);
+  drawBitmap(_ctx, m_RDoorstep, 15, 12);
 }
 
 void renderPlayer(Layer* _thisLayer, GContext* _ctx) {

@@ -7,6 +7,7 @@ void initStart() {
   s_state = 0;
   s_choice = 0;
   m_player.m_position = GPoint(0, SIZE*9);
+  //addCluter(2, 3, 0, 20); // Only left
 }
 
 void updateProcStart(Layer* _thisLayer, GContext* _ctx) {
@@ -25,6 +26,7 @@ void updateProcStart(Layer* _thisLayer, GContext* _ctx) {
 
   renderPlayer(_thisLayer, _ctx);
   renderWalls(_thisLayer, _ctx, true, true, true, true);
+  //renderClutter(_thisLayer, _ctx);
 
   if (m_gameState == kAwaitInput && m_frame < ANIM_FPS/2) {
     drawBitmap(_ctx, m_arrow, 15, 4);
@@ -37,12 +39,9 @@ void updateProcStart(Layer* _thisLayer, GContext* _ctx) {
 void tickStart() {
 
   if (s_state == 0) { // start initial move
-    m_player.m_target = GPoint(SIZE*3, SIZE*9);
-    m_gameState = kMovePlayer;
-    ++s_state;
+    enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
-    m_gameState = kAwaitInput;
-    // do not increment state - done in click start
+    m_gameState = kAwaitInput;  // do not increment state - done in click start
   } else if (s_state == 2) {
     switch (s_choice) {
       case 0: m_player.m_target = GPoint(SIZE*7, SIZE*5); break;
