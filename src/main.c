@@ -15,14 +15,11 @@ static void init(void) {
     .unload = gameWindowUnload,
   });
 
-  //initGlobals();
-  //initPersistence();
 }
 
 static void deinit(void) {
   window_destroy(s_gameWindow);
   deinitSprite();
-  //destroyGlobals();
 }
 
 int main(void) {

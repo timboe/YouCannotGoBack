@@ -7,6 +7,7 @@
 RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kStart].m_minL  = 0, [kStart].m_giveHint  = 1, [kStart].m_giveItem  = 0, [kStart].m_reqItem  = 0, [kStart].m_reqHint  = {0, 0, 0, 0, 0},
  [kStairs].m_minL = 0, [kStairs].m_giveHint = 1, [kStairs].m_giveItem = 0, [kStairs].m_reqItem = 0, [kStairs].m_reqHint = {0, 0, 0, 0, 0},
+ [kPword].m_minL  = 0, [kPword].m_giveHint  = 1, [kPword].m_giveItem  = 0, [kPword].m_reqItem  = 0, [kPword].m_reqHint  = {0, 0, 1, 1, 0},
  [kWin].m_minL    = 9, [kWin].m_giveHint    = 1, [kWin].m_giveItem    = 0, [kWin].m_reqItem    = 0, [kWin].m_reqHint    = {0, 0, 0, 0, 0},
  [kLoose].m_minL  = 9, [kLoose].m_giveHint  = 1, [kLoose].m_giveItem  = 0, [kLoose].m_reqItem  = 0, [kLoose].m_reqHint  = {0, 0, 0, 0, 0}
 };
@@ -95,6 +96,8 @@ void generate() {
   m_dungeon.m_seed = time(NULL);
   srand(m_dungeon.m_seed);
 
+  APP_LOG(APP_LOG_LEVEL_INFO,"sz info:%i dn:%i", sizeof(m_roomDescriptor) * kNRoomTypes, sizeof(m_dungeon) );
+
   m_dungeon.m_level = 0;
   m_dungeon.m_room = -1; // Will be incremented on kNewLevel
   m_dungeon.m_lives = 1;
@@ -102,15 +105,14 @@ void generate() {
 
   for (int _level = 0; _level < MAX_LEVELS; ++ _level) {
     m_dungeon.m_roomsPerLevel[_level] = MIN_ROOMS + (rand() % (MAX_ROOMS - MIN_ROOMS));
-    APP_LOG(APP_LOG_LEVEL_INFO," ------------> LEVEL %i, N ROOMS %i", _level, m_dungeon.m_roomsPerLevel[_level]);
+    APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
     for (int _room = 0; _room < m_dungeon.m_roomsPerLevel[_level]; ++_room) {
-      APP_LOG(APP_LOG_LEVEL_INFO,"-----");
 
       Hints_t _consumeHint = kNoHint;
       bool _consumeItem = false;
       Rooms_t _roomType = getRoom(_level, &_consumeHint, &_consumeItem);
       m_dungeon.m_rooms[_level][_room] = _roomType;
-      APP_LOG(APP_LOG_LEVEL_INFO,"Generating Level:%i Room:%i = type %i", _level, _room, (int)_roomType);
+      APP_LOG(APP_LOG_LEVEL_INFO,"GL:%i R:%i t:%i", _level, _room, (int)_roomType);
 
       // Can we add a hint to this room?
       Hints_t _addHint = getHint(_roomType);
@@ -121,7 +123,7 @@ void generate() {
 
         m_dungeon.m_roomGiveHint[_level][_room] = _addHint;
         m_dungeon.m_roomGiveHintValue[_level][_room] = m_hintValue[_addHint];
-        APP_LOG(APP_LOG_LEVEL_INFO,"  ADDING *hint* type %i, value %i", (int)_addHint, (int)m_hintValue[_addHint]);
+        APP_LOG(APP_LOG_LEVEL_INFO," A H t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
 
       }
 
@@ -129,7 +131,7 @@ void generate() {
       if (_consumeHint != kNoHint) {
         m_dungeon.m_roomNeedHint[_level][_room] = _consumeHint;
         m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[_consumeHint];
-        APP_LOG(APP_LOG_LEVEL_INFO,"  CONSUMING *hint* type %i, value %i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
+        APP_LOG(APP_LOG_LEVEL_INFO," C H t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
 
         --m_hintsInPlay;
         m_hintIsActive[_consumeHint] = 0;
@@ -142,7 +144,7 @@ void generate() {
       if (m_roomDescriptor[_roomType].m_giveItem == 1) {
         m_itemValue[ m_itemsInPlay ] = getItemValue();
         m_dungeon.m_roomGiveItem[_level][_room] = m_itemValue[ m_itemsInPlay ];
-        APP_LOG(APP_LOG_LEVEL_INFO,"  ADDING #item# type %i", (int)m_itemValue[ m_itemsInPlay ]);
+        APP_LOG(APP_LOG_LEVEL_INFO," A i t:%i", (int)m_itemValue[ m_itemsInPlay ]);
         ++m_itemsInPlay;
       }
 
@@ -150,7 +152,7 @@ void generate() {
       if (_consumeItem == true) {
         int _toTake = rand() % m_itemsInPlay; // If there are 2, choose which to consume. itemsInPlay is 1 or 2 here
         m_dungeon.m_roomNeedItem[_level][_room] = m_itemValue[ _toTake ];
-        APP_LOG(APP_LOG_LEVEL_INFO,"  CONSUMING #item# type %i", (int)m_itemValue[ _toTake ]);
+        APP_LOG(APP_LOG_LEVEL_INFO," C i t:%i", (int)m_itemValue[ _toTake ]);
 
         // TODO this also assumes we will only ever have 2 items
         // Move other down
@@ -160,5 +162,5 @@ void generate() {
 
     }
   }
-  m_gameState = kNewRoom;
+  setGameState(kNewRoom);
 }

@@ -24,21 +24,22 @@ GBitmap* m_LDoorstep;
 GBitmap* m_RDoorstep;
 
 GBitmap* m_greek[MAX_GREEK];
-
 GBitmap* m_playerSprite[MAX_FRAMES];
-
 GBitmap* m_stairs;
-
 GBitmap* m_arrow;
-
 GBitmap* m_clutterSprite[MAX_CLUTTER];
+GBitmap* m_tapestrySprite[3];
+GBitmap* m_shieldSprite;
+
+GBitmap* m_guardian;
+GBitmap* m_blockWall[3];
 
 GBitmap* getSprite(int _x, int _y, int _w, int _h) {
   return gbitmap_create_as_sub_bitmap(m_spriteMap, GRect(SIZE * _x, SIZE * _y, SIZE * _w, SIZE * _h));
 }
 
-GBitmap* getClutter() {
-  return m_clutterSprite[ rand() % MAX_CLUTTER ];
+GBitmap* getClutter(bool _broken) {
+  return m_clutterSprite[ rand() % (_broken == true ? 3 :MAX_CLUTTER) ];
 }
 
 GBitmap* getOuterWall(int _d) {
@@ -100,12 +101,12 @@ void initSprite() {
     m_floorC[_f] = getSprite(12 + (_f*2), 0, 2, 2);
   }
 
-  m_LOpenDoor = getSprite(31, 6, 3, 4);
-  m_ROpenDoor = getSprite(26, 6, 3, 4);
-  m_RShutDoor = getSprite(22, 6, 3, 4);
+  m_LOpenDoor = getSprite(23, 6, 3, 4);
+  m_ROpenDoor = getSprite(18, 6, 3, 4);
+  m_RShutDoor = getSprite(14, 6, 3, 4);
 
-  m_LDoorstep =  getSprite(37, 0, 1, 4);
-  m_RDoorstep =  getSprite(36, 0, 1, 4);
+  m_LDoorstep =  getSprite(27, 6, 1, 4);
+  m_RDoorstep =  getSprite(26, 6, 1, 4);
 
   for (int _g = 0; _g < MAX_GREEK/2; ++_g) {
     m_greek[_g]               = getSprite(4 + _g, 12, 1, 1);
@@ -113,20 +114,25 @@ void initSprite() {
   }
 
   for (int _p = 0; _p < MAX_FRAMES; ++_p) {
-    m_playerSprite[_p] = getSprite(20 + (_p*2), 14, 2, 2);
+    m_playerSprite[_p] = getSprite(16 + (_p*2), 14, 2, 2);
   }
 
-  // int _clutter = 0;
-  // for (int _c = 0; _c < N_SMALL_CLUTTER; ++_c) {
-  //   m_clutterSprite[_clutter++] = getSprite(_c*2, 14, 2, 2);
-  // }
-  // m_clutterSprite[_clutter++] = getSprite(34, 4,  2, 4); // med 1
-  // m_clutterSprite[_clutter++] = getSprite(34, 8,  2, 4); // med 2
-  // m_clutterSprite[_clutter++] = getSprite(32, 0,  4, 4); // big 1
-  // m_clutterSprite[_clutter++] = getSprite(30, 10, 4, 4); // big 2
+  int _clutter = 0;
+  for (int _c = 0; _c < N_SMALL_CLUTTER; ++_c) {
+    m_clutterSprite[_clutter++] = getSprite(_c*2, 14, 2, 2);
+  }
+  m_clutterSprite[_clutter++] = getSprite(16, 10,  2, 4); // med 1
+  m_clutterSprite[_clutter++] = getSprite(18, 10,  2, 4); // med 2
 
+  m_tapestrySprite[0] = getSprite(20, 12,  1, 2);
+  m_tapestrySprite[1] = getSprite(21, 12,  1, 2);
+  m_tapestrySprite[2] = getSprite(22, 12,  1, 2);
+  m_shieldSprite = getSprite(20, 10,  4, 2);
 
-
+  m_guardian = getSprite(20, 0, 4, 6);
+  m_blockWall[0] = getSprite(12, 6, 2, 2);
+  m_blockWall[1] = getSprite(12, 8, 2, 2);
+  m_blockWall[2] = getSprite(12, 10, 2, 2);
 }
 
 void deinitSprite() {

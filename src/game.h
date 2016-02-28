@@ -10,6 +10,7 @@
 typedef enum {
   kStart,
   kStairs,
+  kPword,
   kWin,
   kLoose,
   kNRoomTypes
@@ -39,26 +40,26 @@ typedef enum {
 } Hints_t;
 
 typedef enum {
-  kIdle,
-  kMovePlayer,
-  kAwaitInput,
-  kFadeOut,
-  kNewRoom,
-  kFadeIn,
-  kLevelSpecific
+  kIdle = 0,
+  kMovePlayer = 1,
+  kAwaitInput = 2,
+  kFadeOut = 3,
+  kNewRoom = 4,
+  kFadeIn = 5,
+  kLevelSpecific = 6
 } GameState_t;
 
 typedef enum {
   kRWb,
+  kRbG,
+  kbBG,
   kbRW,
   kBbR,
-  kbBG,
-  kbWG,
-  kGRb,
-  kBWG,
-  kRbG,
-  kGbB,
-  kbRB,
+  kBGR,
+  // kbWG,
+  // kGRb,
+  // kGbB,
+  // kbRB,
   kNShieldTypes
 } ShieldTypes_t;
 //RGBWb
@@ -85,7 +86,7 @@ typedef struct {
 #define MAX_FRAMES 6
 #define PLAYER_SPEED 2
 typedef struct {
-  uint16_t m_frame;
+  uint16_t m_playerFrame;
   GPoint m_position;
   GPoint m_target;
 } Player_t;
@@ -97,12 +98,6 @@ typedef struct {
 } Clutter_t;
 
 
-// typedef struct {
-//   int8_t m_nHints;
-//   int8_t m_hintActive[HINT_TYPES]
-//   int8_t m_hintValue[HINT_TYPES]
-// } HintStore_t;
-
 // Note changing MAX_INVENTORY has big effects in generate.c, check the TODOs
 #define MAX_INVENTORY 2
 typedef struct {
@@ -110,17 +105,16 @@ typedef struct {
   int8_t m_itemValue[kNItemTypes];
 } ItemStore_t;
 
-
 extern Dungeon_t m_dungeon;
 extern Player_t m_player;
-extern GameState_t m_gameState;
 extern Clutter_t m_clutter;
 extern ItemStore_t m_items;
-extern int m_frame;
+
+int getFrameCount();
+GameState_t getGameState();
+void setGameState(GameState_t _state);
 
 extern const char* const m_spellNames[MAX_SPELLS];
-
-
 
 void gameWindowLoad(Window* _window);
 void gameWindowUnload();

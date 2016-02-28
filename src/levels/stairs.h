@@ -5,6 +5,6 @@
 #include "common.h"
 
 void initStairs();
-void updateProcStairs(Layer* _thisLayer, GContext* _ctx);
+void updateProcStairs(GContext* _ctx);
 void tickStairs();
 void clickStairs(ButtonId _button);
