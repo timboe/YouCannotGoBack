@@ -51,6 +51,27 @@ void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
+static void endRenderMsg(void* _data) {
+  // Stop displaying message timeout
+  if (getGameState() == kDisplayingMsg) {
+    setGameState(kLevelSpecific);
+  }
+}
+
+void renderMessage(GContext* _ctx, const char* _msg) {
+  GRect _b = GRect(2*SIZE, 7*SIZE, 14*SIZE, 5*SIZE);
+  graphics_context_set_fill_color(_ctx, GColorWhite);
+  graphics_fill_rect(_ctx, _b, 13, 0);
+  graphics_context_set_fill_color(_ctx, GColorBlack);
+  graphics_fill_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4), 13, 0);
+  graphics_context_set_fill_color(_ctx, GColorWhite);
+  graphics_fill_rect(_ctx, GRect(_b.origin.x+4, _b.origin.y+4, _b.size.w-8, _b.size.h-8), 13, 0);
+  graphics_context_set_text_color(_ctx, GColorBlack);
+  graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), GRect(_b.origin.x, _b.origin.y + 4, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+  APP_LOG(APP_LOG_LEVEL_INFO,"DISPLAY MESSAGE %s", _msg);
+  app_timer_register(1500, endRenderMsg, NULL);
+}
+
 void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
   drawBitmap(_ctx, m_outerCorner[0], 1, 0);
   drawBitmap(_ctx, m_outerCorner[1], 15, 0);
@@ -100,11 +121,26 @@ void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
   }
 }
 
-void renderFloor(GContext* _ctx, int mode) {
-  for (int _y = 2; _y < 18; _y += 2) {
-    for (int _x = 3; _x < 15; _x += 2) {
+void renderFloor(GContext* _ctx, int _mode) {
+  for (int _x = 3; _x < 15; _x += 2) {
+    if (_mode == 1 && !(_x == 3 || _x == 13)) continue; // Pit
+    for (int _y = 2; _y < 18; _y += 2) {
       drawBitmap(_ctx, getFloor(), _x, _y);
     }
+  }
+  if (_mode == 1) { // Pit with one space on either side
+    for (int _y = 4; _y < 16; _y += 2) {
+      drawBitmap(_ctx, m_innerWall[0], 5,  _y);
+      drawBitmap(_ctx, m_innerWall[1], 11, _y);
+    }
+    drawBitmap(_ctx, m_innerCorner[0], 5,  2);
+    drawBitmap(_ctx, m_innerCorner[1], 11, 2);
+    drawBitmap(_ctx, m_innerCorner[2], 11, 16);
+    drawBitmap(_ctx, m_innerCorner[3], 5,  16);
+    drawBitmap(_ctx, m_innerWall[2], 7, 2);
+    drawBitmap(_ctx, m_innerWall[2], 9, 2);
+    drawBitmap(_ctx, m_innerWall[3], 7, 16);
+    drawBitmap(_ctx, m_innerWall[3], 9, 16);
   }
   // Extra bits where the doors can go
   drawBitmap(_ctx, m_LDoorstep, 2, 8);
@@ -139,17 +175,9 @@ void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer,
   graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
 }
 
-//void setPixel(uint8_t* bitmapData, int bytesPerRow, int y, int x, uint8_t color) {
-  //#ifdef PBL_COLOR
-  //bitmap_data[y*bytes_per_row + x] = GColorBlack.argb;
-  //#else
-  //bitmap_data[y*bytes_per_row + x / 8] ^= (-color ^ bitmap_data[y*bytes_per_row + x / 8]) & (1 << (x % 8)); // in Aplite - set the bit
-  //#endif
-//}
-
-
 #define FADE_LEVELS 16
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
+  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position.y++;
   static int s_progress = 1;
   GRect _b = layer_get_bounds(_thisLayer);
   GBitmap* _fBuffer = graphics_capture_frame_buffer(_ctx);

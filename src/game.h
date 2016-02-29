@@ -11,8 +11,8 @@ typedef enum {
   kStart,
   kStairs,
   kPword,
-  kWin,
-  kLoose,
+  kBridge,
+  kEnd,
   kNRoomTypes
 } Rooms_t;
 
@@ -46,7 +46,10 @@ typedef enum {
   kFadeOut = 3,
   kNewRoom = 4,
   kFadeIn = 5,
-  kLevelSpecific = 6
+  kLevelSpecific = 6,
+  kDisplayMsg = 7,
+  kDisplayingMsg = 8,
+  kDoInit = 9
 } GameState_t;
 
 typedef enum {
@@ -81,6 +84,7 @@ typedef struct {
   int8_t m_roomNeedHintValue[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomNeedItem[MAX_LEVELS][MAX_ROOMS];
   uint32_t m_seed;
+  bool m_fallingDeath;
 } Dungeon_t;
 
 #define MAX_FRAMES 6
@@ -111,10 +115,14 @@ extern Clutter_t m_clutter;
 extern ItemStore_t m_items;
 
 int getFrameCount();
+int getPlayerChoice();
 GameState_t getGameState();
 void setGameState(GameState_t _state);
+void setDisplayMsg(const char* _msg);
+void setGameOver(bool _go);
 
 extern const char* const m_spellNames[MAX_SPELLS];
+int getHintValueMax(Hints_t hint);
 
 void gameWindowLoad(Window* _window);
 void gameWindowUnload();

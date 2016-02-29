@@ -3,9 +3,7 @@
 static uint16_t s_state = 0;
 
 void initStairs() {
-  s_state = 0;
-  m_player.m_position = GPoint(0, SIZE*9);
-  addCluter(5, 6, 5, 13);
+
 }
 
 void updateProcStairs(GContext* _ctx) {
@@ -27,12 +25,19 @@ void updateProcStairs(GContext* _ctx) {
 
 }
 
-void tickStairs() {
+bool tickStairs(bool _doInit) {
+  if (_doInit == true) {
+    s_state = 0;
+    m_player.m_position = GPoint(0, SIZE*9);
+    addCluter(5, 6, 5, 13);
+    return false;
+  }
 
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
-    setGameState(kAwaitInput);  // do not increment state - done in click start
+    setGameState(kAwaitInput);
+    ++s_state;
   } else if (s_state == 2) { // move onto stairs
     m_player.m_target = GPoint(SIZE*9, SIZE*9);
     setGameState(kMovePlayer);
@@ -44,9 +49,6 @@ void tickStairs() {
   } else if (s_state == 4) {
     setGameState(kFadeOut);
   }
-}
 
-void clickStairs(ButtonId _button) { // Choice entered - no choice here!
-  ++s_state;
-  setGameState(kLevelSpecific);
+  return false;
 }

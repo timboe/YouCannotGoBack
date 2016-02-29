@@ -1,27 +1,36 @@
 #include "pword.h"
 
 static uint16_t s_state = 0;
-static uint16_t s_choice = 0;
-
-void initPword() {
-  s_state = 0;
-  m_player.m_position = GPoint(0, SIZE*9);
-  addCluter(2, 5, 0, 20);
-}
+static int8_t s_choices[3] = {0};
+static uint16_t s_correct = 0;
 
 void updateProcPword(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
-  drawBitmap(_ctx, m_guardian, 5, 6);
 
   renderPlayer(_ctx);
-  renderWalls(_ctx, true, false, false, false);
+  renderWalls(_ctx, true, false, true, false);
 
-  drawBitmap(_ctx, m_blockWall[0], 11, 0);
-  for (int _i = 2; _i < 18; _i += 2) drawBitmap(_ctx, m_blockWall[1], 11, _i);
-  drawBitmap(_ctx, m_blockWall[2], 11, 18);
+  drawBitmap(_ctx, m_guardian, 5, 6);
+
+  if (s_state < 7) {
+    drawBitmap(_ctx, m_blockWall[0], 9, 0);
+    for (int _i = 2; _i < 18; _i += 2) drawBitmap(_ctx, m_blockWall[1], 9, _i);
+    drawBitmap(_ctx, m_blockWall[2], 9, 18);
+  }
 
   renderClutter(_ctx);
+
+  if (s_state == 5) {
+    renderBorderText(_ctx, GRect(SIZE*10, SIZE*3,  SIZE*6, SIZE*2), fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[0]], 2, GTextAlignmentCenter);
+    renderBorderText(_ctx, GRect(SIZE*10, SIZE*8,  SIZE*6, SIZE*2), fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[1]], 2, GTextAlignmentCenter);
+    renderBorderText(_ctx, GRect(SIZE*10, SIZE*13, SIZE*6, SIZE*2), fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[2]], 2, GTextAlignmentCenter);
+    if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
+      drawBitmap(_ctx, m_arrow, 12, 2);
+      drawBitmap(_ctx, m_arrow, 12, 7);
+      drawBitmap(_ctx, m_arrow, 12, 12);
+    }
+  }
 
   // if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
   //   drawBitmap(_ctx, m_arrow, 9, 8);
@@ -29,28 +38,55 @@ void updateProcPword(GContext* _ctx) {
 
 }
 
-void tickPword() {
+bool tickPword(bool _doInit) {
+  if (_doInit == true) {
+    s_state = 0;
+    m_player.m_position = GPoint(0, SIZE*9);
+    addCluter(2, 5, 0, 20);
+    s_correct = randomiseChoices(s_choices);
+    return false;
+  }
+
+  static const char _msg[] = "PASSWORD?";
 
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
-    m_player.m_target = GPoint(SIZE*11, SIZE*11);
+    m_player.m_target = GPoint(SIZE*3, SIZE*12); // move down
     setGameState(kMovePlayer);
     ++s_state;
-  } else if (s_state == 2) { // move onto stairs
-    setGameState(kAwaitInput);  // do not increment state - done in click start
-  } else if (s_state == 3) { // move down stairs
-    //do desc.
-  } else if (s_state == 4) {
+  } else if (s_state == 2) {
+    m_player.m_target = GPoint(SIZE*6, SIZE*12); // move right
+    setGameState(kMovePlayer);
+    ++s_state;
+  } else if (s_state == 3) { // display msg
+    setDisplayMsg(_msg);
+    setGameState(kDisplayMsg);
+    ++s_state;
+  } else if (s_state == 4) { // move down stairs
+    setGameState(kAwaitInput);
+    ++s_state;
+  } else if (s_state == 5) {
+    if (getPlayerChoice() == s_correct) s_state = 7; // Yay
+    else s_state = 6; // Oh noes!
+  } else if (s_state == 6) { // DEATH MOVE
+    m_player.m_position.y -= 1;
+    if (m_player.m_position.y < 8*SIZE) {
+      setGameState(kFadeOut);
+      setGameOver(true);
+    }
+    return true;
+  } else if (s_state == 7) { // WIN MOVE
+    m_player.m_target = GPoint(SIZE*9, SIZE*12);
+    setGameState(kMovePlayer);
+    ++s_state;
+  } else if (s_state == 8) { // WIN MOVE
+    m_player.m_target = GPoint(SIZE*17, SIZE*9);
+    setGameState(kMovePlayer);
+    ++s_state;
+  } else if (s_state == 9) {
     setGameState(kFadeOut);
   }
-}
 
-void clickPword(ButtonId _button) { // Choice entered - no choice here!
-  ++s_state;
-  setGameState(kLevelSpecific);
-
-  if (BUTTON_ID_UP == _button) s_choice = 0;
-  else if (BUTTON_ID_SELECT == _button) s_choice = 1;
-  else if (BUTTON_ID_DOWN == _button) s_choice = 2;
+  return false;
 }

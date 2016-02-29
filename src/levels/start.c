@@ -1,14 +1,6 @@
 #include "start.h"
 
 static uint16_t s_state = 0;
-static uint16_t s_choice = 0;
-
-void initStart() {
-  s_state = 0;
-  s_choice = 0;
-  m_player.m_position = GPoint(0, SIZE*9);
-  addCluter(2, 4, 0, 20); // Only left
-}
 
 void updateProcStart(GContext* _ctx) {
 
@@ -36,14 +28,21 @@ void updateProcStart(GContext* _ctx) {
 
 }
 
-void tickStart() {
+bool tickStart(bool _doInit) {
+  if (_doInit == true) {
+    s_state = 0;
+    m_player.m_position = GPoint(0, SIZE*9);
+    addCluter(2, 4, 0, 20); // Only left
+    return false;
+  }
 
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
-    setGameState(kAwaitInput);  // do not increment state - done in click start
+    setGameState(kAwaitInput);
+    ++s_state;
   } else if (s_state == 2) {
-    switch (s_choice) {
+    switch (getPlayerChoice()) {
       case 0: m_player.m_target = GPoint(SIZE*7, SIZE*5); break;
       case 1: m_player.m_target = GPoint(SIZE*7, SIZE*9); break;
       case 2: m_player.m_target = GPoint(SIZE*7, SIZE*13); break;
@@ -51,7 +50,7 @@ void tickStart() {
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) {
-    switch (s_choice) {
+    switch (getPlayerChoice()) {
       case 0: m_player.m_target = GPoint(SIZE*17, SIZE*5); break;
       case 1: m_player.m_target = GPoint(SIZE*17, SIZE*9); break;
       case 2: m_player.m_target = GPoint(SIZE*17, SIZE*13); break;
@@ -61,15 +60,6 @@ void tickStart() {
   } else if (s_state == 4) {
     setGameState(kFadeOut);
   }
-}
 
-void clickStart(ButtonId _button) { // Choice entered
-
-  ++s_state;
-  setGameState(kLevelSpecific);
-
-  if (BUTTON_ID_UP == _button) s_choice = 0;
-  else if (BUTTON_ID_SELECT == _button) s_choice = 1;
-  else if (BUTTON_ID_DOWN == _button) s_choice = 2;
-
+  return false;
 }

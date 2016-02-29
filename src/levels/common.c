@@ -36,3 +36,30 @@ void enterRoom(uint16_t* _state) {
   setGameState(kMovePlayer);
   ++(*_state);
 }
+
+uint16_t randomiseChoices(int8_t* _choices) {
+  // Have an array size 3, first choose correct location
+  uint16_t _c = rand() % 3, _i1, _i2;
+  // Better way of doing this?
+  if (_c == 0) {
+    _i1 = 1;
+    _i2 = 2;
+  } else if (_c == 1) {
+    _i1 = 0;
+    _i2 = 2;
+  } else {
+    _i1 = 0;
+    _i2 = 1;
+  }
+
+  _choices[_c] = m_dungeon.m_roomNeedHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ];
+  int _max = getHintValueMax( m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room ] );
+  do { // Choose first incorrect, must be different to correct
+    _choices[ _i1 ] = rand() % _max;
+  } while (_choices[_i1] == _choices[_c]);
+  do { // same for second incorrect
+    _choices[ _i2 ] = rand() % _max;
+  } while (_choices[_i2] == _choices[_c] || _choices[_i2] == _choices[_i1]);
+  return _c;
+
+}

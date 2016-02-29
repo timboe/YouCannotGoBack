@@ -4,5 +4,5 @@
 #include "../game.h"
 #include "common.h"
 
-void updateProcPword(GContext* _ctx);
-bool tickPword(bool _doInit);
+void updateProcBridge(GContext* _ctx);
+bool tickBridge(bool _doInit);

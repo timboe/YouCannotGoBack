@@ -7,9 +7,9 @@
 RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kStart].m_minL  = 0, [kStart].m_giveHint  = 1, [kStart].m_giveItem  = 0, [kStart].m_reqItem  = 0, [kStart].m_reqHint  = {0, 0, 0, 0, 0},
  [kStairs].m_minL = 0, [kStairs].m_giveHint = 1, [kStairs].m_giveItem = 0, [kStairs].m_reqItem = 0, [kStairs].m_reqHint = {0, 0, 0, 0, 0},
- [kPword].m_minL  = 0, [kPword].m_giveHint  = 1, [kPword].m_giveItem  = 0, [kPword].m_reqItem  = 0, [kPword].m_reqHint  = {0, 0, 1, 1, 0},
- [kWin].m_minL    = 9, [kWin].m_giveHint    = 1, [kWin].m_giveItem    = 0, [kWin].m_reqItem    = 0, [kWin].m_reqHint    = {0, 0, 0, 0, 0},
- [kLoose].m_minL  = 9, [kLoose].m_giveHint  = 1, [kLoose].m_giveItem  = 0, [kLoose].m_reqItem  = 0, [kLoose].m_reqHint  = {0, 0, 0, 0, 0}
+ [kPword].m_minL  = 0, [kPword].m_giveHint  = 1, [kPword].m_giveItem  = 0, [kPword].m_reqItem  = 0, [kPword].m_reqHint  = {0, 0, 0, 1, 0}, // TODO add number hint here
+ [kBridge].m_minL = 0, [kBridge].m_giveHint = 1, [kBridge].m_giveItem = 0, [kBridge].m_reqItem = 0, [kBridge].m_reqHint = {0, 0, 0, 0, 0},
+ [kEnd].m_minL    = 9, [kEnd].m_giveHint    = 1, [kEnd].m_giveItem    = 0, [kEnd].m_reqItem    = 0, [kEnd].m_reqHint    = {0, 0, 0, 0, 0}
 };
 
 int m_hintsInPlay = 0;
@@ -18,16 +18,6 @@ uint8_t m_hintValue[kNHintTypes] = {0};
 
 int m_itemsInPlay = 0;
 uint8_t m_itemValue[kNItemTypes] = {0};
-
-uint8_t getHintValue(Hints_t _hint) {
-  switch (_hint) {
-    case kShield: return rand() % kNShieldTypes;
-    case kNumber: return rand() % MAX_NUMBER;
-    case kSpell: return rand() % MAX_SPELLS;
-    case kGreek: return rand() % MAX_GREEK;
-    default: return 0;
-  }
-}
 
 uint8_t getItemValue() {
   while (true) {
@@ -58,7 +48,6 @@ Hints_t getHint(Rooms_t _room) {
 Rooms_t getRoom(int _level, Hints_t* _consumeHint, bool* _consumeItem) {
 
   // TODO make rooms be spread out
-
 
   while (true) {
     Rooms_t _room = rand() % kNRoomTypes;
@@ -94,7 +83,9 @@ Rooms_t getRoom(int _level, Hints_t* _consumeHint, bool* _consumeItem) {
 void generate() {
 
   m_dungeon.m_seed = time(NULL);
+  setGameOver(false);
   srand(m_dungeon.m_seed);
+  m_dungeon.m_fallingDeath = false;
 
   APP_LOG(APP_LOG_LEVEL_INFO,"sz info:%i dn:%i", sizeof(m_roomDescriptor) * kNRoomTypes, sizeof(m_dungeon) );
 
@@ -119,7 +110,7 @@ void generate() {
       if (_addHint != kNoHint) {
         ++m_hintsInPlay;
         m_hintIsActive[_addHint] = 1;
-        m_hintValue[_addHint] = getHintValue(_addHint);
+        m_hintValue[_addHint] = rand() % getHintValueMax(_addHint);
 
         m_dungeon.m_roomGiveHint[_level][_room] = _addHint;
         m_dungeon.m_roomGiveHintValue[_level][_room] = m_hintValue[_addHint];

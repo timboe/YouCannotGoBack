@@ -12,6 +12,7 @@ void renderPlayer(GContext* _ctx);
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in);
 void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al);
 void renderClutter(GContext* _ctx);
+void renderMessage(GContext* _ctx, const char* _msg);
 
 GColor getShieldA(int _value);
 GColor getShieldB(int _value);

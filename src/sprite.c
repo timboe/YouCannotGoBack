@@ -33,6 +33,7 @@ GBitmap* m_shieldSprite;
 
 GBitmap* m_guardian;
 GBitmap* m_blockWall[3];
+GBitmap* m_bridge[3];
 
 GBitmap* getSprite(int _x, int _y, int _w, int _h) {
   return gbitmap_create_as_sub_bitmap(m_spriteMap, GRect(SIZE * _x, SIZE * _y, SIZE * _w, SIZE * _h));
@@ -78,13 +79,13 @@ void initSprite() {
 
   m_innerCorner[0] = getSprite(0, 0, 2, 2);
   m_innerCorner[1] = getSprite(4, 0, 2, 2);
-  m_innerCorner[2] = getSprite(0, 4, 2, 2);
-  m_innerCorner[3] = getSprite(4, 4, 2, 2);
+  m_innerCorner[2] = getSprite(4, 4, 2, 2);
+  m_innerCorner[3] = getSprite(0, 4, 2, 2);
 
   m_innerWall[0] = getSprite(0, 2, 2, 2);
   m_innerWall[1] = getSprite(4, 2, 2, 2);
-  m_innerWall[2] = getSprite(2, 4, 2, 2);
-  m_innerWall[3] = getSprite(0, 2, 2, 2);
+  m_innerWall[2] = getSprite(2, 0, 2, 2);
+  m_innerWall[3] = getSprite(2, 4, 2, 2);
 
   m_torchWall[0] = getSprite(10, 2, 2, 2);
   m_torchWall[1] = getSprite(7,  4, 3, 2);
@@ -133,6 +134,11 @@ void initSprite() {
   m_blockWall[0] = getSprite(12, 6, 2, 2);
   m_blockWall[1] = getSprite(12, 8, 2, 2);
   m_blockWall[2] = getSprite(12, 10, 2, 2);
+
+  m_bridge[0] = getSprite(6, 4, 1, 2);
+  m_bridge[1] = getSprite(9, 6, 1, 2);
+  m_bridge[2] = getSprite(14, 10, 1, 2);
+
 }
 
 void deinitSprite() {

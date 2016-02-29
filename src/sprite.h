@@ -38,3 +38,5 @@ extern GBitmap* m_shieldSprite;
 
 extern GBitmap* m_guardian;
 extern GBitmap* m_blockWall[3];
+
+extern GBitmap* m_bridge[3];
