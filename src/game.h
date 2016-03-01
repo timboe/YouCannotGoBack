@@ -12,19 +12,11 @@ typedef enum {
   kStairs,
   kPword,
   kBridge,
+  kMaze,
+  kDeath,
   kEnd,
   kNRoomTypes
 } Rooms_t;
-
-typedef enum {
-  kNoItem,
-  kDagger,
-  kAnkh,
-  kPotion,
-  kGold,
-  kApple,
-  kNItemTypes
-} Items_t;
 
 #define HINT_TYPES 4
 #define MAX_SPELLS 31
@@ -77,13 +69,12 @@ typedef struct {
   int8_t m_lives;
   int8_t m_roomsPerLevel[MAX_LEVELS];
   int8_t m_rooms[MAX_LEVELS][MAX_ROOMS];
-  int8_t m_roomGiveItem[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomGiveHint[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomGiveHintValue[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomNeedHint[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomNeedHintValue[MAX_LEVELS][MAX_ROOMS];
-  int8_t m_roomNeedItem[MAX_LEVELS][MAX_ROOMS];
   uint32_t m_seed;
+  bool m_gameOver;
   bool m_fallingDeath;
 } Dungeon_t;
 
@@ -101,25 +92,15 @@ typedef struct {
   GPoint m_position[MAX_PLACE_CLUTTER];
 } Clutter_t;
 
-
-// Note changing MAX_INVENTORY has big effects in generate.c, check the TODOs
-#define MAX_INVENTORY 2
-typedef struct {
-  int8_t m_nItems;
-  int8_t m_itemValue[kNItemTypes];
-} ItemStore_t;
-
 extern Dungeon_t m_dungeon;
 extern Player_t m_player;
 extern Clutter_t m_clutter;
-extern ItemStore_t m_items;
 
 int getFrameCount();
 int getPlayerChoice();
 GameState_t getGameState();
 void setGameState(GameState_t _state);
 void setDisplayMsg(const char* _msg);
-void setGameOver(bool _go);
 
 extern const char* const m_spellNames[MAX_SPELLS];
 int getHintValueMax(Hints_t hint);

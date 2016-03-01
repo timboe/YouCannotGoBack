@@ -6,6 +6,7 @@
 void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y);
 void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p);
 
+void renderHintNumber(GContext* _ctx, GRect _r, int _value);
 void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC);
 void renderFloor(GContext* _ctx, int mode);
 void renderPlayer(GContext* _ctx);

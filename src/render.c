@@ -7,6 +7,12 @@ void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
+void renderHintNumber(GContext* _ctx, GRect _r, int _value) {
+  static char _hintText[3];
+  snprintf(_hintText, 3, "%i", _value);
+  renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _hintText, 1, GTextAlignmentCenter);
+}
+
 void renderClutter(GContext* _ctx) {
   Hints_t _hint = m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room];
   int _hintValue = m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room];
@@ -17,9 +23,7 @@ void renderClutter(GContext* _ctx) {
       drawBitmapAbs(_ctx, m_greek[ _hintValue ], _p);
     } else if (_c == 0 && _hint == kNumber) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
-      static char _hintText[3];
-      snprintf(_hintText, 3, "%i", _hintValue);
-      renderBorderText(_ctx, GRect(m_clutter.m_position[_c].x * SIZE, (m_clutter.m_position[_c].y * SIZE)-3, 16, 16),  fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _hintText, 1, GTextAlignmentCenter);
+      renderHintNumber(_ctx, GRect(m_clutter.m_position[_c].x * SIZE, (m_clutter.m_position[_c].y * SIZE)-3, 16, 16), m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room]);
     } else {
       drawBitmap(_ctx, getClutter(false), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
     }
@@ -59,17 +63,15 @@ static void endRenderMsg(void* _data) {
 }
 
 void renderMessage(GContext* _ctx, const char* _msg) {
-  GRect _b = GRect(2*SIZE, 7*SIZE, 14*SIZE, 5*SIZE);
+  GRect _b = GRect(2*SIZE, 7*SIZE, 14*SIZE, 6*SIZE);
   graphics_context_set_fill_color(_ctx, GColorWhite);
   graphics_fill_rect(_ctx, _b, 13, 0);
-  graphics_context_set_fill_color(_ctx, GColorBlack);
-  graphics_fill_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4), 13, 0);
-  graphics_context_set_fill_color(_ctx, GColorWhite);
-  graphics_fill_rect(_ctx, GRect(_b.origin.x+4, _b.origin.y+4, _b.size.w-8, _b.size.h-8), 13, 0);
+  graphics_context_set_stroke_color(_ctx, GColorBlack);
+  graphics_context_set_stroke_width(_ctx, 3);
+  graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
   graphics_context_set_text_color(_ctx, GColorBlack);
   graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), GRect(_b.origin.x, _b.origin.y + 4, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
-  APP_LOG(APP_LOG_LEVEL_INFO,"DISPLAY MESSAGE %s", _msg);
-  app_timer_register(1500, endRenderMsg, NULL);
+  app_timer_register(1000, endRenderMsg, NULL);
 }
 
 void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {

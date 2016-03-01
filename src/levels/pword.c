@@ -22,19 +22,20 @@ void updateProcPword(GContext* _ctx) {
   renderClutter(_ctx);
 
   if (s_state == 5) {
-    renderBorderText(_ctx, GRect(SIZE*10, SIZE*3,  SIZE*6, SIZE*2), fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[0]], 2, GTextAlignmentCenter);
-    renderBorderText(_ctx, GRect(SIZE*10, SIZE*8,  SIZE*6, SIZE*2), fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[1]], 2, GTextAlignmentCenter);
-    renderBorderText(_ctx, GRect(SIZE*10, SIZE*13, SIZE*6, SIZE*2), fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[2]], 2, GTextAlignmentCenter);
+    for (int _i = 0; _i < 3; ++_i) {
+      GRect _r = GRect(SIZE*10, SIZE*(5 + 4*_i),  SIZE*6, SIZE*2);
+      if (m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room] == kNumber ) {
+        renderHintNumber(_ctx, _r, s_choices[_i]);
+      } else {
+        renderBorderText(_ctx, _r, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[_i]], 2, GTextAlignmentCenter);
+      }
+    }
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-      drawBitmap(_ctx, m_arrow, 12, 2);
-      drawBitmap(_ctx, m_arrow, 12, 7);
-      drawBitmap(_ctx, m_arrow, 12, 12);
+      drawBitmap(_ctx, m_arrow, 12, 3);
+      drawBitmap(_ctx, m_arrow, 12, 8);
+      drawBitmap(_ctx, m_arrow, 12, 13);
     }
   }
-
-  // if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-  //   drawBitmap(_ctx, m_arrow, 9, 8);
-  // }
 
 }
 
@@ -73,7 +74,7 @@ bool tickPword(bool _doInit) {
     m_player.m_position.y -= 1;
     if (m_player.m_position.y < 8*SIZE) {
       setGameState(kFadeOut);
-      setGameOver(true);
+      m_dungeon.m_gameOver = true;
     }
     return true;
   } else if (s_state == 7) { // WIN MOVE

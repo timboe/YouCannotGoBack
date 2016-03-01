@@ -6,6 +6,7 @@
 #include "levels/stairs.h"
 #include "levels/pword.h"
 #include "levels/bridge.h"
+#include "levels/maze.h"
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
@@ -13,9 +14,7 @@ Player_t m_player = {0};
 static GameState_t s_gameState = kIdle;
 static int s_playerChoice = 0;
 static const char* s_displayMsg = NULL;
-static bool s_gameOver = false;
 Clutter_t m_clutter = {0};
-ItemStore_t m_items = {0};
 
 static AppTimer* s_gameLoopTimer = NULL;
 static Layer* s_dungeonLayer;
@@ -28,24 +27,11 @@ static int s_lastSecondFPS = 0;
 void FPSTimer(void* data);
 #endif
 
-int getFrameCount() {
-  return s_frameCount;
-}
-
-GameState_t getGameState() {
-  return s_gameState;
-}
-
+int getFrameCount() { return s_frameCount; }
+GameState_t getGameState() { return s_gameState; }
 void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; }
-void setGameOver(bool _go) { s_gameOver = _go; }
-
-void setGameState(GameState_t _state) {
-  s_gameState = _state;
-}
-
-int getPlayerChoice() {
-  return s_playerChoice;
-}
+void setGameState(GameState_t _state) { s_gameState = _state; }
+int getPlayerChoice() { return s_playerChoice; }
 
 void gameClickConfigHandler(ClickRecognizerRef _recognizer, void* _context) {
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
@@ -94,6 +80,7 @@ void gameLoop(void* data) {
       case kStairs: requestRedraw = tickStairs(_doInit); break;
       case kPword: requestRedraw = tickPword(_doInit); break;
       case kBridge: requestRedraw = tickBridge(_doInit); break;
+      case kMaze: requestRedraw = tickMaze(_doInit); break;
       default: break;
     } break;
     default: APP_LOG(APP_LOG_LEVEL_INFO,"GS:%i ???",(int) s_gameState); break;
@@ -106,6 +93,7 @@ void gameLoop(void* data) {
 
 
 void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
+  if (getGameState() == kIdle) return;
   srand(m_dungeon.m_seed);
   graphics_context_set_compositing_mode(_ctx, GCompOpSet);
 
@@ -114,6 +102,7 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     case kStairs: updateProcStairs(_ctx); break;
     case kPword: updateProcPword(_ctx); break;
     case kBridge: updateProcBridge(_ctx); break;
+    case kMaze: updateProcMaze(_ctx); break;
     default: break;
   }
 
