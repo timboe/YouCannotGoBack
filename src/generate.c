@@ -5,12 +5,15 @@
 // kNoHint is currently unused, any other bit true will indicate that reqHint is true
 // Set levels which are not to be chosen at random to minL = 9
 RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
- [kStart].m_minL  = 0, [kStart].m_giveHint  = 1, [kStart].m_reqHint  = {0, 0, 0, 0, 0},
- [kStairs].m_minL = 0, [kStairs].m_giveHint = 1, [kStairs].m_reqHint = {0, 0, 0, 0, 0},
+ [kStart].m_minL  = 9, [kStart].m_giveHint  = 1, [kStart].m_reqHint  = {0, 0, 0, 0, 0},
+ [kStairs].m_minL = 9, [kStairs].m_giveHint = 1, [kStairs].m_reqHint = {0, 0, 0, 0, 0},
  [kPword].m_minL  = 0, [kPword].m_giveHint  = 1, [kPword].m_reqHint  = {0, 0, 1, 1, 0},
  [kBridge].m_minL = 0, [kBridge].m_giveHint = 1, [kBridge].m_reqHint = {0, 0, 1, 0, 1},
+ [kMaths].m_minL  = 0, [kMaths].m_giveHint  = 1, [kMaths].m_reqHint  = {0, 0, 0, 0, 0},
+ [kStones].m_minL = 0, [kStones].m_giveHint = 0, [kStones].m_reqHint = {0, 1, 0, 0, 0},
  [kMaze].m_minL   = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint   = {0, 0, 0, 0, 0},
- [kEnd].m_minL    = 9, [kEnd].m_giveHint    = 1, [kEnd].m_reqHint    = {0, 0, 0, 0, 0}
+ [kDeath].m_minL  = 9, [kDeath].m_giveHint  = 0, [kDeath].m_reqHint  = {0, 0, 0, 0, 0},
+ [kEnd].m_minL    = 9, [kEnd].m_giveHint    = 0, [kEnd].m_reqHint    = {0, 0, 0, 0, 0}
 };
 
 int m_hintsInPlay = 0;
@@ -33,31 +36,36 @@ Hints_t getHint(Rooms_t _room) {
 }
 
 
-Rooms_t getRoom(int _level, Hints_t* _consumeHint, bool* _consumeItem) {
+Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem) {
 
   // TODO make rooms be spread out
   // TODO some hints only show up later
 
   while (true) {
-    Rooms_t _room = kMaze;//rand() % kNRoomTypes;
-
-    // Check level
-    if (m_roomDescriptor[_room].m_minL > _level) continue;
+    Rooms_t _newRoom;
+    if (_level == 0 && _room == 0) { // First room
+      _newRoom = kStart;
+    } else if (_room - 2 == m_dungeon.m_roomsPerLevel[_level]) { // End of floor (why - 2?!) TODO
+      _newRoom = kStairs;
+    } else {
+      _newRoom = rand() % kNRoomTypes;
+      if (m_roomDescriptor[_newRoom].m_minL > _level) continue;  // Check level
+    }
 
     // Check if needs hint
     bool _needsHint = false;
     int _nCompatableHints = 0;
     int _hints[kNHintTypes] = {0};
     for (Hints_t _h = 1; _h < kNHintTypes; ++_h) { // Avoid kNoHint
-      if ( m_roomDescriptor[_room].m_reqHint[ _h ] == 1 ) _needsHint = true; // I require a hint
-      if ( m_roomDescriptor[_room].m_reqHint[ _h ] == 1 && m_hintIsActive[ _h ] == 1) { // This hint is available
+      if ( m_roomDescriptor[_newRoom].m_reqHint[ _h ] == 1 ) _needsHint = true; // I require a hint
+      if ( m_roomDescriptor[_newRoom].m_reqHint[ _h ] == 1 && m_hintIsActive[ _h ] == 1) { // This hint is available
         _hints[ _nCompatableHints++ ] = _h;
       }
     }
     if (_needsHint == true && _nCompatableHints == 0) continue; // Roll again
     else if (_needsHint == true) (*_consumeHint) = _hints[ rand() % _nCompatableHints ]; // Consume an available hint
 
-    return _room;
+    return _newRoom;
   }
 }
 
@@ -68,6 +76,11 @@ void generate() {
   m_dungeon.m_fallingDeath = false;
   m_dungeon.m_gameOver = false;
 
+  m_hintsInPlay = 0;
+  for (int _i = 0; _i < kNHintTypes; ++_i) {
+    m_hintIsActive[_i] = 0;
+  }
+
   APP_LOG(APP_LOG_LEVEL_INFO,"sz info:%i dn:%i", sizeof(m_roomDescriptor) * kNRoomTypes, sizeof(m_dungeon) );
 
   m_dungeon.m_level = 0;
@@ -75,16 +88,16 @@ void generate() {
   m_dungeon.m_lives = 1;
 
 
-  for (int _level = 0; _level < MAX_LEVELS; ++ _level) {
+  for (int _level = 0; _level < MAX_LEVELS; ++_level) {
     m_dungeon.m_roomsPerLevel[_level] = MIN_ROOMS + (rand() % (MAX_ROOMS - MIN_ROOMS));
     APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
     for (int _room = 0; _room < m_dungeon.m_roomsPerLevel[_level]; ++_room) {
 
       Hints_t _consumeHint = kNoHint;
       bool _consumeItem = false;
-      Rooms_t _roomType = getRoom(_level, &_consumeHint, &_consumeItem);
+      Rooms_t _roomType = getRoom(_level, _room, &_consumeHint, &_consumeItem);
       m_dungeon.m_rooms[_level][_room] = _roomType;
-      APP_LOG(APP_LOG_LEVEL_INFO,"GL:%i R:%i t:%i", _level, _room, (int)_roomType);
+      APP_LOG(APP_LOG_LEVEL_INFO,"[%i][%i] = t:%i", _level, _room, (int)_roomType);
 
       // Can we add a hint to this room?
       Hints_t _addHint = getHint(_roomType);
@@ -95,7 +108,7 @@ void generate() {
 
         m_dungeon.m_roomGiveHint[_level][_room] = _addHint;
         m_dungeon.m_roomGiveHintValue[_level][_room] = m_hintValue[_addHint];
-        APP_LOG(APP_LOG_LEVEL_INFO,"      A H t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
+        APP_LOG(APP_LOG_LEVEL_INFO," >> A t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
 
       }
 
@@ -103,7 +116,7 @@ void generate() {
       if (_consumeHint != kNoHint) {
         m_dungeon.m_roomNeedHint[_level][_room] = _consumeHint;
         m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[_consumeHint];
-        APP_LOG(APP_LOG_LEVEL_INFO,"       C H t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
+        APP_LOG(APP_LOG_LEVEL_INFO," << C t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
 
         --m_hintsInPlay;
         m_hintIsActive[_consumeHint] = 0;

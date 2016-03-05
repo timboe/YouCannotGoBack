@@ -33,7 +33,11 @@ GBitmap* m_shieldSprite;
 
 GBitmap* m_guardian;
 GBitmap* m_blockWall[3];
+GBitmap* m_block;
 GBitmap* m_bridge[3];
+GBitmap* m_grave;
+GBitmap* m_fire;
+
 
 GBitmap* getSprite(int _x, int _y, int _w, int _h) {
   return gbitmap_create_as_sub_bitmap(m_spriteMap, GRect(SIZE * _x, SIZE * _y, SIZE * _w, SIZE * _h));
@@ -64,6 +68,7 @@ GBitmap* getFloor() {
 
 void initSprite() {
   m_spriteMap = gbitmap_create_with_resource(RESOURCE_ID_SPRITESHEET);
+  m_grave = gbitmap_create_with_resource(RESOURCE_ID_GRAVE);
 
   for (int _w = 0; _w < 3; ++_w) { // Walls
     m_UOuterWall[_w] = getSprite(_w + 0, 6, 2, 2);
@@ -134,6 +139,8 @@ void initSprite() {
   m_blockWall[0] = getSprite(12, 6, 2, 2);
   m_blockWall[1] = getSprite(12, 8, 2, 2);
   m_blockWall[2] = getSprite(12, 10, 2, 2);
+  m_block = getSprite(10, 10, 2, 2);
+  m_fire = getSprite(8, 12, 2, 2);
 
   m_bridge[0] = getSprite(6, 4, 1, 2);
   m_bridge[1] = getSprite(9, 6, 1, 2);
@@ -142,5 +149,6 @@ void initSprite() {
 }
 
 void deinitSprite() {
-
+  gbitmap_destroy(m_spriteMap);
+  gbitmap_destroy(m_grave);
 }

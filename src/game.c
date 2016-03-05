@@ -7,6 +7,10 @@
 #include "levels/pword.h"
 #include "levels/bridge.h"
 #include "levels/maze.h"
+#include "levels/death.h"
+#include "levels/end.h"
+#include "levels/maths.h"
+#include "levels/stones.h"
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
@@ -44,13 +48,18 @@ void gameClickConfigHandler(ClickRecognizerRef _recognizer, void* _context) {
 }
 
 bool newRoom() {
-  if ( ++m_dungeon.m_room == m_dungeon.m_roomsPerLevel[ m_dungeon.m_level ] ) {
+  if (m_dungeon.m_gameOver > 0) { // PLAYER HAS WON OR LOST
+    m_dungeon.m_level = 0;
+    m_dungeon.m_room = 0;
+    m_dungeon.m_rooms[0][0] = kEnd;
+  } else  if ( ++m_dungeon.m_room == m_dungeon.m_roomsPerLevel[ m_dungeon.m_level ] ) { // New level
     ++m_dungeon.m_level;
     m_dungeon.m_room = 0;
   };
   m_clutter.m_nClutter = 0;
   ++m_dungeon.m_seed;
   s_gameState = kDoInit;
+  APP_LOG(APP_LOG_LEVEL_WARNING,"ENTER %i", m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]);
   return false;
 }
 
@@ -80,7 +89,11 @@ void gameLoop(void* data) {
       case kStairs: requestRedraw = tickStairs(_doInit); break;
       case kPword: requestRedraw = tickPword(_doInit); break;
       case kBridge: requestRedraw = tickBridge(_doInit); break;
+      case kMaths: requestRedraw = tickMaths(_doInit); break;
+      case kStones: requestRedraw = tickStones(_doInit); break;
       case kMaze: requestRedraw = tickMaze(_doInit); break;
+      case kDeath: requestRedraw = tickDeath(_doInit); break;
+      case kEnd: requestRedraw = tickEnd(_doInit); break;
       default: break;
     } break;
     default: APP_LOG(APP_LOG_LEVEL_INFO,"GS:%i ???",(int) s_gameState); break;
@@ -102,7 +115,11 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     case kStairs: updateProcStairs(_ctx); break;
     case kPword: updateProcPword(_ctx); break;
     case kBridge: updateProcBridge(_ctx); break;
+    case kMaths: updateProcMaths(_ctx); break;
+    case kStones: updateProcStones(_ctx); break;
     case kMaze: updateProcMaze(_ctx); break;
+    case kDeath: updateProcDeath(_ctx); break;
+    case kEnd: updateProcEnd(_ctx); break;
     default: break;
   }
 
@@ -118,9 +135,9 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
 
   // Draw FPS indicator (dbg only)
   #ifdef DEBUG_MODE
-  static char FPSBuffer[5];
-  snprintf(FPSBuffer, 10, "%i/%i %i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS);
-  GRect _fpsRect = GRect( 80, 155, 100, 15);
+  static char FPSBuffer[16];
+  snprintf(FPSBuffer, 16, "%i/%i %i L:%i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS, m_dungeon.m_lives);
+  GRect _fpsRect = GRect( 50, 155, 100, 15);
   graphics_context_set_text_color(_ctx, GColorWhite);
   graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
   #endif
@@ -176,11 +193,45 @@ void FPSTimer(void* data) {
 
 int getHintValueMax(Hints_t _hint) {
   switch (_hint) {
-    case kShield: return rand() % kNShieldTypes;
-    case kNumber: return rand() % MAX_NUMBER;
-    case kSpell: return rand() % MAX_SPELLS;
-    case kGreek: return rand() % MAX_GREEK;
+    case kShield: return MAX_SHIELD_COLOUR;
+    case kNumber: return MAX_NUMBER;
+    case kSpell: return MAX_SPELLS;
+    case kGreek: return MAX_GREEK;
     default: return 0;
+  }
+}
+
+
+int getShieldA(int _value) {
+  switch (_value) {
+    case kRWb: return 0;
+    case kRbG: return 0;
+    case kbBG: return 1;
+    case kbRW: return 1;
+    case kBbR: return 3;
+    case kBGR: default: return 4;
+  }
+}
+
+int getShieldB(int _value) {
+  switch (_value) {
+    case kRWb: return 2;
+    case kRbG: return 1;
+    case kbBG: return 3;
+    case kbRW: return 0;
+    case kBbR: return 1;
+    case kBGR: default: return 4;
+  }
+}
+
+int getShieldC(int _value) {
+  switch (_value) {
+    case kRWb: return 1;
+    case kRbG: return 4;
+    case kbBG: return 4;
+    case kbRW: return 2;
+    case kBbR: return 0;
+    case kBGR: default: return 0;
   }
 }
 

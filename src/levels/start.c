@@ -43,21 +43,13 @@ bool tickStart(bool _doInit) {
     ++s_state;
   } else if (s_state == 2) {
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target = GPoint(SIZE*7, SIZE*5); break;
-      case 1: m_player.m_target = GPoint(SIZE*7, SIZE*9); break;
-      case 2: m_player.m_target = GPoint(SIZE*7, SIZE*13); break;
-    }
-    setGameState(kMovePlayer);
-    ++s_state;
-  } else if (s_state == 3) {
-    switch (getPlayerChoice()) {
       case 0: m_player.m_target = GPoint(SIZE*17, SIZE*5); break;
       case 1: m_player.m_target = GPoint(SIZE*17, SIZE*9); break;
       case 2: m_player.m_target = GPoint(SIZE*17, SIZE*13); break;
     }
     setGameState(kMovePlayer);
     ++s_state;
-  } else if (s_state == 4) {
+  } else if (s_state == 3) {
     setGameState(kFadeOut);
   }
 

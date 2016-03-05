@@ -13,8 +13,11 @@ void renderPlayer(GContext* _ctx);
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in);
 void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al);
 void renderClutter(GContext* _ctx);
+void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b);
 void renderMessage(GContext* _ctx, const char* _msg);
+void renderPit(GContext* _ctx);
+void renderFrame(GContext* _ctx, GRect _b);
+void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2);
+void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c);
 
-GColor getShieldA(int _value);
-GColor getShieldB(int _value);
-GColor getShieldC(int _value);
+GColor getShieldColor(int _value);

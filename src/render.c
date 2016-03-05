@@ -33,12 +33,12 @@ void renderClutter(GContext* _ctx) {
   if (_hint == kShield) {
     GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
     drawBitmap(_ctx, m_shieldSprite, _r, 0);
-    graphics_context_set_fill_color(_ctx, getShieldA(_hintValue));
+    graphics_context_set_fill_color(_ctx, getShieldColor(getShieldA(_hintValue)));
     graphics_fill_circle(_ctx, _p, 3);
-    graphics_context_set_fill_color(_ctx, getShieldC(_hintValue));
+    graphics_context_set_fill_color(_ctx, getShieldColor(getShieldC(_hintValue)));
     _p.x += SIZE*2;
     graphics_fill_circle(_ctx, _p, 3);
-    graphics_context_set_fill_color(_ctx, getShieldB(_hintValue));
+    graphics_context_set_fill_color(_ctx, getShieldColor(getShieldB(_hintValue)));
     _p.x -= SIZE;
     graphics_fill_circle(_ctx, _p, 3);
   } else if (_hint == kSpell) {
@@ -62,8 +62,36 @@ static void endRenderMsg(void* _data) {
   }
 }
 
-void renderMessage(GContext* _ctx, const char* _msg) {
-  GRect _b = GRect(2*SIZE, 7*SIZE, 14*SIZE, 6*SIZE);
+void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
+  GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
+  GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
+  graphics_context_set_stroke_width(_ctx, 7);
+  graphics_context_set_stroke_color(_ctx, GColorDarkGray);
+  graphics_draw_line(_ctx, _p1, _p2);
+  graphics_context_set_stroke_width(_ctx, 3);
+  graphics_context_set_stroke_color(_ctx, GColorLightGray);
+  graphics_draw_line(_ctx, _p1, _p2);
+}
+
+void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c) {
+  GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
+  graphics_context_set_fill_color(_ctx, GColorLightGray);
+  graphics_fill_circle(_ctx, _p1, SIZE);
+  graphics_context_set_fill_color(_ctx, GColorBlack);
+  graphics_fill_circle(_ctx, _p1, SIZE - 2);
+  graphics_context_set_fill_color(_ctx, _c);
+  graphics_fill_circle(_ctx, _p1, SIZE - 4);
+}
+
+void renderFrame(GContext* _ctx, GRect _b) {
+  graphics_context_set_fill_color(_ctx, GColorDarkGray);
+  graphics_context_set_stroke_color(_ctx, GColorWhite);
+  graphics_context_set_stroke_width(_ctx, 2);
+  graphics_fill_rect(_ctx, _b, 0, 0);
+  graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
+}
+
+void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
   graphics_context_set_fill_color(_ctx, GColorWhite);
   graphics_fill_rect(_ctx, _b, 13, 0);
   graphics_context_set_stroke_color(_ctx, GColorBlack);
@@ -71,6 +99,11 @@ void renderMessage(GContext* _ctx, const char* _msg) {
   graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
   graphics_context_set_text_color(_ctx, GColorBlack);
   graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), GRect(_b.origin.x, _b.origin.y + 4, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+}
+
+void renderMessage(GContext* _ctx, const char* _msg) {
+  GRect _b = GRect(2*SIZE, 8*SIZE, 14*SIZE, 5*SIZE);
+  renderTextInFrame(_ctx, _msg, _b);
   app_timer_register(1000, endRenderMsg, NULL);
 }
 
@@ -145,11 +178,33 @@ void renderFloor(GContext* _ctx, int _mode) {
     drawBitmap(_ctx, m_innerWall[3], 9, 16);
   }
   // Extra bits where the doors can go
-  drawBitmap(_ctx, m_LDoorstep, 2, 8);
+  drawBitmap(_ctx, m_LDoorstep, 2, 8); // TODO this on its own call
   drawBitmap(_ctx, m_RDoorstep, 15, 4);
   drawBitmap(_ctx, m_RDoorstep, 15, 8);
   drawBitmap(_ctx, m_RDoorstep, 15, 12);
 }
+
+void renderPit(GContext* _ctx) {
+  for (int _y = 4; _y < 16; _y += 2) {
+    drawBitmap(_ctx, m_innerWall[0], 3,  _y);
+    drawBitmap(_ctx, m_innerWall[1], 13, _y);
+  }
+  for (int _x = 5; _x < 15; _x += 2) {
+    drawBitmap(_ctx, m_innerWall[2], _x, 2);
+    drawBitmap(_ctx, m_innerWall[3], _x, 16);
+  }
+  drawBitmap(_ctx, m_innerCorner[0], 3,  2);
+  drawBitmap(_ctx, m_innerCorner[1], 13, 2);
+  drawBitmap(_ctx, m_innerCorner[2], 13, 16);
+  drawBitmap(_ctx, m_innerCorner[3], 3,  16);
+
+  // Extra bits where the doors can go
+  drawBitmap(_ctx, m_LDoorstep, 2, 8); // TODO this on its own call
+  drawBitmap(_ctx, m_RDoorstep, 15, 4);
+  drawBitmap(_ctx, m_RDoorstep, 15, 8);
+  drawBitmap(_ctx, m_RDoorstep, 15, 12);
+}
+
 
 void renderPlayer(GContext* _ctx) {
   drawBitmapAbs(_ctx, m_playerSprite[ m_player.m_playerFrame ], m_player.m_position);
@@ -177,7 +232,7 @@ void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer,
   graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
 }
 
-#define FADE_LEVELS 16
+#define FADE_LEVELS 8
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position.y++;
   static int s_progress = 1;
@@ -200,37 +255,12 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   }
 }
 
-
-
-GColor getShieldA(int _value) {
+GColor getShieldColor(int _value) {
   switch (_value) {
-    case kRWb: return GColorRed;
-    case kRbG: return GColorRed;
-    case kbBG: return GColorBlack;
-    case kbRW: return GColorBlack;
-    case kBbR: return GColorBlue;
-    case kBGR: default: return GColorBlue;
-  }
-}
-
-GColor getShieldB(int _value) {
-  switch (_value) {
-    case kRWb: return GColorWhite;
-    case kRbG: return GColorBlack;
-    case kbBG: return GColorBlue;
-    case kbRW: return GColorRed;
-    case kBbR: return GColorBlack;
-    case kBGR: default: return GColorGreen;
-  }
-}
-
-GColor getShieldC(int _value) {
-  switch (_value) {
-    case kRWb: return GColorBlack;
-    case kRbG: return GColorGreen;
-    case kbBG: return GColorGreen;
-    case kbRW: return GColorWhite;
-    case kBbR: return GColorRed;
-    case kBGR: default: return GColorRed;
+    case 0: return GColorRed;
+    case 1: return GColorBlack;
+    case 2: return GColorWhite;
+    case 3: return GColorBlue;
+    default: return GColorGreen;
   }
 }

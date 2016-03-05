@@ -32,8 +32,8 @@ void updateProcPword(GContext* _ctx) {
     }
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawBitmap(_ctx, m_arrow, 12, 3);
-      drawBitmap(_ctx, m_arrow, 12, 8);
-      drawBitmap(_ctx, m_arrow, 12, 13);
+      drawBitmap(_ctx, m_arrow, 12, 7);
+      drawBitmap(_ctx, m_arrow, 12, 11);
     }
   }
 
@@ -44,7 +44,7 @@ bool tickPword(bool _doInit) {
     s_state = 0;
     m_player.m_position = GPoint(0, SIZE*9);
     addCluter(2, 5, 0, 20);
-    s_correct = randomiseChoices(s_choices);
+    s_correct = randomiseChoices(s_choices, 0);
     return false;
   }
 

@@ -8,20 +8,23 @@
 
 
 typedef enum {
-  kStart,
-  kStairs,
-  kPword,
-  kBridge,
-  kMaze,
-  kDeath,
-  kEnd,
-  kNRoomTypes
+  kStart = 0,
+  kStairs = 1,
+  kPword = 2,
+  kBridge = 3,
+  kMaze = 4,
+  kMaths = 5,
+  kStones = 6,
+  kDeath = 7,
+  kEnd = 8,
+  kNRoomTypes = 9
 } Rooms_t;
 
 #define HINT_TYPES 4
 #define MAX_SPELLS 31
 #define MAX_GREEK 8
 #define MAX_NUMBER 43
+#define MAX_SHIELD_COLOUR 5
 typedef enum {
   kNoHint,
   kShield,
@@ -74,7 +77,7 @@ typedef struct {
   int8_t m_roomNeedHint[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomNeedHintValue[MAX_LEVELS][MAX_ROOMS];
   uint32_t m_seed;
-  bool m_gameOver;
+  int8_t m_gameOver;
   bool m_fallingDeath;
 } Dungeon_t;
 
@@ -104,6 +107,10 @@ void setDisplayMsg(const char* _msg);
 
 extern const char* const m_spellNames[MAX_SPELLS];
 int getHintValueMax(Hints_t hint);
+
+int getShieldA(int _value);
+int getShieldB(int _value);
+int getShieldC(int _value);
 
 void gameWindowLoad(Window* _window);
 void gameWindowUnload();

@@ -37,29 +37,39 @@ void enterRoom(uint16_t* _state) {
   ++(*_state);
 }
 
-uint16_t randomiseChoices(int8_t* _choices) {
+uint16_t randomiseChoices(int8_t* _choices, int _stage) {
+  APP_LOG(APP_LOG_LEVEL_INFO,"   [In RandChoice] stage:%i", _stage);
   // Have an array size 3, first choose correct location
-  uint16_t _c = rand() % 3, _i1, _i2;
-  // Better way of doing this?
-  if (_c == 0) {
-    _i1 = 1;
-    _i2 = 2;
-  } else if (_c == 1) {
-    _i1 = 0;
-    _i2 = 2;
+
+  for (int _i = 0; _i < 3; ++_i) _choices[ _i ] = -1;
+  uint16_t _c = rand() % 3;
+
+  Hints_t _type = m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room ];
+  int8_t _value = m_dungeon.m_roomNeedHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ];
+
+  if ( _type == kShield ) {
+      if      (_stage == 0) _choices[_c] = getShieldA( _value );
+      else if (_stage == 1) _choices[_c] = getShieldB( _value );
+      else                  _choices[_c] = getShieldC( _value );
   } else {
-    _i1 = 0;
-    _i2 = 1;
+    _choices[_c] = _value;
   }
 
-  _choices[_c] = m_dungeon.m_roomNeedHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ];
-  int _max = getHintValueMax( m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room ] );
-  do { // Choose first incorrect, must be different to correct
-    _choices[ _i1 ] = rand() % _max;
-  } while (_choices[_i1] == _choices[_c]);
-  do { // same for second incorrect
-    _choices[ _i2 ] = rand() % _max;
-  } while (_choices[_i2] == _choices[_c] || _choices[_i2] == _choices[_i1]);
+  int _max = getHintValueMax( _type );
+
+  APP_LOG(APP_LOG_LEVEL_INFO,"   [RC] T:%i V:%i Rnd:%i CHOICE:%i MAX:%i", _type, _value, _c, _choices[_c], _max );
+
+
+  for (int _v = 0; _v < 3; ++_v) {
+    int _v1 = _v + 1;
+    int _v2 = _v + 2;
+    if (_v1 >= 3) _v1 -= 3;
+    if (_v2 >= 3) _v2 -= 3;
+    while (_choices[_v] == -1 || _choices[_v] == _choices[_v1] || _choices[_v] == _choices[_v2]) {
+      _choices[_v] = rand() % _max;
+    }
+  }
+
   return _c;
 
 }

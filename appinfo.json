@@ -1,7 +1,7 @@
 {
   "uuid": "9bfc6335-e968-4dd1-8aaf-2bc03b98d490",
-  "shortName": "CannotGoBack",
-  "longName": "YouCannotGoBack",
+  "shortName": "Cannot Go Back",
+  "longName": "You Cannot Go Back",
   "companyName": "MakeAwesomeHappen",
   "versionLabel": "1.0",
   "sdkVersion": "3",
@@ -15,7 +15,8 @@
   },
   "resources": {
     "media": [
-      { "file": "images/spritesheet.png", "name": "SPRITESHEET", "type": "png" }
+      { "file": "images/spritesheet.png", "name": "SPRITESHEET", "type": "png" },
+      { "file": "images/gameover.png", "name": "GRAVE", "type": "png" }
     ]
   }
 }
