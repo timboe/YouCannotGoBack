@@ -4,6 +4,10 @@ void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
   GRect _r = gbitmap_get_bounds(_bitmap);
   _r.origin.x = _x * SIZE;
   _r.origin.y = _y * SIZE;
+#ifdef PBL_ROUND
+  _r.origin.x += ROUND_OFFSET_X;
+  _r.origin.y += ROUND_OFFSET_Y;
+#endif
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
@@ -21,9 +25,8 @@ void renderClutter(GContext* _ctx) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
       GPoint _p = GPoint((m_clutter.m_position[_c].x * SIZE) + 4, (m_clutter.m_position[_c].y * SIZE) + 2);
       drawBitmapAbs(_ctx, m_greek[ _hintValue ], _p);
-    } else if (_c == 0 && _hint == kNumber) {
-      drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
-      renderHintNumber(_ctx, GRect(m_clutter.m_position[_c].x * SIZE, (m_clutter.m_position[_c].y * SIZE)-3, 16, 16), m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room]);
+    } else if (_c == 0 && _hint == kSymbol) {
+      drawBitmap(_ctx, m_symbol[_hintValue], m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
     } else {
       drawBitmap(_ctx, getClutter(false), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
     }
@@ -52,19 +55,56 @@ void renderClutter(GContext* _ctx) {
 void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
   GRect _r = gbitmap_get_bounds(_bitmap);
   _r.origin = _p;
+#ifdef PBL_ROUND
+  _r.origin.x += ROUND_OFFSET_X;
+  _r.origin.y += ROUND_OFFSET_Y;
+#endif
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
 static void endRenderMsg(void* _data) {
   // Stop displaying message timeout
-  if (getGameState() == kDisplayingMsg) {
-    setGameState(kLevelSpecific);
+  if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific);
+}
+
+void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC) {
+
+  renderLinePath(_ctx, 4, 10,   7, 6); // to upper
+  renderLinePath(_ctx, 4, 10,   15, 10); // straight accross
+  renderLinePath(_ctx, 4, 10,   7, 14); // to lower
+
+  renderLinePath(_ctx, 7, 6,    15, 6); //upper accross
+  renderLinePath(_ctx, 7, 14,   15, 14); // lower accross
+
+  renderLinePath(_ctx, 11, 6,    11, 14); // middle down
+
+  renderLinePath(_ctx, 7, 6,    15, 14); // cross \.
+  renderLinePath(_ctx, 7, 14,   15, 6); // cross /
+
+  renderLinePath(_ctx, 7, 10,   11, 6);  //diamond
+  renderLinePath(_ctx, 7, 10,   11, 14);
+  renderLinePath(_ctx, 11, 6,   15, 10);
+  renderLinePath(_ctx, 11, 14,  15, 10);
+
+  renderStandingStone(_ctx, 4, 10, GColorLightGray);
+
+  for (int _s = 0; _s < 3; ++_s) {
+    renderStandingStone(_ctx, 7, 6 + (4 * _s), getShieldColor(_coloursA[_s])); // Top row
+    renderStandingStone(_ctx, 11, 6 + (4 * _s), getShieldColor(_coloursB[_s])); // Middle row
+    renderStandingStone(_ctx, 15, 6 + (4 * _s), getShieldColor(_coloursC[_s])); // Bottom row
   }
+
 }
 
 void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
   GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
   GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
+#ifdef PBL_ROUND
+  _p1.x += ROUND_OFFSET_X;
+  _p1.y += ROUND_OFFSET_Y;
+  _p2.x += ROUND_OFFSET_X;
+  _p2.y += ROUND_OFFSET_Y;
+#endif
   graphics_context_set_stroke_width(_ctx, 7);
   graphics_context_set_stroke_color(_ctx, GColorDarkGray);
   graphics_draw_line(_ctx, _p1, _p2);
@@ -75,6 +115,10 @@ void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
 
 void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c) {
   GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
+#ifdef PBL_ROUND
+  _p1.x += ROUND_OFFSET_X;
+  _p1.y += ROUND_OFFSET_Y;
+#endif
   graphics_context_set_fill_color(_ctx, GColorLightGray);
   graphics_fill_circle(_ctx, _p1, SIZE);
   graphics_context_set_fill_color(_ctx, GColorBlack);
@@ -87,11 +131,19 @@ void renderFrame(GContext* _ctx, GRect _b) {
   graphics_context_set_fill_color(_ctx, GColorDarkGray);
   graphics_context_set_stroke_color(_ctx, GColorWhite);
   graphics_context_set_stroke_width(_ctx, 2);
+#ifdef PBL_ROUND
+  _b.origin.x += ROUND_OFFSET_X;
+  _b.origin.y += ROUND_OFFSET_Y;
+#endif
   graphics_fill_rect(_ctx, _b, 0, 0);
   graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
 }
 
 void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
+#ifdef PBL_ROUND
+  _b.origin.x += ROUND_OFFSET_X;
+  _b.origin.y += ROUND_OFFSET_Y;
+#endif
   graphics_context_set_fill_color(_ctx, GColorWhite);
   graphics_fill_rect(_ctx, _b, 13, 0);
   graphics_context_set_stroke_color(_ctx, GColorBlack);
@@ -102,9 +154,9 @@ void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
 }
 
 void renderMessage(GContext* _ctx, const char* _msg) {
-  GRect _b = GRect(2*SIZE, 8*SIZE, 14*SIZE, 5*SIZE);
+  GRect _b = GRect(0*SIZE, 8*SIZE, 18*SIZE, 5*SIZE);
   renderTextInFrame(_ctx, _msg, _b);
-  app_timer_register(1000, endRenderMsg, NULL);
+  app_timer_register(1500, endRenderMsg, NULL);
 }
 
 void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
@@ -205,6 +257,39 @@ void renderPit(GContext* _ctx) {
   drawBitmap(_ctx, m_RDoorstep, 15, 12);
 }
 
+void renderFinalPit(GContext* _ctx) {
+  for (int _w = 0; _w < 4; ++_w) { //0=l, 1=r
+    drawBitmap(_ctx, m_innerWall[0], 7, 6 + (_w*2));
+    drawBitmap(_ctx, m_innerWall[1], 9, 6 + (_w*2));
+    if (_w >= 2) continue;
+    drawBitmap(_ctx, m_innerWall[2], 9 + (_w*2), 2);
+    drawBitmap(_ctx, m_innerWall[3], 9 + (_w*2), 6);
+    drawBitmap(_ctx, m_innerWall[2], 9 + (_w*2), 12);
+    drawBitmap(_ctx, m_innerWall[3], 9 + (_w*2), 16);
+  }
+
+  drawBitmap(_ctx, m_innerWall[0], 7, 4);
+  drawBitmap(_ctx, m_innerWall[1], 13, 4);
+
+  drawBitmap(_ctx, m_innerWall[0], 7, 14);
+  drawBitmap(_ctx, m_innerWall[1], 13, 14);
+
+  drawBitmap(_ctx, m_innerCorner[0], 7, 2);
+  drawBitmap(_ctx, m_innerCorner[1], 13, 2);
+  drawBitmap(_ctx, m_innerCorner[2], 13, 16);
+  drawBitmap(_ctx, m_innerCorner[3], 7, 16);
+
+  drawBitmap(_ctx, m_innerCorner[2], 13, 6);
+  drawBitmap(_ctx, m_innerCorner[1], 13, 12);
+
+  drawBitmap(_ctx, m_outerCorner[0], 9, 6);
+  drawBitmap(_ctx, m_outerCorner[2], 9, 12);
+
+  drawBitmap(_ctx, m_black, 9, 14);
+  drawBitmap(_ctx, m_black, 11, 14);
+  drawBitmap(_ctx, m_black, 9, 4);
+  drawBitmap(_ctx, m_black, 11, 4);
+}
 
 void renderPlayer(GContext* _ctx) {
   drawBitmapAbs(_ctx, m_playerSprite[ m_player.m_playerFrame ], m_player.m_position);
@@ -213,6 +298,10 @@ void renderPlayer(GContext* _ctx) {
 void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al) {
 
   graphics_context_set_text_color(_ctx, GColorBlack);
+#ifdef PBL_ROUND
+  _loc.origin.x += 18;
+  _loc.origin.y += 10;
+#endif
 
   _loc.origin.y += _offset; // CU
   graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
@@ -240,8 +329,8 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   GBitmap* _fBuffer = graphics_capture_frame_buffer(_ctx);
   uint8_t* _bitmapData =  gbitmap_get_data(_fBuffer);
   int _bytesPerRow = gbitmap_get_bytes_per_row(_fBuffer);
-  //int _count = 0;
   int _flag = (_in == true ? s_progress : FADE_LEVELS - s_progress );
+  //APP_LOG(APP_LOG_LEVEL_INFO,"      !!! F: %i", (int) _flag);
   for (int _y = 0; _y < _b.size.h; ++_y) {
     for (int _x = 0; _x < _b.size.w; ++_x) {
       if (rand() % _flag == 0) _bitmapData[_y * _bytesPerRow + _x] = GColorBlack.argb;
@@ -255,12 +344,12 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   }
 }
 
-GColor getShieldColor(int _value) {
+GColor getShieldColor(int8_t _value) {
   switch (_value) {
     case 0: return GColorRed;
     case 1: return GColorBlack;
     case 2: return GColorWhite;
     case 3: return GColorBlue;
-    default: return GColorGreen;
+    default: return GColorLightGray;
   }
 }

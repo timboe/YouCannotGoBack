@@ -39,7 +39,14 @@ extern GBitmap* m_shieldSprite;
 extern GBitmap* m_guardian;
 extern GBitmap* m_blockWall[3];
 extern GBitmap* m_block;
-extern GBitmap* m_fire;
+extern GBitmap* m_fire[2];
 
 extern GBitmap* m_bridge[3];
 extern GBitmap* m_grave;
+extern GBitmap* m_flagstone[3];
+extern GBitmap* m_chest;
+extern GBitmap* m_table;
+extern GBitmap* m_black;
+extern GBitmap* m_treasureBanner;
+extern GBitmap* m_treasure[3];
+extern GBitmap* m_symbol[MAX_SYMBOL];

@@ -23,12 +23,8 @@ void updateProcPword(GContext* _ctx) {
 
   if (s_state == 5) {
     for (int _i = 0; _i < 3; ++_i) {
-      GRect _r = GRect(SIZE*10, SIZE*(5 + 4*_i),  SIZE*6, SIZE*2);
-      if (m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room] == kNumber ) {
-        renderHintNumber(_ctx, _r, s_choices[_i]);
-      } else {
-        renderBorderText(_ctx, _r, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[_i]], 2, GTextAlignmentCenter);
-      }
+      GRect _r = GRect(SIZE*10, SIZE*(4 + 4*_i),  SIZE*6, SIZE*2);
+      renderBorderText(_ctx, _r, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[_i]], 2, GTextAlignmentCenter);
     }
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawBitmap(_ctx, m_arrow, 12, 3);
@@ -43,7 +39,7 @@ bool tickPword(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     m_player.m_position = GPoint(0, SIZE*9);
-    addCluter(2, 5, 0, 20);
+    addCluter(4, 0, 20);
     s_correct = randomiseChoices(s_choices, 0);
     return false;
   }

@@ -6,30 +6,35 @@
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
 
+#define ROUND_OFFSET_X 18
+#define ROUND_OFFSET_Y 10
 
 typedef enum {
-  kStart = 0,
-  kStairs = 1,
-  kPword = 2,
-  kBridge = 3,
-  kMaze = 4,
-  kMaths = 5,
-  kStones = 6,
-  kDeath = 7,
-  kEnd = 8,
-  kNRoomTypes = 9
+  kStart,
+  kStairs,
+  kChest,
+  kPword,
+  kBridge,
+  kMaze,
+  kMaths,
+  kStones,
+  kDark,
+  kDeath,
+  kFinal,
+  kEnd,
+  kNRoomTypes
 } Rooms_t;
 
 #define HINT_TYPES 4
 #define MAX_SPELLS 31
 #define MAX_GREEK 8
-#define MAX_NUMBER 43
-#define MAX_SHIELD_COLOUR 5
+#define MAX_SYMBOL 4
+#define MAX_SHIELD_COLOUR 4
 typedef enum {
   kNoHint,
-  kShield,
-  kNumber,
   kSpell,
+  kSymbol,
+  kShield,
   kGreek,
   kNHintTypes
 } Hints_t;
@@ -49,15 +54,11 @@ typedef enum {
 
 typedef enum {
   kRWb,
-  kRbG,
-  kbBG,
+  kRbB,
+  kbBb,
   kbRW,
   kBbR,
-  kBGR,
-  // kbWG,
-  // kGRb,
-  // kGbB,
-  // kbRB,
+  kBRR,
   kNShieldTypes
 } ShieldTypes_t;
 //RGBWb
@@ -66,6 +67,7 @@ typedef enum {
 #define MAX_LEVELS 3
 #define MIN_ROOMS 5
 #define MAX_ROOMS 8
+#define MIN_ROOM_SEP 3
 typedef struct {
   int8_t m_level;
   int8_t m_room;
@@ -76,9 +78,10 @@ typedef struct {
   int8_t m_roomGiveHintValue[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomNeedHint[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomNeedHintValue[MAX_LEVELS][MAX_ROOMS];
-  uint32_t m_seed;
+  int8_t m_finalPuzzle;
   int8_t m_gameOver;
   bool m_fallingDeath;
+  uint32_t m_seed;
 } Dungeon_t;
 
 #define MAX_FRAMES 6

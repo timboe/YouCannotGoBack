@@ -5,7 +5,7 @@
   "companyName": "MakeAwesomeHappen",
   "versionLabel": "1.0",
   "sdkVersion": "3",
-  "targetPlatforms": ["basalt", "aplite"],
+  "targetPlatforms": ["basalt", "chalk"],
   "enableMultiJS": true,
   "watchapp": {
     "watchface": false
@@ -16,7 +16,8 @@
   "resources": {
     "media": [
       { "file": "images/spritesheet.png", "name": "SPRITESHEET", "type": "png" },
-      { "file": "images/gameover.png", "name": "GRAVE", "type": "png" }
+      { "file": "images/gameover.png", "name": "GRAVE", "type": "png" },
+      { "file": "images/treasure.png", "name": "TREASURE", "type": "png" }
     ]
   }
 }

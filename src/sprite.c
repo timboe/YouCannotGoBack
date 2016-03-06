@@ -36,7 +36,14 @@ GBitmap* m_blockWall[3];
 GBitmap* m_block;
 GBitmap* m_bridge[3];
 GBitmap* m_grave;
-GBitmap* m_fire;
+GBitmap* m_fire[2];
+GBitmap* m_flagstone[3];
+GBitmap* m_chest;
+GBitmap* m_table;
+GBitmap* m_black;
+GBitmap* m_treasureBanner;
+GBitmap* m_treasure[3];
+GBitmap* m_symbol[MAX_SYMBOL];
 
 
 GBitmap* getSprite(int _x, int _y, int _w, int _h) {
@@ -69,12 +76,15 @@ GBitmap* getFloor() {
 void initSprite() {
   m_spriteMap = gbitmap_create_with_resource(RESOURCE_ID_SPRITESHEET);
   m_grave = gbitmap_create_with_resource(RESOURCE_ID_GRAVE);
+  m_treasureBanner = gbitmap_create_with_resource(RESOURCE_ID_TREASURE);
 
   for (int _w = 0; _w < 3; ++_w) { // Walls
     m_UOuterWall[_w] = getSprite(_w + 0, 6, 2, 2);
     m_DOuterWall[_w] = getSprite(_w + 4, 8, 2, 2);
     m_ROuterWall[_w] = getSprite(0, _w + 9, 2, 2);
     m_LOuterWall[_w] = getSprite(2, _w + 8, 2, 2);
+
+    m_flagstone[_w] = getSprite(12 + (_w * 2), 12, 2, 2);
   }
 
   m_outerCorner[0] = getSprite(6, 0, 2, 2);
@@ -119,6 +129,11 @@ void initSprite() {
     m_greek[_g + MAX_GREEK/2] = getSprite(4 + _g, 13, 1, 1);
   }
 
+  for (int _g = 0; _g < MAX_SYMBOL/2; ++_g) {
+    m_symbol[_g]                = getSprite(24 + (_g*2), 0, 2, 2);
+    m_symbol[_g + MAX_SYMBOL/2] = getSprite(24 + (_g*2), 2, 2, 2);
+  }
+
   for (int _p = 0; _p < MAX_FRAMES; ++_p) {
     m_playerSprite[_p] = getSprite(16 + (_p*2), 14, 2, 2);
   }
@@ -127,8 +142,8 @@ void initSprite() {
   for (int _c = 0; _c < N_SMALL_CLUTTER; ++_c) {
     m_clutterSprite[_clutter++] = getSprite(_c*2, 14, 2, 2);
   }
-  m_clutterSprite[_clutter++] = getSprite(16, 10,  2, 4); // med 1
-  m_clutterSprite[_clutter++] = getSprite(18, 10,  2, 4); // med 2
+  m_clutterSprite[_clutter++] = getSprite(24, 10,  2, 4); // med 1
+  m_clutterSprite[_clutter++] = getSprite(26, 10,  2, 4); // med 2
 
   m_tapestrySprite[0] = getSprite(20, 12,  1, 2);
   m_tapestrySprite[1] = getSprite(21, 12,  1, 2);
@@ -140,15 +155,26 @@ void initSprite() {
   m_blockWall[1] = getSprite(12, 8, 2, 2);
   m_blockWall[2] = getSprite(12, 10, 2, 2);
   m_block = getSprite(10, 10, 2, 2);
-  m_fire = getSprite(8, 12, 2, 2);
+  m_fire[0] = getSprite(8, 12, 4, 2);
+  m_fire[1] = getSprite(10, 7, 2, 1);
+
 
   m_bridge[0] = getSprite(6, 4, 1, 2);
   m_bridge[1] = getSprite(9, 6, 1, 2);
   m_bridge[2] = getSprite(14, 10, 1, 2);
+
+  m_chest = getSprite(8, 10, 2, 2);
+  m_table = getSprite(4, 10, 4, 2);
+  m_black = getSprite(2, 2, 2, 2);
+
+  m_treasure[0] = getSprite(16, 10, 2, 2);
+  m_treasure[1] = getSprite(18, 10, 2, 2);
+  m_treasure[2] = getSprite(23, 12, 1, 1);
 
 }
 
 void deinitSprite() {
   gbitmap_destroy(m_spriteMap);
   gbitmap_destroy(m_grave);
+  gbitmap_destroy(m_treasureBanner);
 }

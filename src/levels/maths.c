@@ -17,16 +17,18 @@ void updateProcMaths(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
 
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, true, true, true);
-  renderClutter(_ctx);
-
   drawBitmap(_ctx, m_block, 5, 9);
   drawBitmap(_ctx, m_block, 13, 9);
 
   for (int _s = 0; _s < 3; ++_s) {
     renderHintNumber(_ctx, GRect((7 + _s*2)*SIZE, 9*SIZE, 16, 16), s_sequence[_s]);   // sequence
+  }
 
+  renderPlayer(_ctx);
+  renderWalls(_ctx, true, true, true, true);
+  renderClutter(_ctx);
+
+  for (int _s = 0; _s < 3; ++_s) {
     GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);   // Choices
     renderFrame(_ctx, _b);
     renderHintNumber(_ctx, GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s]);
@@ -44,7 +46,7 @@ bool tickMaths(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     m_player.m_position = GPoint(0, SIZE*9);
-    addCluter(3, 4, 5, 13); // Only left
+    addCluter(5, 20, 1);
 
     s_puzzle = rand() % kNMathsPuzzles; // Choose seq
     s_sequence[0] = 30 + rand()%50; // Choose starting
@@ -63,15 +65,7 @@ bool tickMaths(bool _doInit) {
     s_correct = rand() % 3;
     s_choices[ s_correct ] = s_sequence[3];
 
-    // TODO move this to common, make the shuffler use it
-    for (int _c = 0; _c < 3; ++_c) {
-      int _c1 = _c + 1, _c2 = _c + 2;
-      if (_c1 >= 3) _c1 -= 3;
-      if (_c2 >= 3) _c2 -= 3;
-      while (s_choices[_c] == -1 || s_choices[_c] == s_choices[_c1] || s_choices[_c] == s_choices[_c2]) {
-        s_choices[_c] = s_sequence[3] - 10 + (rand()%20);
-      }
-    }
+    shuffler(s_choices, s_sequence[3] - 10, 20);
 
     return false;
   }
@@ -88,12 +82,16 @@ bool tickMaths(bool _doInit) {
     }
     switch (getPlayerChoice()) {
       case 0: m_player.m_target = GPoint(SIZE*17, SIZE*5); break;
-      case 1: m_player.m_target = GPoint(SIZE*17, SIZE*9); break;
+      case 1: m_player.m_target = GPoint(SIZE*13, SIZE*11); break; // further down
       case 2: m_player.m_target = GPoint(SIZE*17, SIZE*13); break;
     }
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) {
+    m_player.m_target = GPoint(SIZE*17, SIZE*9);
+    setGameState(kMovePlayer);
+    ++s_state;
+  } else if (s_state == 4) {
     setGameState(kFadeOut);
   }
 

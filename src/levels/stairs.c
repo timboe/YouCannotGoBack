@@ -29,7 +29,7 @@ bool tickStairs(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     m_player.m_position = GPoint(0, SIZE*9);
-    addCluter(5, 6, 5, 13);
+    addCluter(6, 5, 13);
     return false;
   }
 

@@ -23,11 +23,13 @@ void updateProcBridge(GContext* _ctx) {
   renderWalls(_ctx, true, true, true, true);
 
   for (int _s = 0; _s < 3; ++_s) {
-    GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);
-    renderFrame(_ctx, _b);
-    if ( m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room] == kNumber ) {
-      renderHintNumber(_ctx, GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s]);
+    if ( m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room] == kSymbol ) {
+      drawBitmap(_ctx, m_symbol[ s_choices[_s] ], 16, 5 + (_s*4));
+      //GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16)
+      //renderHintNumber(_ctx, , s_choices[_s]);
     } else {
+      GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);
+      renderFrame(_ctx, _b);
       drawBitmapAbs(_ctx, m_greek[ s_choices[_s] ], GPoint(16*SIZE + 4, (5 + (_s*4))*SIZE + 4));
     }
   }
@@ -46,7 +48,7 @@ bool tickBridge(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     m_player.m_position = GPoint(0, SIZE*9);
-    addCluter(2, 5, 0, 20);
+    addCluter(4, 0, 20);
     s_correct = randomiseChoices(s_choices, 0);
     return false;
   }

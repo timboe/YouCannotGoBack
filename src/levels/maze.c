@@ -1,13 +1,13 @@
 #include "bridge.h"
 
-#define N_MAZES 2
-#define N_MAZE_STEP 50
+#define N_MAZES 3
+#define N_MAZE_STEP 30
 
 static uint16_t s_state = 0;
 static uint16_t s_maze = 0;
 static uint16_t s_path = 0;
 //static uint16_t s_correct = 0;
-static const uint16_t s_sollution[N_MAZES][3] = {{2,0,1},{1,0,2}};
+static const uint16_t s_sollution[N_MAZES][3] = { {2,0,1}, {1,0,2}, {0,2,1}};
 
 typedef struct {
   uint8_t m_path2[N_MAZE_STEP];
@@ -21,12 +21,23 @@ static const Maze_t s_mazes[N_MAZES] = {
   [0].m_path2 = {5,16, 10,16, 10,8, 7,8, 7,10, 15,10},
   [1].m_path0 = {5,4, 6,4, 6,9, 8,9, 8,10, 10,10, 10,14, 6,14, 6,17, 11,17, 11,11, 14,11, 14,10, 15,10},
   [1].m_path1 = {5,10, 6,10, 6,13, 7,13, 7, 3, 8,3, 8,7, 13,7, 13,6, 15,6},
-  [1].m_path2 = {5,16, 8,16, 8,11, 9,11, 9,3, 11,3, 11,10, 13,10, 13,14, 15,14}
+  [1].m_path2 = {5,16, 8,16, 8,11, 9,11, 9,3, 11,3, 11,10, 13,10, 13,14, 15,14},
+  [2].m_path0 = {5,4, 6,4, 6,7, 11,7, 11,16, 13,16, 13,6, 15,6},
+  [2].m_path1 = {5,10, 9,10, 9,8, 10,8, 10,9, 6,9, 6,13, 9,13, 9,15, 7,15, 7,17, 14,17, 14,14, 15,14},
+  [2].m_path2 = {5,16, 6,16, 6,14, 8,14, 8,6, 12,6, 12,5, 8,5, 8,3, 14,3, 14,10, 15,10}
 };
 
 void drawLine(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
   if (_x1 == 0 || _x2 == 0) return;
-  graphics_draw_line(_ctx, GPoint(_x1*SIZE, _y1*SIZE), GPoint(_x2*SIZE,_y2*SIZE));
+  GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
+  GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
+#ifdef PBL_ROUND
+  _p1.x += ROUND_OFFSET_X;
+  _p1.y += ROUND_OFFSET_Y;
+  _p2.x += ROUND_OFFSET_X;
+  _p2.y += ROUND_OFFSET_Y;
+#endif
+  graphics_draw_line(_ctx, _p1, _p2);
 }
 
 void updateProcMaze(GContext* _ctx) {
@@ -36,8 +47,8 @@ void updateProcMaze(GContext* _ctx) {
   graphics_context_set_stroke_width(_ctx, 2);
   switch (m_dungeon.m_level) {
     case 0: graphics_context_set_stroke_color(_ctx, GColorWhite); break;
-    case 1: graphics_context_set_stroke_color(_ctx, GColorRed); break;
-    default: graphics_context_set_stroke_color(_ctx, GColorBlack); break;
+    case 1: graphics_context_set_stroke_color(_ctx, GColorBlack); break;
+    default: graphics_context_set_stroke_color(_ctx, GColorRed); break;
   }
   for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
     drawLine(_ctx, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3]);
@@ -61,7 +72,7 @@ bool tickMaze(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     m_player.m_position = GPoint(0, SIZE*9);
-    addCluter(3 + m_dungeon.m_level, 15, 20, 0);
+    addCluter(15, 20, 0);
     s_path = rand() % 3;
     s_maze = rand() % N_MAZES;
     return false;

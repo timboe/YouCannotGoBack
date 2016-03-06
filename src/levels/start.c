@@ -20,6 +20,8 @@ void updateProcStart(GContext* _ctx) {
   renderWalls(_ctx, true, true, true, true);
   renderClutter(_ctx);
 
+  drawBitmap(_ctx, m_flagstone[ m_dungeon.m_finalPuzzle ], 0, 9);
+
   if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
     drawBitmap(_ctx, m_arrow, 15, 4);
     drawBitmap(_ctx, m_arrow, 15, 8);
@@ -32,7 +34,7 @@ bool tickStart(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     m_player.m_position = GPoint(0, SIZE*9);
-    addCluter(2, 4, 0, 20); // Only left
+    addCluter(4, 0, 20); // Only left
     return false;
   }
 

@@ -16,8 +16,11 @@ void renderClutter(GContext* _ctx);
 void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b);
 void renderMessage(GContext* _ctx, const char* _msg);
 void renderPit(GContext* _ctx);
+void renderFinalPit(GContext* _ctx);
 void renderFrame(GContext* _ctx, GRect _b);
+void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC);
 void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2);
 void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c);
 
-GColor getShieldColor(int _value);
+
+GColor getShieldColor(int8_t _value);
