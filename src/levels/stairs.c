@@ -45,6 +45,7 @@ bool tickStairs(bool _doInit) {
   } else if (s_state == 3) { // move down stairs
     m_player.m_target = GPoint(SIZE*11, SIZE*11);
     setGameState(kMovePlayer);
+    vibes_double_pulse();
     ++s_state;
   } else if (s_state == 4) {
     setGameState(kFadeOut);

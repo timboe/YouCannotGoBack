@@ -39,6 +39,9 @@ bool tickChest(bool _doInit) {
 
   static const char _goodA[] = "A GOOD FAERIE!";
   static const char _goodB[] = "FEELING LUCKY";
+  //
+  // static const char _goodC[] = "A QUIET VOICE"
+  // static const char _goodD[] = "REMEMBER, ";
 
 
   if (s_state == 0) { // start initial move
@@ -70,7 +73,7 @@ bool tickChest(bool _doInit) {
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 5) {
-    m_player.m_target = GPoint(SIZE*15, SIZE*9);
+    m_player.m_target = GPoint(SIZE*16, SIZE*9);
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 6) {

@@ -23,8 +23,13 @@ void updateProcPword(GContext* _ctx) {
 
   if (s_state == 5) {
     for (int _i = 0; _i < 3; ++_i) {
-      GRect _r = GRect(SIZE*10, SIZE*(4 + 4*_i),  SIZE*6, SIZE*2);
-      renderBorderText(_ctx, _r, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[_i]], 2, GTextAlignmentCenter);
+      if (m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room] == kNumber ) {
+        GRect _r = GRect(SIZE*10, SIZE*(5 + 4*_i),  SIZE*6, SIZE*2);
+        renderHintNumber(_ctx, _r, s_choices[_i], true);
+      } else {
+        GRect _r = GRect(SIZE*10, SIZE*(4 + 4*_i),  SIZE*6, SIZE*2);
+        renderBorderText(_ctx, _r, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[_i]], 2, GTextAlignmentCenter, false);
+      }
     }
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawBitmap(_ctx, m_arrow, 12, 3);
@@ -59,13 +64,18 @@ bool tickPword(bool _doInit) {
   } else if (s_state == 3) { // display msg
     setDisplayMsg(_msg);
     setGameState(kDisplayMsg);
+    vibes_double_pulse();
     ++s_state;
   } else if (s_state == 4) { // move down stairs
     setGameState(kAwaitInput);
     ++s_state;
   } else if (s_state == 5) {
-    if (getPlayerChoice() == s_correct) s_state = 7; // Yay
-    else s_state = 6; // Oh noes!
+    if (getPlayerChoice() == s_correct) {
+      s_state = 7; // Yay
+    } else {
+      s_state = 6; // Oh noes!
+      vibes_long_pulse();
+    }
   } else if (s_state == 6) { // DEATH MOVE
     m_player.m_position.y -= 1;
     if (m_player.m_position.y < 8*SIZE) {
@@ -78,7 +88,7 @@ bool tickPword(bool _doInit) {
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 8) { // WIN MOVE
-    m_player.m_target = GPoint(SIZE*17, SIZE*9);
+    m_player.m_target = GPoint(SIZE*16, SIZE*9);
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 9) {

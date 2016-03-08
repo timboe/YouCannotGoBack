@@ -1,13 +1,13 @@
 #include "bridge.h"
 
-#define N_MAZES 3
+#define N_MAZES 4
 #define N_MAZE_STEP 30
 
 static uint16_t s_state = 0;
 static uint16_t s_maze = 0;
 static uint16_t s_path = 0;
 //static uint16_t s_correct = 0;
-static const uint16_t s_sollution[N_MAZES][3] = { {2,0,1}, {1,0,2}, {0,2,1}};
+static const uint16_t s_sollution[N_MAZES][3] = { {2,0,1}, {1,0,2}, {0,2,1}, {2,0,1} };
 
 typedef struct {
   uint8_t m_path2[N_MAZE_STEP];
@@ -24,7 +24,10 @@ static const Maze_t s_mazes[N_MAZES] = {
   [1].m_path2 = {5,16, 8,16, 8,11, 9,11, 9,3, 11,3, 11,10, 13,10, 13,14, 15,14},
   [2].m_path0 = {5,4, 6,4, 6,7, 11,7, 11,16, 13,16, 13,6, 15,6},
   [2].m_path1 = {5,10, 9,10, 9,8, 10,8, 10,9, 6,9, 6,13, 9,13, 9,15, 7,15, 7,17, 14,17, 14,14, 15,14},
-  [2].m_path2 = {5,16, 6,16, 6,14, 8,14, 8,6, 12,6, 12,5, 8,5, 8,3, 14,3, 14,10, 15,10}
+  [2].m_path2 = {5,16, 6,16, 6,14, 8,14, 8,6, 12,6, 12,5, 8,5, 8,3, 14,3, 14,10, 15,10},
+  [3].m_path0 = {5,4, 6,4, 10,8, 6,12, 12,18, 14,16, 14,14, 15,14},
+  [3].m_path1 = {5,10, 6,10, 9,13, 10,12, 13,15, 10,18, 6,14, 14,6, 15,6},
+  [3].m_path2 = {5,16, 6,16, 7,17, 12,12, 6,6, 10,2, 13,5, 11,7, 14,10, 15,10}
 };
 
 void drawLine(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
@@ -48,7 +51,7 @@ void updateProcMaze(GContext* _ctx) {
   switch (m_dungeon.m_level) {
     case 0: graphics_context_set_stroke_color(_ctx, GColorWhite); break;
     case 1: graphics_context_set_stroke_color(_ctx, GColorBlack); break;
-    default: graphics_context_set_stroke_color(_ctx, GColorRed); break;
+    default: graphics_context_set_stroke_color(_ctx, GColorYellow); break;
   }
   for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
     drawLine(_ctx, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3]);
@@ -97,9 +100,9 @@ bool tickMaze(bool _doInit) {
      else m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room + 1 ] = kDeath;
    }
    switch (getPlayerChoice()) {
-     case 0: m_player.m_target = GPoint(SIZE*17, SIZE*5); break;
-     case 1: m_player.m_target = GPoint(SIZE*17, SIZE*9); break;
-     case 2: m_player.m_target = GPoint(SIZE*17, SIZE*13); break;
+     case 0: m_player.m_target = GPoint(SIZE*16, SIZE*5); break;
+     case 1: m_player.m_target = GPoint(SIZE*16, SIZE*9); break;
+     case 2: m_player.m_target = GPoint(SIZE*16, SIZE*13); break;
    }
    setGameState(kMovePlayer);
    ++s_state;
@@ -107,31 +110,6 @@ bool tickMaze(bool _doInit) {
    setGameState(kFadeOut);
  }
 
- //     ++s_state;
- //  } else if (s_state == 2) { // Move to chosen bridge
- //    switch (getPlayerChoice()) {
- //      case 0: m_player.m_target = GPoint(SIZE*3, SIZE*5); break;
- //      case 1: m_player.m_target = GPoint(SIZE*3, SIZE*9); break;
- //      case 2: m_player.m_target = GPoint(SIZE*3, SIZE*13); break;
- //    }
- //    setGameState(kMovePlayer);
- //    ++s_state;
- //  } else if (s_state == 3) { // move to center of bridge
- //    m_player.m_target.x = SIZE*8;
- //    if (getPlayerChoice() == s_correct) s_state = 5;
- //    else s_state = 4;
- //    setGameState(kMovePlayer);
- //  } else if (s_state == 4) { // LOOSE
- //   m_dungeon.m_gameOver = true;
- //   m_dungeon.m_fallingDeath = true;
- //   s_state = 6;
- // } else if (s_state == 5) {
- //   m_player.m_target.x = SIZE*17;
- //   setGameState(kMovePlayer);
- //   s_state = 6;
- // } else if (s_state == 6) {
- //   setGameState(kFadeOut);
- // }
 
 
   return false;

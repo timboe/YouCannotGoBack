@@ -10,6 +10,6 @@ typedef struct {
   int8_t m_minL;
 } RoomDescriptor_t;
 
-#define HINT_CHANCE 75
+#define HINT_CHANCE 90
 
 void generate();

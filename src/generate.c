@@ -1,22 +1,23 @@
 #include "game.h"
 #include "generate.h"
 
-//Hints Format   kNoHint, kSpell, kSymbol, kShield, kGreek, kNHintTypes
+//Hints Format   kNoHint, kSpell, kSymbol, kShield, kNumber, kGreek, kNHintTypes
 // kNoHint is currently unused, any other bit true will indicate that reqHint is true
 // Set levels which are not to be chosen at random to minL = 9
 RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
- [kStart].m_minL  = 9, [kStart].m_giveHint  = 1, [kStart].m_reqHint  = {0, 0, 0, 0, 0},
- [kStairs].m_minL = 9, [kStairs].m_giveHint = 1, [kStairs].m_reqHint = {0, 0, 0, 0, 0},
- [kChest].m_minL  = 0, [kChest].m_giveHint  = 1, [kChest].m_reqHint  = {0, 0, 0, 0, 0},
- [kPword].m_minL  = 0, [kPword].m_giveHint  = 1, [kPword].m_reqHint  = {0, 1, 0, 0, 0},
- [kBridge].m_minL = 0, [kBridge].m_giveHint = 1, [kBridge].m_reqHint = {0, 0, 1, 0, 1},
- [kMaths].m_minL  = 0, [kMaths].m_giveHint  = 1, [kMaths].m_reqHint  = {0, 0, 0, 0, 0},
- [kStones].m_minL = 0, [kStones].m_giveHint = 0, [kStones].m_reqHint = {0, 0, 0, 1, 0},
- [kDark].m_minL   = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint   = {0, 0, 0, 0, 0},
- [kMaze].m_minL   = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint   = {0, 0, 0, 0, 0},
- [kDeath].m_minL  = 9, [kDeath].m_giveHint  = 0, [kDeath].m_reqHint  = {0, 0, 0, 0, 0},
- [kFinal].m_minL  = 9, [kFinal].m_giveHint  = 0, [kFinal].m_reqHint  = {0, 0, 0, 0, 0},
- [kEnd].m_minL    = 9, [kEnd].m_giveHint    = 0, [kEnd].m_reqHint    = {0, 0, 0, 0, 0}
+ [kStart].m_minL  = 9, [kStart].m_giveHint  = 1, [kStart].m_reqHint  = {0, 0, 0, 0, 0, 0},
+ [kStairs].m_minL = 9, [kStairs].m_giveHint = 1, [kStairs].m_reqHint = {0, 0, 0, 0, 0, 0},
+ [kChest].m_minL  = 0, [kChest].m_giveHint  = 1, [kChest].m_reqHint  = {0, 0, 0, 0, 0, 0},
+ [kEmpty].m_minL  = 0, [kEmpty].m_giveHint  = 1, [kEmpty].m_reqHint  = {0, 0, 0, 0, 0, 0},
+ [kPword].m_minL  = 0, [kPword].m_giveHint  = 1, [kPword].m_reqHint  = {0, 1, 0, 0, 1, 0},
+ [kBridge].m_minL = 1, [kBridge].m_giveHint = 1, [kBridge].m_reqHint = {0, 0, 1, 0, 0, 1},
+ [kMaths].m_minL  = 0, [kMaths].m_giveHint  = 1, [kMaths].m_reqHint  = {0, 0, 0, 0, 0, 0},
+ [kStones].m_minL = 1, [kStones].m_giveHint = 0, [kStones].m_reqHint = {0, 0, 0, 1, 0, 0},
+ [kDark].m_minL   = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ [kMaze].m_minL   = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ [kDeath].m_minL  = 9, [kDeath].m_giveHint  = 0, [kDeath].m_reqHint  = {0, 0, 0, 0, 0, 0},
+ [kFinal].m_minL  = 9, [kFinal].m_giveHint  = 0, [kFinal].m_reqHint  = {0, 0, 0, 0, 0, 0},
+ [kEnd].m_minL    = 9, [kEnd].m_giveHint    = 0, [kEnd].m_reqHint    = {0, 0, 0, 0, 0, 0}
 };
 
 int m_hintsInPlay = 0;
@@ -25,14 +26,14 @@ uint8_t m_hintValue[kNHintTypes] = {0};
 
 Hints_t getHint(int _level, Rooms_t _roomType) {
   if (m_roomDescriptor[_roomType].m_giveHint == 0) return kNoHint; // Room does not allow hints
-  if (m_hintsInPlay == HINT_TYPES - (MAX_LEVELS - _level)) return kNoHint; // Have max hints in play
-  if (rand() % 100 > HINT_CHANCE) return kNoHint; // rnd
+  if (m_hintsInPlay == HINT_TYPES) return kNoHint; // Have max hints in play
+  if (rand() % 100 >= HINT_CHANCE) return kNoHint; // rnd
 
   // Else choose a hint
   Hints_t _hint = kNoHint;
   while (_hint == kNoHint) {
     // +1 avoids the kNoHint
-    Hints_t _random = 1 + (rand() % (kNHintTypes - (MAX_LEVELS - _level)));
+    Hints_t _random = 1 + (rand() % kNHintTypes);
     if ( m_hintIsActive[_random] == false ) _hint = _random;
   }
 
@@ -46,7 +47,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      _newRoom = kMaze; // TESTING
+      //_newRoom = kMaze; // TESTING
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor
@@ -86,6 +87,8 @@ void generate() {
   m_dungeon.m_fallingDeath = false;
   m_dungeon.m_gameOver = false;
   m_dungeon.m_finalPuzzle = rand() % 3;
+  m_dungeon.m_totalRooms = 0;
+  m_dungeon.m_roomsVisited = 0;
   m_hintsInPlay = 0;
   for (int _i = 0; _i < kNHintTypes; ++_i) {
     m_hintIsActive[_i] = 0;
@@ -97,9 +100,11 @@ void generate() {
   APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, sz info:%i dn:%i", m_dungeon.m_finalPuzzle, sizeof(m_roomDescriptor) * kNRoomTypes, sizeof(m_dungeon) );
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
-    m_dungeon.m_roomsPerLevel[_level] = MIN_ROOMS + _level + (rand() % (MAX_ROOMS - MIN_ROOMS - _level));
-    APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
-    for (int _room = 0; _room < m_dungeon.m_roomsPerLevel[_level]; ++_room) {
+    int8_t _roomsInLevel = MIN_ROOMS + _level + (rand() % (MAX_ROOMS - MIN_ROOMS - _level));
+    m_dungeon.m_totalRooms += _roomsInLevel;
+    m_dungeon.m_roomsPerLevel[_level] = _roomsInLevel;
+    APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, _roomsInLevel);
+    for (int _room = 0; _room < _roomsInLevel; ++_room) {
 
       Hints_t _consumeHint = kNoHint;
       bool _consumeItem = false;

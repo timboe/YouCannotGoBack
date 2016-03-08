@@ -21,7 +21,7 @@ void updateProcMaths(GContext* _ctx) {
   drawBitmap(_ctx, m_block, 13, 9);
 
   for (int _s = 0; _s < 3; ++_s) {
-    renderHintNumber(_ctx, GRect((7 + _s*2)*SIZE, 9*SIZE, 16, 16), s_sequence[_s]);   // sequence
+    renderHintNumber(_ctx, GRect((7 + _s*2)*SIZE, 9*SIZE, 16, 16), s_sequence[_s], false);   // sequence
   }
 
   renderPlayer(_ctx);
@@ -31,7 +31,7 @@ void updateProcMaths(GContext* _ctx) {
   for (int _s = 0; _s < 3; ++_s) {
     GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);   // Choices
     renderFrame(_ctx, _b);
-    renderHintNumber(_ctx, GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s]);
+    renderHintNumber(_ctx, GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s], false);
   }
 
   if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
@@ -81,14 +81,14 @@ bool tickMaths(bool _doInit) {
       else m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room + 1 ] = kDeath;
     }
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target = GPoint(SIZE*17, SIZE*5); break;
+      case 0: m_player.m_target = GPoint(SIZE*16, SIZE*5); break;
       case 1: m_player.m_target = GPoint(SIZE*13, SIZE*11); break; // further down
-      case 2: m_player.m_target = GPoint(SIZE*17, SIZE*13); break;
+      case 2: m_player.m_target = GPoint(SIZE*16, SIZE*13); break;
     }
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) {
-    m_player.m_target = GPoint(SIZE*17, SIZE*9);
+    m_player.m_target = GPoint(SIZE*16, SIZE*9);
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 4) {

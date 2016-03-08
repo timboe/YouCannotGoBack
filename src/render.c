@@ -11,10 +11,10 @@ void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
-void renderHintNumber(GContext* _ctx, GRect _r, int _value) {
+void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert) {
   static char _hintText[3];
   snprintf(_hintText, 3, "%i", _value);
-  renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _hintText, 1, GTextAlignmentCenter);
+  renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _hintText, 1, GTextAlignmentCenter, _invert);
 }
 
 void renderClutter(GContext* _ctx) {
@@ -25,8 +25,9 @@ void renderClutter(GContext* _ctx) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
       GPoint _p = GPoint((m_clutter.m_position[_c].x * SIZE) + 4, (m_clutter.m_position[_c].y * SIZE) + 2);
       drawBitmapAbs(_ctx, m_greek[ _hintValue ], _p);
-    } else if (_c == 0 && _hint == kSymbol) {
-      drawBitmap(_ctx, m_symbol[_hintValue], m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
+    } else if (_c == 0 && _hint == kNumber) {
+      drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
+      renderHintNumber(_ctx, GRect(m_clutter.m_position[_c].x * SIZE, (m_clutter.m_position[_c].y * SIZE)-3, 16, 16), _hintValue, true);
     } else {
       drawBitmap(_ctx, getClutter(false), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
     }
@@ -35,6 +36,10 @@ void renderClutter(GContext* _ctx) {
   int _r = 3 + (rand()%8);
   if (_hint == kShield) {
     GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
+#ifdef PBL_ROUND
+  _p.x += ROUND_OFFSET_X;
+  _p.y += ROUND_OFFSET_Y;
+#endif
     drawBitmap(_ctx, m_shieldSprite, _r, 0);
     graphics_context_set_fill_color(_ctx, getShieldColor(getShieldA(_hintValue)));
     graphics_fill_circle(_ctx, _p, 3);
@@ -48,8 +53,27 @@ void renderClutter(GContext* _ctx) {
     drawBitmap(_ctx, m_tapestrySprite[0], _r, 0);
     for (int _i=1; _i<5; ++_i) drawBitmap(_ctx, m_tapestrySprite[1], _r+_i, 0);
     drawBitmap(_ctx, m_tapestrySprite[2], _r+5, 0);
-    renderBorderText(_ctx, GRect(_r * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), m_spellNames[_hintValue], 1, GTextAlignmentCenter);
+    renderBorderText(_ctx, GRect(_r * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
+  } else if (_hint == kSymbol) {
+    drawBitmap(_ctx, m_symbol[_hintValue], _r, 18);
   }
+}
+
+void renderProgressBar(Layer* _thisLayer, GContext* _ctx) {
+  GRect _b = layer_get_bounds(_thisLayer);
+  int _x1 = 0;
+  int _w = _b.size.w;
+#ifdef PBL_ROUND
+  _x1 += _b.size.w / 3;
+  _w -= (2 * _b.size.w) / 3;
+#endif
+  int _x2 = ( _w * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
+  int _h = _b.size.h - (SIZE/2);
+  GPoint _s = GPoint(_x1, _h);
+  GPoint _e = GPoint(_x1 + _x2, _h);
+  graphics_context_set_stroke_width(_ctx, 3);
+  graphics_context_set_stroke_color(_ctx, GColorRed);
+  graphics_draw_line(_ctx, _s, _e);
 }
 
 void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
@@ -292,12 +316,15 @@ void renderFinalPit(GContext* _ctx) {
 }
 
 void renderPlayer(GContext* _ctx) {
-  drawBitmapAbs(_ctx, m_playerSprite[ m_player.m_playerFrame ], m_player.m_position);
+  GPoint _pos = m_player.m_position;
+  if (m_player.m_hop == true) --_pos.y;
+  drawBitmapAbs(_ctx, m_playerSprite[ m_player.m_playerFrame ], _pos);
 }
 
-void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al) {
+void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert) {
 
   graphics_context_set_text_color(_ctx, GColorBlack);
+  if (_invert == true) graphics_context_set_text_color(_ctx, GColorWhite);
 #ifdef PBL_ROUND
   _loc.origin.x += 18;
   _loc.origin.y += 10;
@@ -317,6 +344,7 @@ void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer,
 
   // main
   graphics_context_set_text_color(_ctx, GColorWhite);
+  if (_invert == true) graphics_context_set_text_color(_ctx, GColorBlack);
   _loc.origin.x += _offset; // O
   graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
 }

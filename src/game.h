@@ -1,7 +1,7 @@
 #pragma once
 #include <pebble.h>
 
-#define DEBUG_MODE
+//#define DEBUG_MODE
 
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
@@ -13,6 +13,7 @@ typedef enum {
   kStart,
   kStairs,
   kChest,
+  kEmpty,
   kPword,
   kBridge,
   kMaze,
@@ -29,12 +30,14 @@ typedef enum {
 #define MAX_SPELLS 31
 #define MAX_GREEK 8
 #define MAX_SYMBOL 4
+#define MAX_NUMBER 43
 #define MAX_SHIELD_COLOUR 4
 typedef enum {
   kNoHint,
   kSpell,
   kSymbol,
   kShield,
+  kNumber,
   kGreek,
   kNHintTypes
 } Hints_t;
@@ -66,12 +69,14 @@ typedef enum {
 
 #define MAX_LEVELS 3
 #define MIN_ROOMS 5
-#define MAX_ROOMS 8
+#define MAX_ROOMS 10
 #define MIN_ROOM_SEP 3
 typedef struct {
   int8_t m_level;
   int8_t m_room;
   int8_t m_lives;
+  int8_t m_totalRooms;
+  int8_t m_roomsVisited;
   int8_t m_roomsPerLevel[MAX_LEVELS];
   int8_t m_rooms[MAX_LEVELS][MAX_ROOMS];
   int8_t m_roomGiveHint[MAX_LEVELS][MAX_ROOMS];
@@ -90,6 +95,7 @@ typedef struct {
   uint16_t m_playerFrame;
   GPoint m_position;
   GPoint m_target;
+  bool m_hop;
 } Player_t;
 
 #define MAX_PLACE_CLUTTER 5

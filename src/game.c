@@ -14,6 +14,7 @@
 #include "levels/dark.h"
 #include "levels/final.h"
 #include "levels/chest.h"
+#include "levels/empty.h"
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
@@ -60,6 +61,7 @@ bool newRoom() {
     ++m_dungeon.m_level;
     m_dungeon.m_room = 0;
   };
+  ++m_dungeon.m_roomsVisited;
   m_clutter.m_nClutter = 0;
   for (int _i = 0; _i < MAX_PLACE_CLUTTER; ++_i) m_clutter.m_position[_i] = GPoint(0,0);
   ++m_dungeon.m_seed;
@@ -100,6 +102,7 @@ void gameLoop(void* data) {
       case kStart: requestRedraw = tickStart(_doInit); break;
       case kStairs: requestRedraw = tickStairs(_doInit); break;
       case kChest: requestRedraw = tickChest(_doInit); break;
+      case kEmpty: requestRedraw = tickEmpty(_doInit); break;
       case kPword: requestRedraw = tickPword(_doInit); break;
       case kBridge: requestRedraw = tickBridge(_doInit); break;
       case kMaths: requestRedraw = tickMaths(_doInit); break;
@@ -137,6 +140,7 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     case kStart: updateProcStart(_ctx); break;
     case kStairs: updateProcStairs(_ctx); break;
     case kChest: updateProcChest(_ctx); break;
+    case kEmpty: updateProcEmpty(_ctx); break;
     case kPword: updateProcPword(_ctx); break;
     case kBridge: updateProcBridge(_ctx); break;
     case kMaths: updateProcMaths(_ctx); break;
@@ -155,6 +159,8 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     setGameState(kDisplayingMsg);
   }
 
+  if (m_dungeon.m_gameOver == 0) renderProgressBar(_thisLayer, _ctx);
+
   // Do fade
   if (s_gameState == kFadeIn) renderFade(_thisLayer, _ctx, true);
   else if (s_gameState == kFadeOut) renderFade(_thisLayer, _ctx, false);
@@ -172,6 +178,9 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
 bool movePlayer() {
   if (s_frameCount % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
   //APP_LOG(APP_LOG_LEVEL_INFO,"F:%i PF:%i",s_frameCount, m_player.m_playerFrame);
+
+  if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) m_player.m_hop = true;
+  else m_player.m_hop = false;
 
   if      (m_player.m_target.x > m_player.m_position.x) m_player.m_position.x += PLAYER_SPEED;
   if      (m_player.m_target.y > m_player.m_position.y) m_player.m_position.y += PLAYER_SPEED;
@@ -223,6 +232,7 @@ int getHintValueMax(Hints_t _hint) {
     case kShield: return MAX_SHIELD_COLOUR;
     case kSymbol: return MAX_SYMBOL;
     case kSpell: return MAX_SPELLS;
+    case kNumber: return MAX_NUMBER;
     case kGreek: return MAX_GREEK;
     default: return 0;
   }

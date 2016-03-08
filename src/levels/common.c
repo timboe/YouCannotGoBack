@@ -1,11 +1,12 @@
 #include "common.h"
+#include "../render.h"
 
 
 void addCluter(int _xMax, int _yUp, int _yDn) {
   // Min clutter, if we are leaving a hint then we need at least 1
   int _minClutter = 0;
-  if (m_dungeon.m_roomGiveHint[m_dungeon.m_level][m_dungeon.m_room] == kSymbol
-   || m_dungeon.m_roomGiveHint[m_dungeon.m_level][m_dungeon.m_room] == kGreek ) {
+  Hints_t _hint = m_dungeon.m_roomGiveHint[m_dungeon.m_level][m_dungeon.m_room];
+  if (_hint == kSymbol || _hint == kGreek || _hint == kNumber) {
     _minClutter = 1;
   }
 
@@ -92,6 +93,7 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
    if (getPlayerChoice() != _correct[0]) {
      m_dungeon.m_gameOver = 1;
      setGameState(kFadeOut);
+     vibes_long_pulse();
    } else {
      setGameState(kAwaitInput);
    }
@@ -113,6 +115,7 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
    if (getPlayerChoice() != _correct[1]) {
      m_dungeon.m_gameOver = 1;
      setGameState(kFadeOut);
+     vibes_long_pulse();
    } else {
      setGameState(kAwaitInput);
    }
@@ -134,8 +137,9 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
     if (getPlayerChoice() != _correct[2]) {
       m_dungeon.m_gameOver = 1;
       setGameState(kFadeOut);
+      vibes_long_pulse();
     } else {
-      m_player.m_target.x = SIZE*17;
+      m_player.m_target.x = SIZE*16;
       setGameState(kMovePlayer);
     }
     ++(*_state); // On 10, draw final fires
@@ -143,5 +147,30 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
 
   } else if ((*_state) == 11) {
    setGameState(kFadeOut);
+  }
+}
+
+void renderStonesCommon(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _correct, int8_t _fire, int16_t _state) {
+  renderPit(_ctx);
+  renderStandingStoneGrid(_ctx, _coloursA, _coloursB, _coloursC);
+  renderPlayer(_ctx);
+  renderWalls(_ctx, true, true, true, true);
+
+  for (int _f = 0; _f < 3; ++_f) {  // Draw fires
+    if (_fire < _f) break;
+    for (int _i = 0; _i < 3; ++_i) {
+      if (_correct[_f] == _i) continue;
+      drawBitmap(_ctx, m_fire[0], 5 + (4 * _f) , 5 + (4 * _i));
+      drawBitmap(_ctx, m_fire[1], 6 + (4 * _f) , 4 + (4 * _i));
+    }
+  }
+
+  if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
+    int _off = 0;
+    if (_state == 7) _off = 4;
+    else if (_state == 9) _off = 8;
+    drawBitmap(_ctx, m_arrow, 6 + _off, 3);
+    drawBitmap(_ctx, m_arrow, 6 + _off, 7);
+    drawBitmap(_ctx, m_arrow, 6 + _off, 11);
   }
 }

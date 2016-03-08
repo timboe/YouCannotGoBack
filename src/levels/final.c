@@ -79,6 +79,7 @@ bool tickFinal(bool _doInit) {
     ++s_state;
   } else if (s_state == 3) {
     setDisplayMsg(_msgA);
+    vibes_double_pulse();
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 4) {
@@ -101,6 +102,7 @@ bool tickFinal(bool _doInit) {
       }
       if (_move == false) {
         m_dungeon.m_gameOver = 1;
+        vibes_long_pulse();
         setGameState(kFadeOut);
       }
     }
@@ -112,6 +114,7 @@ bool tickFinal(bool _doInit) {
   } else if (s_state == 7) {
     setDisplayMsg(_msgB);
     setGameState(kDisplayMsg);
+    vibes_long_pulse();
     ++s_state;
   } else if (s_state == 8) {
     m_player.m_target.x = SIZE*15;

@@ -23,11 +23,14 @@ void updateProcBridge(GContext* _ctx) {
   renderWalls(_ctx, true, true, true, true);
 
   for (int _s = 0; _s < 3; ++_s) {
-    if ( m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room] == kSymbol ) {
+    Hints_t _hint = m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room];
+    if ( _hint == kNumber) {
+      GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);
+      renderFrame(_ctx, _b);
+      renderHintNumber(_ctx, GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s], true);
+    } else if ( _hint == kSymbol ) {
       drawBitmap(_ctx, m_symbol[ s_choices[_s] ], 16, 5 + (_s*4));
-      //GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16)
-      //renderHintNumber(_ctx, , s_choices[_s]);
-    } else {
+    } else if ( _hint == kGreek ) {
       GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);
       renderFrame(_ctx, _b);
       drawBitmapAbs(_ctx, m_greek[ s_choices[_s] ], GPoint(16*SIZE + 4, (5 + (_s*4))*SIZE + 4));
@@ -83,9 +86,10 @@ bool tickBridge(bool _doInit) {
   } else if (s_state == 4) { // LOOSE
    m_dungeon.m_gameOver = 1;
    m_dungeon.m_fallingDeath = true;
+   vibes_long_pulse();
    s_state = 6;
  } else if (s_state == 5) {
-   m_player.m_target.x = SIZE*17;
+   m_player.m_target.x = SIZE*16;
    setGameState(kMovePlayer);
    s_state = 6;
  } else if (s_state == 6) {
