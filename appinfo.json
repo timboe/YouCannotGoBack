@@ -17,6 +17,7 @@
     "media": [
       { "file": "images/spritesheet.png", "name": "SPRITESHEET", "type": "png" },
       { "file": "images/gameover.png", "name": "GRAVE", "type": "png" },
+      { "file": "images/saw.png", "name": "SAW", "type": "png" },
       { "file": "images/treasure.png", "name": "TREASURE", "type": "png" }
     ]
   }

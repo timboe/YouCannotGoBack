@@ -14,6 +14,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kMaths].m_minL  = 0, [kMaths].m_giveHint  = 1, [kMaths].m_reqHint  = {0, 0, 0, 0, 0, 0},
  [kStones].m_minL = 1, [kStones].m_giveHint = 0, [kStones].m_reqHint = {0, 0, 0, 1, 0, 0},
  [kDark].m_minL   = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ [kSaw].m_minL    = 0, [kSaw].m_giveHint    = 0, [kSaw].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kMaze].m_minL   = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kDeath].m_minL  = 9, [kDeath].m_giveHint  = 0, [kDeath].m_reqHint  = {0, 0, 0, 0, 0, 0},
  [kFinal].m_minL  = 9, [kFinal].m_giveHint  = 0, [kFinal].m_reqHint  = {0, 0, 0, 0, 0, 0},
@@ -47,7 +48,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      //_newRoom = kMaze; // TESTING
+      //_newRoom = kSaw; // TESTING
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor
@@ -135,7 +136,16 @@ void generate() {
         m_hintValue[_consumeHint] = 0;
       }
 
-
+      // Special for CHEST room, REMINDER
+      if (_roomType == kChest && (m_hintIsActive[kSpell] == true || m_hintIsActive[kNumber] == true) && rand() % 2 == 0) {
+        if (m_hintIsActive[kSpell] == true) {
+          m_dungeon.m_roomNeedHint[_level][_room] = kSpell;
+          m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[kSpell];
+        } else {
+          m_dungeon.m_roomNeedHint[_level][_room] = kNumber;
+          m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[kNumber];
+        }
+      }
     }
   }
   setGameState(kNewRoom);

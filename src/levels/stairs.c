@@ -2,10 +2,6 @@
 
 static uint16_t s_state = 0;
 
-void initStairs() {
-
-}
-
 void updateProcStairs(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
@@ -14,9 +10,9 @@ void updateProcStairs(GContext* _ctx) {
 
   renderPlayer(_ctx);
   renderWalls(_ctx, true, false, false, false);
-  drawBitmap(_ctx, getFloor(), 11, 10); //Draw some more floor to cover the player
-  drawBitmap(_ctx, getFloor(), 11, 12);
-  drawBitmap(_ctx, getFloor(), 9, 12);
+  drawBitmap(_ctx, getFloor(true), 11, 10); //Draw some more floor to cover the player
+  drawBitmap(_ctx, getFloor(true), 11, 12);
+  drawBitmap(_ctx, getFloor(true), 9, 12);
   renderClutter(_ctx);
 
   if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {

@@ -33,7 +33,7 @@ void renderClutter(GContext* _ctx) {
     }
   }
   // Check shield
-  int _r = 3 + (rand()%8);
+  int _r = 4 + (rand()%6);
   if (_hint == kShield) {
     GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
 #ifdef PBL_ROUND
@@ -232,11 +232,31 @@ void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
   }
 }
 
+void renderSawFloor(GContext* _ctx, int8_t _offset) {
+  for (int _x = 0; _x < 20; _x += 2) {
+    for (int _y = 6; _y < 12; _y += 2) {
+      drawBitmapAbs(_ctx, getFloor(false), GPoint((_x*SIZE) - _offset, _y*SIZE));
+    }
+    drawBitmapAbs(_ctx, m_halfUpperWall[0], GPoint((_x*SIZE) - _offset, 5*SIZE));
+    drawBitmapAbs(_ctx, m_halfLowerWall[0], GPoint((_x*SIZE) - _offset, 12*SIZE));
+  }
+}
+
+void renderSawWalls(GContext* _ctx, int8_t _offset) {
+  for (int _x = 0; _x < 20; _x += 2) {
+    drawBitmapAbs(_ctx, m_halfUpperWall[1], GPoint((_x*SIZE) - _offset, 4*SIZE));
+    drawBitmapAbs(_ctx, m_halfLowerWall[1], GPoint((_x*SIZE) - _offset, 13*SIZE));
+    drawBitmapAbs(_ctx, m_black, GPoint((_x*SIZE) - _offset, 2*SIZE));
+    drawBitmapAbs(_ctx, m_black, GPoint((_x*SIZE) - _offset, 14*SIZE));
+
+  }
+}
+
 void renderFloor(GContext* _ctx, int _mode) {
   for (int _x = 3; _x < 15; _x += 2) {
     if (_mode == 1 && !(_x == 3 || _x == 13)) continue; // Pit
     for (int _y = 2; _y < 18; _y += 2) {
-      drawBitmap(_ctx, getFloor(), _x, _y);
+      drawBitmap(_ctx, getFloor(true), _x, _y);
     }
   }
   if (_mode == 1) { // Pit with one space on either side
@@ -317,7 +337,7 @@ void renderFinalPit(GContext* _ctx) {
 
 void renderPlayer(GContext* _ctx) {
   GPoint _pos = m_player.m_position;
-  if (m_player.m_hop == true) --_pos.y;
+  if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) --_pos.y;
   drawBitmapAbs(_ctx, m_playerSprite[ m_player.m_playerFrame ], _pos);
 }
 

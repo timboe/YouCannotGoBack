@@ -15,6 +15,7 @@
 #include "levels/final.h"
 #include "levels/chest.h"
 #include "levels/empty.h"
+#include "levels/saw.h"
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
@@ -44,12 +45,13 @@ int getPlayerChoice() { return s_playerChoice; }
 
 void gameClickConfigHandler(ClickRecognizerRef _recognizer, void* _context) {
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
-  if (getGameState() != kAwaitInput) return;
-  ButtonId _button = click_recognizer_get_button_id(_recognizer);
-  if (BUTTON_ID_UP == _button) s_playerChoice = 0;
-  else if (BUTTON_ID_SELECT == _button) s_playerChoice = 1;
-  else if (BUTTON_ID_DOWN == _button) s_playerChoice = 2;
-  setGameState(kLevelSpecific);
+  if (getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) {
+    ButtonId _button = click_recognizer_get_button_id(_recognizer);
+    if (BUTTON_ID_UP == _button) s_playerChoice = 0;
+    else if (BUTTON_ID_SELECT == _button) s_playerChoice = 1;
+    else if (BUTTON_ID_DOWN == _button) s_playerChoice = 2;
+    setGameState(kLevelSpecific);
+  }
 }
 
 bool newRoom() {
@@ -66,6 +68,7 @@ bool newRoom() {
   for (int _i = 0; _i < MAX_PLACE_CLUTTER; ++_i) m_clutter.m_position[_i] = GPoint(0,0);
   ++m_dungeon.m_seed;
   s_gameState = kDoInit;
+  s_playerChoice = 1;
   APP_LOG(APP_LOG_LEVEL_WARNING,"ENTER %i", m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]);
   return false;
 }
@@ -97,7 +100,7 @@ void gameLoop(void* data) {
     case kDisplayingMsg: requestRedraw = false; break; // Wait for timer to expire or button click
     // For the init level case, we call the tick fn with a boolean flag, but we then need to wait until we fade in before we tick propper
     case kDoInit: _doInit = true; s_gameState = kFadeIn; // FALL THROUGH
-    case kLevelSpecific:
+    case kLevelSpecific: case kLevelSpecificWButtons:
     switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
       case kStart: requestRedraw = tickStart(_doInit); break;
       case kStairs: requestRedraw = tickStairs(_doInit); break;
@@ -109,6 +112,7 @@ void gameLoop(void* data) {
       case kStones: requestRedraw = tickStones(_doInit); break;
       case kDark: requestRedraw = tickDark(_doInit); break;
       case kMaze: requestRedraw = tickMaze(_doInit); break;
+      case kSaw: requestRedraw = tickSaw(_doInit); break;
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
       case kEnd: requestRedraw = tickEnd(_doInit); break;
@@ -147,6 +151,7 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     case kStones: updateProcStones(_ctx); break;
     case kDark: updateProcDark(_ctx); break;
     case kMaze: updateProcMaze(_ctx); break;
+    case kSaw: updateProcSaw(_ctx); break;
     case kDeath: updateProcDeath(_ctx); break;
     case kFinal: updateProcFinal(_ctx); break;
     case kEnd: updateProcEnd(_ctx); break;
@@ -178,9 +183,6 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
 bool movePlayer() {
   if (s_frameCount % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
   //APP_LOG(APP_LOG_LEVEL_INFO,"F:%i PF:%i",s_frameCount, m_player.m_playerFrame);
-
-  if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) m_player.m_hop = true;
-  else m_player.m_hop = false;
 
   if      (m_player.m_target.x > m_player.m_position.x) m_player.m_position.x += PLAYER_SPEED;
   if      (m_player.m_target.y > m_player.m_position.y) m_player.m_position.y += PLAYER_SPEED;

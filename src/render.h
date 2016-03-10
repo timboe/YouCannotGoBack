@@ -22,5 +22,7 @@ void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _colours
 void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2);
 void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c);
 void renderProgressBar(Layer* _thisLayer, GContext* _ctx);
+void renderSawFloor(GContext* _ctx, int8_t _offset);
+void renderSawWalls(GContext* _ctx, int8_t _offset);
 
 GColor getShieldColor(int8_t _value);

@@ -2,6 +2,9 @@
 
 
 GBitmap* m_spriteMap;
+GBitmap* m_saw;
+GBitmap* m_sawA[2];
+GBitmap* m_sawB[2];
 
 GBitmap* m_UOuterWall[3];
 GBitmap* m_DOuterWall[3];
@@ -45,6 +48,8 @@ GBitmap* m_treasureBanner;
 GBitmap* m_treasure[3];
 GBitmap* m_symbol[MAX_SYMBOL];
 
+GBitmap* m_halfUpperWall[2];
+GBitmap* m_halfLowerWall[2];
 
 GBitmap* getSprite(int _x, int _y, int _w, int _h) {
   return gbitmap_create_as_sub_bitmap(m_spriteMap, GRect(SIZE * _x, SIZE * _y, SIZE * _w, SIZE * _h));
@@ -64,8 +69,9 @@ GBitmap* getOuterWall(int _d) {
   }
 }
 
-GBitmap* getFloor() {
+GBitmap* getFloor(bool _random) {
   int _r = rand() % MAX_FLOOR;
+  if (_random == false) _r = 0;
   switch (m_dungeon.m_level) {
     case 0:  return m_floorA[_r];
     case 1:  return m_floorB[_r];
@@ -78,6 +84,12 @@ void initSprite() {
   m_grave = gbitmap_create_with_resource(RESOURCE_ID_GRAVE);
   m_treasureBanner = gbitmap_create_with_resource(RESOURCE_ID_TREASURE);
 
+  m_saw = gbitmap_create_with_resource(RESOURCE_ID_SAW);
+  for (int _s = 0; _s < 2; ++_s) {
+    m_sawA[_s] = gbitmap_create_as_sub_bitmap(m_saw, GRect(_s * 80, 0, 80, 40));
+    m_sawB[_s] = gbitmap_create_as_sub_bitmap(m_saw, GRect(_s * 80, 40, 80, 40));
+  }
+
   for (int _w = 0; _w < 3; ++_w) { // Walls
     m_UOuterWall[_w] = getSprite(_w + 0, 6, 2, 2);
     m_DOuterWall[_w] = getSprite(_w + 4, 8, 2, 2);
@@ -86,6 +98,11 @@ void initSprite() {
 
     m_flagstone[_w] = getSprite(12 + (_w * 2), 12, 2, 2);
   }
+
+  m_halfUpperWall[0] = getSprite(2, 7, 2, 1);
+  m_halfUpperWall[1] = getSprite(2, 6, 2, 1);
+  m_halfLowerWall[0] = getSprite(4, 8, 2, 1);
+  m_halfLowerWall[1] = getSprite(4, 9, 2, 1);
 
   m_outerCorner[0] = getSprite(6, 0, 2, 2);
   m_outerCorner[1] = getSprite(8, 0, 2, 2);
@@ -177,4 +194,5 @@ void deinitSprite() {
   gbitmap_destroy(m_spriteMap);
   gbitmap_destroy(m_grave);
   gbitmap_destroy(m_treasureBanner);
+  gbitmap_destroy(m_saw);
 }

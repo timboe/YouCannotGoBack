@@ -20,10 +20,10 @@ void updateProcFinal(GContext* _ctx) {
     drawBitmap(_ctx, m_innerCorner[0], 7, 12);
     drawBitmap(_ctx, m_innerWall[3], 9, 6);
     drawBitmap(_ctx, m_innerWall[2], 9, 12);
-    drawBitmap(_ctx, getFloor(), 7, 8);
-    drawBitmap(_ctx, getFloor(), 7, 10);
-    drawBitmap(_ctx, getFloor(), 9, 8);
-    drawBitmap(_ctx, getFloor(), 9, 10);
+    drawBitmap(_ctx, getFloor(true), 7, 8);
+    drawBitmap(_ctx, getFloor(true), 7, 10);
+    drawBitmap(_ctx, getFloor(true), 9, 8);
+    drawBitmap(_ctx, getFloor(true), 9, 10);
   } else {
     for (int _i = 0; _i < 4; ++_i) rand(); // keep the wall the same
   }

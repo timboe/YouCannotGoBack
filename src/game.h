@@ -20,6 +20,7 @@ typedef enum {
   kMaths,
   kStones,
   kDark,
+  kSaw,
   kDeath,
   kFinal,
   kEnd,
@@ -52,7 +53,8 @@ typedef enum {
   kLevelSpecific = 6,
   kDisplayMsg = 7,
   kDisplayingMsg = 8,
-  kDoInit = 9
+  kDoInit = 9,
+  kLevelSpecificWButtons = 10
 } GameState_t;
 
 typedef enum {
@@ -95,7 +97,6 @@ typedef struct {
   uint16_t m_playerFrame;
   GPoint m_position;
   GPoint m_target;
-  bool m_hop;
 } Player_t;
 
 #define MAX_PLACE_CLUTTER 5

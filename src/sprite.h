@@ -12,8 +12,16 @@ void initSprite();
 void deinitSprite();
 
 GBitmap* getOuterWall(int _d);
-GBitmap* getFloor();
+GBitmap* getFloor(bool _random);
 GBitmap* getClutter(bool _broken);
+
+extern GBitmap* m_UOuterWall[3];
+extern GBitmap* m_DOuterWall[3];
+extern GBitmap* m_LOuterWall[3];
+extern GBitmap* m_ROuterWall[3];
+
+extern GBitmap* m_halfUpperWall[2];
+extern GBitmap* m_halfLowerWall[2];
 
 extern GBitmap* m_outerCorner[4];
 extern GBitmap* m_innerCorner[4];
@@ -21,6 +29,10 @@ extern GBitmap* m_innerWall[4];
 extern GBitmap* m_torchWall[4];
 
 extern GBitmap* m_stairs;
+extern GBitmap* m_saw;
+extern GBitmap* m_sawB[2];
+extern GBitmap* m_sawA[2];
+
 
 extern GBitmap* m_arrow;
 

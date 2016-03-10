@@ -6,7 +6,7 @@ void addCluter(int _xMax, int _yUp, int _yDn) {
   // Min clutter, if we are leaving a hint then we need at least 1
   int _minClutter = 0;
   Hints_t _hint = m_dungeon.m_roomGiveHint[m_dungeon.m_level][m_dungeon.m_room];
-  if (_hint == kSymbol || _hint == kGreek || _hint == kNumber) {
+  if (_hint == kGreek || _hint == kNumber) {
     _minClutter = 1;
   }
 
@@ -71,26 +71,35 @@ uint16_t randomiseChoices(int8_t* _choices, int _stage) {
     _choices[_c] = _value;
   }
 
-  APP_LOG(APP_LOG_LEVEL_INFO,"   [RC] T:%i V:%i Rnd:%i CHOICE:%i MAX:%i", _type, _value, _c, _choices[_c], getHintValueMax( _type ) );
+  //APP_LOG(APP_LOG_LEVEL_INFO,"   [RC] T:%i V:%i Rnd:%i CHOICE:%i MAX:%i", _type, _value, _c, _choices[_c], getHintValueMax( _type ) );
   shuffler(_choices, 0, getHintValueMax( _type ));
   return _c;
 
 }
 
 void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
-  if ((*_state) == 5) { // first choice
+  int _targetX, _step;
+  switch (*_state) {
+    case 5: case 6: _targetX = 6; _step = 0; break;
+    case 7: case 8: _targetX = 10; _step = 1; break;
+    case 9: default: _targetX = 14; _step = 2; break;
+  }
+
+  if ((*_state) == 11) {
+    setGameState(kFadeOut);
+  } else if ((*_state) % 2 == 1) { // ODD state
 
    switch (getPlayerChoice()) {
-     case 0: m_player.m_target = GPoint(SIZE*6, SIZE*5); break;
-     case 1: m_player.m_target = GPoint(SIZE*6, SIZE*9); break;
-     case 2: m_player.m_target = GPoint(SIZE*6, SIZE*13); break;
+     case 0: m_player.m_target = GPoint(SIZE*_targetX, SIZE*5); break;
+     case 1: m_player.m_target = GPoint(SIZE*_targetX, SIZE*9); break;
+     case 2: m_player.m_target = GPoint(SIZE*_targetX, SIZE*13); break;
    }
    setGameState(kMovePlayer);
    ++(*_state);
 
- } else if ((*_state) == 6) {
+ } else {
 
-   if (getPlayerChoice() != _correct[0]) {
+   if (getPlayerChoice() != _correct[_step]) {
      m_dungeon.m_gameOver = 1;
      setGameState(kFadeOut);
      vibes_long_pulse();
@@ -100,53 +109,6 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
    ++(*_state); // On 6, draw first fires
    ++(*_fire);
 
- } else if ((*_state) == 7) { // first choice
-
-   switch (getPlayerChoice()) {
-     case 0: m_player.m_target = GPoint(SIZE*10, SIZE*5); break;
-     case 1: m_player.m_target = GPoint(SIZE*10, SIZE*9); break;
-     case 2: m_player.m_target = GPoint(SIZE*10, SIZE*13); break;
-   }
-   setGameState(kMovePlayer);
-   ++(*_state);
-
- } else if ((*_state) == 8) {
-
-   if (getPlayerChoice() != _correct[1]) {
-     m_dungeon.m_gameOver = 1;
-     setGameState(kFadeOut);
-     vibes_long_pulse();
-   } else {
-     setGameState(kAwaitInput);
-   }
-   ++(*_state); // On 8, draw second fires
-   ++(*_fire);
-
- } else if ((*_state) == 9) { // first choice
-
-   switch (getPlayerChoice()) {
-     case 0: m_player.m_target = GPoint(SIZE*14, SIZE*5); break;
-     case 1: m_player.m_target = GPoint(SIZE*14, SIZE*9); break;
-     case 2: m_player.m_target = GPoint(SIZE*14, SIZE*13); break;
-   }
-   setGameState(kMovePlayer);
-   ++(*_state);
-
- } else if ((*_state) == 10) {
-
-    if (getPlayerChoice() != _correct[2]) {
-      m_dungeon.m_gameOver = 1;
-      setGameState(kFadeOut);
-      vibes_long_pulse();
-    } else {
-      m_player.m_target.x = SIZE*16;
-      setGameState(kMovePlayer);
-    }
-    ++(*_state); // On 10, draw final fires
-    ++(*_fire);
-
-  } else if ((*_state) == 11) {
-   setGameState(kFadeOut);
   }
 }
 
