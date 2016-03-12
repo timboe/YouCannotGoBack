@@ -48,7 +48,7 @@ bool tickMaths(bool _doInit) {
     s_sequence[0] = (10 * m_dungeon.m_level) + rand()%10; // Choose starting
     uint16_t _modA = 1 + rand()%5; // Chose modifier
     uint16_t _modB = 0;
-    if (m_dungeon.m_level > 0) _modB = 1 + rand()%5;
+    if (m_dungeon.m_level > 0) _modB = 1 + rand()%4;
     for (int _i = 1; _i < 4; ++_i) {
       switch (s_puzzle) {
         case kAdd: s_sequence[_i] = s_sequence[_i - 1] + _modA + (_i * _modB); break; // Do seq
