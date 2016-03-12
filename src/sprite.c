@@ -3,8 +3,8 @@
 
 GBitmap* m_spriteMap;
 GBitmap* m_saw;
-GBitmap* m_sawA[2];
-GBitmap* m_sawB[2];
+GBitmap* m_sawA;
+GBitmap* m_sawB;
 
 GBitmap* m_UOuterWall[3];
 GBitmap* m_DOuterWall[3];
@@ -85,10 +85,9 @@ void initSprite() {
   m_treasureBanner = gbitmap_create_with_resource(RESOURCE_ID_TREASURE);
 
   m_saw = gbitmap_create_with_resource(RESOURCE_ID_SAW);
-  for (int _s = 0; _s < 2; ++_s) {
-    m_sawA[_s] = gbitmap_create_as_sub_bitmap(m_saw, GRect(_s * 80, 0, 80, 40));
-    m_sawB[_s] = gbitmap_create_as_sub_bitmap(m_saw, GRect(_s * 80, 40, 80, 40));
-  }
+  m_sawA = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 0, 80, 40));
+  m_sawB = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 40, 80, 40));
+
 
   for (int _w = 0; _w < 3; ++_w) { // Walls
     m_UOuterWall[_w] = getSprite(_w + 0, 6, 2, 2);
@@ -191,6 +190,62 @@ void initSprite() {
 }
 
 void deinitSprite() {
+
+  for (int _i = 1; _i < 4; ++_i) {
+    gbitmap_destroy(m_outerCorner[_i]);
+    gbitmap_destroy(m_innerCorner[_i]);
+    gbitmap_destroy(m_innerWall[_i]);
+    gbitmap_destroy(m_torchWall[_i]);
+
+    if (_i >= 3) continue;
+    gbitmap_destroy(m_UOuterWall[_i]);
+    gbitmap_destroy(m_DOuterWall[_i]);
+    gbitmap_destroy(m_LOuterWall[_i]);
+    gbitmap_destroy(m_ROuterWall[_i]);
+
+    gbitmap_destroy(m_tapestrySprite[_i]);
+    gbitmap_destroy(m_blockWall[_i]);
+    gbitmap_destroy(m_bridge[_i]);
+    gbitmap_destroy(m_flagstone[_i]);
+    gbitmap_destroy(m_treasure[_i]);
+
+    if (_i >= 2) continue;
+    gbitmap_destroy(m_fire[_i]);
+
+    gbitmap_destroy(m_halfUpperWall[_i]);
+    gbitmap_destroy(m_halfLowerWall[_i]);
+  }
+
+  for (int _i = 1; _i < MAX_FLOOR; ++_i) {
+    gbitmap_destroy(m_floorA[_i]);
+    gbitmap_destroy(m_floorB[_i]);
+    gbitmap_destroy(m_floorC[_i]);
+  }
+
+  for (int _i = 1; _i < MAX_GREEK; ++_i) gbitmap_destroy(m_greek[_i]);
+  for (int _i = 1; _i < MAX_CLUTTER; ++_i) gbitmap_destroy(m_clutterSprite[_i]);
+  for (int _i = 1; _i < MAX_FRAMES; ++_i) gbitmap_destroy(m_playerSprite[_i]);
+  for (int _i = 1; _i < MAX_SYMBOL; ++_i) gbitmap_destroy(m_symbol[_i]);
+
+  gbitmap_destroy(m_sawA);
+  gbitmap_destroy(m_sawB);
+
+  gbitmap_destroy(m_LOpenDoor);
+  gbitmap_destroy(m_ROpenDoor);
+  gbitmap_destroy(m_RShutDoor);
+  gbitmap_destroy(m_LDoorstep);
+  gbitmap_destroy(m_RDoorstep);
+  gbitmap_destroy(m_stairs);
+  gbitmap_destroy(m_arrow);
+  gbitmap_destroy(m_shieldSprite);
+
+  gbitmap_destroy(m_guardian);
+  gbitmap_destroy(m_block);
+  gbitmap_destroy(m_chest);
+  gbitmap_destroy(m_table);
+  gbitmap_destroy(m_black);
+
+  // Actual bitmaps
   gbitmap_destroy(m_spriteMap);
   gbitmap_destroy(m_grave);
   gbitmap_destroy(m_treasureBanner);

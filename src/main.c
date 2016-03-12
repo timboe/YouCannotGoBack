@@ -4,6 +4,13 @@
 
 static Window* s_gameWindow;
 
+void tapHandle(AccelAxisType _axis, int32_t _direction) {
+  static bool _backlight = false;
+  _backlight = !_backlight;
+  light_enable(_backlight);
+  vibes_long_pulse();
+}
+
 static void init(void) {
   initSprite();
 
@@ -15,15 +22,16 @@ static void init(void) {
     .unload = gameWindowUnload,
   });
 
+  accel_tap_service_subscribe(tapHandle);
 }
 
 static void deinit(void) {
   window_destroy(s_gameWindow);
   deinitSprite();
+  accel_tap_service_unsubscribe();
 }
 
 int main(void) {
-  light_enable(1);
   init();
   window_stack_push(s_gameWindow, true);
   app_event_loop();

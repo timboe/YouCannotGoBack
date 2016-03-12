@@ -7,11 +7,9 @@ void updateProcFinal(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
 
-
   for (int _i = 0; _i < 3; ++_i) {
     drawBitmap(_ctx, m_flagstone[_i], 5, 5 + (_i * 4));
   }
-
 
   renderFinalPit(_ctx);
 
@@ -32,7 +30,6 @@ void updateProcFinal(GContext* _ctx) {
   drawBitmap(_ctx, m_treasure[2], 14, 8);
   drawBitmap(_ctx, m_chest, 12, 9);
 
-
   renderPlayer(_ctx);
   renderWalls(_ctx, true, false, true, false);
 
@@ -44,12 +41,7 @@ void updateProcFinal(GContext* _ctx) {
   drawBitmapAbs(_ctx, m_fire[0], s_fire[1]);
   drawBitmapAbs(_ctx, m_fire[1], GPoint(s_fire[1].x + SIZE, s_fire[1].y - SIZE));
 
-  if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_ctx, m_arrow, 5, 4);
-    drawBitmap(_ctx, m_arrow, 5, 8);
-    drawBitmap(_ctx, m_arrow, 5, 12);
-  }
-
+  renderArrows(_ctx, 5, 4, 4);
 }
 
 bool tickFinal(bool _doInit) {

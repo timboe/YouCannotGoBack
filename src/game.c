@@ -69,7 +69,14 @@ bool newRoom() {
   ++m_dungeon.m_seed;
   s_gameState = kDoInit;
   s_playerChoice = 1;
-  APP_LOG(APP_LOG_LEVEL_WARNING,"ENTER %i", m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]);
+  #ifdef DEV
+  APP_LOG(APP_LOG_LEVEL_WARNING,"ENTER %i [Give:%i val:%i] [Need:%i val:%i] ",
+    m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ],
+    m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room ],
+    m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ],
+    m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room ],
+    m_dungeon.m_roomNeedHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ]);
+  #endif
   return false;
 }
 
@@ -81,7 +88,9 @@ void gameLoop(void* data) {
 
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
   bool requestRedraw = false;
-  if (s_frameCount == 0)  APP_LOG(APP_LOG_LEVEL_INFO,"f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
+  #ifdef DEV
+  //if (s_frameCount == 0)  APP_LOG(APP_LOG_LEVEL_INFO,"f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
+  #endif
 
   #ifdef DEBUG_MODE
   ++s_FPS;
@@ -118,10 +127,8 @@ void gameLoop(void* data) {
       case kEnd: requestRedraw = tickEnd(_doInit); break;
       default: break;
     } break;
-    default: APP_LOG(APP_LOG_LEVEL_INFO,"GS:%i ???",(int) s_gameState); break;
+    default: break;
   }
-
-  //APP_LOG(APP_LOG_LEVEL_INFO," RD? %i", (int) requestRedraw);
 
   if (requestRedraw == true) {
     layer_mark_dirty(s_dungeonLayer);
@@ -133,7 +140,6 @@ void gameLoop(void* data) {
 
 
 void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
-  //APP_LOG(APP_LOG_LEVEL_INFO,"   !!! R: %i", (int) s_gameState);
 
   s_renderQueued = false;
   if (getGameState() == kIdle || getGameState() == kDoInit) return;
@@ -170,6 +176,14 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
   if (s_gameState == kFadeIn) renderFade(_thisLayer, _ctx, true);
   else if (s_gameState == kFadeOut) renderFade(_thisLayer, _ctx, false);
 
+  // On round we need some masking borders
+  #ifdef PBL_ROUND
+  graphics_context_set_fill_color(_ctx, GColorBlack);
+  GRect _b = layer_get_bounds(_thisLayer);
+  graphics_fill_rect(_ctx, GRect(0,                        0, ROUND_OFFSET_X, _b.size.h), 0, GCornerNone);
+  graphics_fill_rect(_ctx, GRect(_b.size.w-ROUND_OFFSET_X, 0, ROUND_OFFSET_X, _b.size.h), 0, GCornerNone);
+  #endif
+
   // Draw FPS indicator (dbg only)
   #ifdef DEBUG_MODE
   static char FPSBuffer[16];
@@ -182,7 +196,6 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
 
 bool movePlayer() {
   if (s_frameCount % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
-  //APP_LOG(APP_LOG_LEVEL_INFO,"F:%i PF:%i",s_frameCount, m_player.m_playerFrame);
 
   if      (m_player.m_target.x > m_player.m_position.x) m_player.m_position.x += PLAYER_SPEED;
   if      (m_player.m_target.y > m_player.m_position.y) m_player.m_position.y += PLAYER_SPEED;

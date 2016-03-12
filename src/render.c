@@ -11,6 +11,14 @@ void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
+void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd) {
+  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
+    drawBitmap(_ctx, m_arrow, _x, _yStart);
+    drawBitmap(_ctx, m_arrow, _x, _yStart + _yAdd);
+    drawBitmap(_ctx, m_arrow, _x, _yStart + _yAdd + _yAdd);
+  }
+}
+
 void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert) {
   static char _hintText[3];
   snprintf(_hintText, 3, "%i", _value);
@@ -31,31 +39,6 @@ void renderClutter(GContext* _ctx) {
     } else {
       drawBitmap(_ctx, getClutter(false), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
     }
-  }
-  // Check shield
-  int _r = 4 + (rand()%6);
-  if (_hint == kShield) {
-    GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
-#ifdef PBL_ROUND
-  _p.x += ROUND_OFFSET_X;
-  _p.y += ROUND_OFFSET_Y;
-#endif
-    drawBitmap(_ctx, m_shieldSprite, _r, 0);
-    graphics_context_set_fill_color(_ctx, getShieldColor(getShieldA(_hintValue)));
-    graphics_fill_circle(_ctx, _p, 3);
-    graphics_context_set_fill_color(_ctx, getShieldColor(getShieldC(_hintValue)));
-    _p.x += SIZE*2;
-    graphics_fill_circle(_ctx, _p, 3);
-    graphics_context_set_fill_color(_ctx, getShieldColor(getShieldB(_hintValue)));
-    _p.x -= SIZE;
-    graphics_fill_circle(_ctx, _p, 3);
-  } else if (_hint == kSpell) {
-    drawBitmap(_ctx, m_tapestrySprite[0], _r, 0);
-    for (int _i=1; _i<5; ++_i) drawBitmap(_ctx, m_tapestrySprite[1], _r+_i, 0);
-    drawBitmap(_ctx, m_tapestrySprite[2], _r+5, 0);
-    renderBorderText(_ctx, GRect(_r * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
-  } else if (_hint == kSymbol) {
-    drawBitmap(_ctx, m_symbol[_hintValue], _r, 18);
   }
 }
 
@@ -232,6 +215,35 @@ void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
   }
 }
 
+void renderWallClutter(GContext* _ctx) {
+    Hints_t _hint = m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room];
+    int _hintValue = m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room];
+    int _r = 4 + (rand()%6);
+    if (_hint == kShield) {   // Check shield
+      GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
+  #ifdef PBL_ROUND
+    _p.x += ROUND_OFFSET_X;
+    _p.y += ROUND_OFFSET_Y;
+  #endif
+      drawBitmap(_ctx, m_shieldSprite, _r, 0);
+      graphics_context_set_fill_color(_ctx, getShieldColor(getShieldA(_hintValue)));
+      graphics_fill_circle(_ctx, _p, 3);
+      graphics_context_set_fill_color(_ctx, getShieldColor(getShieldC(_hintValue)));
+      _p.x += SIZE*2;
+      graphics_fill_circle(_ctx, _p, 3);
+      graphics_context_set_fill_color(_ctx, getShieldColor(getShieldB(_hintValue)));
+      _p.x -= SIZE;
+      graphics_fill_circle(_ctx, _p, 3);
+    } else if (_hint == kSpell) { // Check spell
+      drawBitmap(_ctx, m_tapestrySprite[0], _r, 0);
+      for (int _i=1; _i<5; ++_i) drawBitmap(_ctx, m_tapestrySprite[1], _r+_i, 0);
+      drawBitmap(_ctx, m_tapestrySprite[2], _r+5, 0);
+      renderBorderText(_ctx, GRect(_r * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
+    } else if (_hint == kSymbol) { // Check symbol
+      drawBitmap(_ctx, m_symbol[_hintValue], _r, 18);
+    }
+}
+
 void renderSawFloor(GContext* _ctx, int8_t _offset) {
   for (int _x = 0; _x < 20; _x += 2) {
     for (int _y = 6; _y < 12; _y += 2) {
@@ -346,8 +358,8 @@ void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer,
   graphics_context_set_text_color(_ctx, GColorBlack);
   if (_invert == true) graphics_context_set_text_color(_ctx, GColorWhite);
 #ifdef PBL_ROUND
-  _loc.origin.x += 18;
-  _loc.origin.y += 10;
+  _loc.origin.x += ROUND_OFFSET_X;
+  _loc.origin.y += ROUND_OFFSET_Y;
 #endif
 
   _loc.origin.y += _offset; // CU
@@ -375,15 +387,15 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   static int s_progress = 1;
   GRect _b = layer_get_bounds(_thisLayer);
   GBitmap* _fBuffer = graphics_capture_frame_buffer(_ctx);
-  uint8_t* _bitmapData =  gbitmap_get_data(_fBuffer);
-  int _bytesPerRow = gbitmap_get_bytes_per_row(_fBuffer);
   int _flag = (_in == true ? s_progress : FADE_LEVELS - s_progress );
-  //APP_LOG(APP_LOG_LEVEL_INFO,"      !!! F: %i", (int) _flag);
+  // Have to do a funny iterating for round screens
   for (int _y = 0; _y < _b.size.h; ++_y) {
-    for (int _x = 0; _x < _b.size.w; ++_x) {
-      if (rand() % _flag == 0) _bitmapData[_y * _bytesPerRow + _x] = GColorBlack.argb;
+    GBitmapDataRowInfo _rowInfo = gbitmap_get_data_row_info(_fBuffer, _y);
+    for (int _x = _rowInfo.min_x; _x < _rowInfo.max_x; ++_x) {
+      uint8_t* _pixelAddr = _rowInfo.data + _x;
+      if (rand() % _flag == 0) (*_pixelAddr) = GColorBlack.argb;
      }
-   }
+  }
   graphics_release_frame_buffer(_ctx, _fBuffer);
   if (++s_progress == FADE_LEVELS) {
     s_progress = 1;

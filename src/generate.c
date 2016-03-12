@@ -33,8 +33,7 @@ Hints_t getHint(int _level, Rooms_t _roomType) {
   // Else choose a hint
   Hints_t _hint = kNoHint;
   while (_hint == kNoHint) {
-    // +1 avoids the kNoHint
-    Hints_t _random = 1 + (rand() % kNHintTypes);
+    Hints_t _random = rand() % kNHintTypes;
     if ( m_hintIsActive[_random] == false ) _hint = _random;
   }
 
@@ -44,11 +43,12 @@ Hints_t getHint(int _level, Rooms_t _roomType) {
 
 Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem) {
 
+  int _spin = 0;
   while (true) {
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      //_newRoom = kSaw; // TESTING
+      //_newRoom = kMaze; // TESTING
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor
@@ -59,10 +59,10 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     }
 
     bool _veto = false;
-    for (int _c = 1; _c <= MIN_ROOM_SEP; ++_c) {     // cycle rooms
+    for (int _c = 1; _c <= m_dungeon.m_roomsPerLevel[_level]; ++_c) {     // cycle rooms
       if (_room >= _c && m_dungeon.m_rooms[_level][_room - _c] == _newRoom) _veto = true;
     }
-    if (_veto == true) continue;
+    if (_veto == true && ++_spin < 100) continue; // The "spin" var prevents us from having zero available rooms
 
     // Check if needs hint
     bool _needsHint = false;
@@ -83,22 +83,20 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
 
 void generate() {
 
+  memset(&m_dungeon, 0, sizeof(Dungeon_t));
   m_dungeon.m_seed = time(NULL);
   srand(m_dungeon.m_seed);
-  m_dungeon.m_fallingDeath = false;
-  m_dungeon.m_gameOver = false;
   m_dungeon.m_finalPuzzle = rand() % 3;
-  m_dungeon.m_totalRooms = 0;
-  m_dungeon.m_roomsVisited = 0;
   m_hintsInPlay = 0;
   for (int _i = 0; _i < kNHintTypes; ++_i) {
     m_hintIsActive[_i] = 0;
   }
-  m_dungeon.m_level = 0;
   m_dungeon.m_room = -1; // Will be incremented on kNewLevel
   m_dungeon.m_lives = 1;
 
-  APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, sz info:%i dn:%i", m_dungeon.m_finalPuzzle, sizeof(m_roomDescriptor) * kNRoomTypes, sizeof(m_dungeon) );
+  #ifdef DEV
+  APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
+  #endif
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
     int8_t _roomsInLevel = MIN_ROOMS + _level + (rand() % (MAX_ROOMS - MIN_ROOMS - _level));
@@ -111,7 +109,10 @@ void generate() {
       bool _consumeItem = false;
       Rooms_t _roomType = getRoom(_level, _room, &_consumeHint, &_consumeItem);
       m_dungeon.m_rooms[_level][_room] = _roomType;
+
+      #ifdef DEV
       APP_LOG(APP_LOG_LEVEL_INFO,"[%i][%i] = t:%i", _level, _room, (int)_roomType);
+      #endif
 
       // Can we add a hint to this room?
       Hints_t _addHint = getHint(_level, _roomType);
@@ -122,14 +123,18 @@ void generate() {
 
         m_dungeon.m_roomGiveHint[_level][_room] = _addHint;
         m_dungeon.m_roomGiveHintValue[_level][_room] = m_hintValue[_addHint];
+        #ifdef DEV
         APP_LOG(APP_LOG_LEVEL_INFO,"      >> A t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
+        #endif
       }
 
       // Are we consuming a hint?
       if (_consumeHint != kNoHint) {
         m_dungeon.m_roomNeedHint[_level][_room] = _consumeHint;
         m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[_consumeHint];
+        #ifdef DEV
         APP_LOG(APP_LOG_LEVEL_INFO,"      << C t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
+        #endif
 
         --m_hintsInPlay;
         m_hintIsActive[_consumeHint] = 0;

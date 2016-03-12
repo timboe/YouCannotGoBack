@@ -19,8 +19,10 @@ void updateProcBridge(GContext* _ctx) {
     }
   }
 
+  renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);
+  renderWallClutter(_ctx);
 
   for (int _s = 0; _s < 3; ++_s) {
     Hints_t _hint = m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room];
@@ -37,14 +39,7 @@ void updateProcBridge(GContext* _ctx) {
     }
   }
 
-  renderClutter(_ctx);
-
-  if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_ctx, m_arrow, 8, 4);
-    drawBitmap(_ctx, m_arrow, 8, 8);
-    drawBitmap(_ctx, m_arrow, 8, 12);
-  }
-
+  renderArrows(_ctx, 8, 4, 4);
 }
 
 bool tickBridge(bool _doInit) {
@@ -89,9 +84,7 @@ bool tickBridge(bool _doInit) {
    vibes_long_pulse();
    s_state = 6;
  } else if (s_state == 5) {
-   m_player.m_target.x = SIZE*16;
-   setGameState(kMovePlayer);
-   s_state = 6;
+   moveToExit(&s_state);
  } else if (s_state == 6) {
    setGameState(kFadeOut);
  }

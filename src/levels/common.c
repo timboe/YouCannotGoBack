@@ -1,6 +1,15 @@
 #include "common.h"
 #include "../render.h"
 
+void moveToExit(uint16_t* _state) {
+  switch (getPlayerChoice()) {
+    case 0: m_player.m_target = GPoint(SIZE*17, SIZE*5); break;
+    case 1: m_player.m_target = GPoint(SIZE*17, SIZE*9); break;
+    case 2: m_player.m_target = GPoint(SIZE*17, SIZE*13); break;
+  }
+  setGameState(kMovePlayer);
+  ++(*_state);
+}
 
 void addCluter(int _xMax, int _yUp, int _yDn) {
   // Min clutter, if we are leaving a hint then we need at least 1
@@ -15,7 +24,7 @@ void addCluter(int _xMax, int _yUp, int _yDn) {
 #define N_X 5
 #define N_Y 4
   static const int8_t _xCoords[] = {3, 5, 8, 10, 13};
-  static const int8_t _yCoords[] = {2, 6, 11, 15};
+  static const int8_t _yCoords[] = {2, 6, 12, 16};
 
   for (int _c = 0; _c < _nClutter; ++_c) {
     int _abort = 0;
@@ -43,6 +52,9 @@ void enterRoom(uint16_t* _state) {
 }
 
 void shuffler(int8_t* _choices, int _offset, int _rand) {
+  #ifdef DEV
+  APP_LOG(APP_LOG_LEVEL_INFO,"Shuffler %i %i %i", _choices[0], _choices[1], _choices[2]);
+  #endif
   for (int _c = 0; _c < 3; ++_c) {
     int _c1 = _c + 1, _c2 = _c + 2;
     if (_c1 >= 3) _c1 -= 3;
@@ -54,7 +66,6 @@ void shuffler(int8_t* _choices, int _offset, int _rand) {
 }
 
 uint16_t randomiseChoices(int8_t* _choices, int _stage) {
-  APP_LOG(APP_LOG_LEVEL_INFO,"   [In RandChoice] stage:%i", _stage);
   // Have an array size 3, first choose correct location
 
   for (int _i = 0; _i < 3; ++_i) _choices[ _i ] = -1;
@@ -82,10 +93,11 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
   switch (*_state) {
     case 5: case 6: _targetX = 6; _step = 0; break;
     case 7: case 8: _targetX = 10; _step = 1; break;
-    case 9: default: _targetX = 14; _step = 2; break;
+    case 9: case 10: _targetX = 14; _step = 2; break;
+    case 11: default: _targetX = 17; _step = 2; break;
   }
 
-  if ((*_state) == 11) {
+  if ((*_state) == 13) {
     setGameState(kFadeOut);
   } else if ((*_state) % 2 == 1) { // ODD state
 
@@ -97,13 +109,13 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
    setGameState(kMovePlayer);
    ++(*_state);
 
- } else {
+ } else { // EVEN
 
    if (getPlayerChoice() != _correct[_step]) {
      m_dungeon.m_gameOver = 1;
      setGameState(kFadeOut);
      vibes_long_pulse();
-   } else {
+   } else if ((*_state) < 10) {
      setGameState(kAwaitInput);
    }
    ++(*_state); // On 6, draw first fires
@@ -127,12 +139,8 @@ void renderStonesCommon(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, in
     }
   }
 
-  if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-    int _off = 0;
-    if (_state == 7) _off = 4;
-    else if (_state == 9) _off = 8;
-    drawBitmap(_ctx, m_arrow, 6 + _off, 3);
-    drawBitmap(_ctx, m_arrow, 6 + _off, 7);
-    drawBitmap(_ctx, m_arrow, 6 + _off, 11);
-  }
+  int _off = 0;
+  if (_state == 7) _off = 4;
+  else if (_state == 9) _off = 8;
+  renderArrows(_ctx, 6 + _off, 3, 4);
 }

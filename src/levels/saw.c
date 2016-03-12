@@ -2,7 +2,7 @@
 
 static uint16_t s_state = 0; // game state
 static int8_t s_offset = 0; // moving backdrop
-static int8_t s_rotation = 0; // rotate status
+//static int8_t s_rotation = 0; // rotate status
 static int8_t s_type = 0; // which blades
 static int16_t s_position = 0; //y axis
 static int8_t s_count = 0; // how many blades dodged
@@ -13,27 +13,15 @@ void updateProcSaw(GContext* _ctx) {
   renderSawFloor(_ctx, s_offset);
   renderPlayer(_ctx);
   if (s_type == 1) {
-     drawBitmapAbs(_ctx, m_sawB[s_rotation], GPoint(s_position, 5*SIZE));
+     drawBitmapAbs(_ctx, m_sawB, GPoint(s_position, 5*SIZE));
   } else if (s_type == 3) {
-     drawBitmapAbs(_ctx, m_sawA[s_rotation], GPoint(s_position, 8*SIZE));
+     drawBitmapAbs(_ctx, m_sawA, GPoint(s_position, 8*SIZE));
   } else if (s_type == 2) {
-     drawBitmapAbs(_ctx, m_sawB[s_rotation], GPoint(s_position, 3*SIZE));
-     drawBitmapAbs(_ctx, m_sawA[s_rotation], GPoint(s_position, 10*SIZE));
+     drawBitmapAbs(_ctx, m_sawB, GPoint(s_position, 3*SIZE));
+     drawBitmapAbs(_ctx, m_sawA, GPoint(s_position, 10*SIZE));
   }
   renderSawWalls(_ctx, s_offset);
-
-#ifdef PBL_ROUND
-  graphics_context_set_fill_color(_ctx, GColorBlack);
-  graphics_fill_rect(_ctx, GRect(0,      0,18,180), 0, GCornerNone);
-  graphics_fill_rect(_ctx, GRect(180-18, 0,18,180), 0, GCornerNone);
-#endif
-
-  if (getGameState() == kLevelSpecificWButtons && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_ctx, m_arrow, 0, 5);
-    drawBitmap(_ctx, m_arrow, 0, 7);
-    drawBitmap(_ctx, m_arrow, 0, 9);
-  }
-
+  renderArrows(_ctx, 0, 5, 2);
 }
 
 bool tickSaw(bool _doInit) {
@@ -41,7 +29,7 @@ bool tickSaw(bool _doInit) {
     s_state = 0;
     m_player.m_position = GPoint(-2*SIZE, SIZE*8);
     s_offset = 0; // moving backdrop
-    s_rotation = 0; // rotate status
+    //s_rotation = 0; // rotate status
     s_type = 0; // which blades
     s_position = 0; //y axis
     s_count = 0;
@@ -54,7 +42,7 @@ bool tickSaw(bool _doInit) {
      ++s_state;
   } else if (s_state == 1) {
     setGameState(kLevelSpecificWButtons);
-    if (getFrameCount() % 2 == 0 && ++s_rotation == 2) s_rotation = 0;
+    //if (getFrameCount() % 2 == 0 && ++s_rotation == 2) s_rotation = 0;
     if (getFrameCount() % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
     if (++s_offset == 16) s_offset = 0;
 

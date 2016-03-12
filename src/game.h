@@ -2,12 +2,15 @@
 #include <pebble.h>
 
 //#define DEBUG_MODE
+//#define DEV
 
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
 
 #define ROUND_OFFSET_X 18
 #define ROUND_OFFSET_Y 10
+
+#define PERSIST_KEY_VICTORY 0
 
 typedef enum {
   kStart,
@@ -72,7 +75,7 @@ typedef enum {
 #define MAX_LEVELS 3
 #define MIN_ROOMS 5
 #define MAX_ROOMS 10
-#define MIN_ROOM_SEP 3
+#define MIN_ROOM_SEP 5
 typedef struct {
   int8_t m_level;
   int8_t m_room;

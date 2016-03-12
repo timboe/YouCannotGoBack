@@ -1,13 +1,13 @@
 #include "bridge.h"
 
-#define N_MAZES 4
+#define N_MAZES 5
 #define N_MAZE_STEP 30
 
 static uint16_t s_state = 0;
 static uint16_t s_maze = 0;
 static uint16_t s_path = 0;
 //static uint16_t s_correct = 0;
-static const uint16_t s_sollution[N_MAZES][3] = { {2,0,1}, {1,0,2}, {0,2,1}, {2,0,1} };
+static const uint16_t s_sollution[N_MAZES][3] = { {2,0,1}, {1,0,2}, {0,2,1}, {2,0,1}, {2,1,0} };
 
 typedef struct {
   uint8_t m_path2[N_MAZE_STEP];
@@ -27,7 +27,10 @@ static const Maze_t s_mazes[N_MAZES] = {
   [2].m_path2 = {5,16, 6,16, 6,14, 8,14, 8,6, 12,6, 12,5, 8,5, 8,3, 14,3, 14,10, 15,10},
   [3].m_path0 = {5,4, 6,4, 10,8, 6,12, 12,18, 14,16, 14,14, 15,14},
   [3].m_path1 = {5,10, 6,10, 9,13, 10,12, 13,15, 10,18, 6,14, 14,6, 15,6},
-  [3].m_path2 = {5,16, 6,16, 7,17, 12,12, 6,6, 10,2, 13,5, 11,7, 14,10, 15,10}
+  [3].m_path2 = {5,16, 6,16, 7,17, 12,12, 6,6, 10,2, 13,5, 11,7, 14,10, 15,10},
+  [4].m_path0 = {5,4, 6,4, 12,10, 14,8, 12,6, 6,12, 9,15, 8,16, 6,14, 9,11, 12,14, 15,14},
+  [4].m_path1 = {5,10, 6,10, 11,15, 10,16, 11,17, 12,16, 13,17, 14,16, 13,15, 15,13, 13,11, 14,10, 15,10},
+  [4].m_path2 = {5,16, 6,16, 11,11, 6,6, 9,3, 11,5, 10,6, 12,8, 14,6, 15,6}
 };
 
 void drawLine(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
@@ -59,16 +62,11 @@ void updateProcMaze(GContext* _ctx) {
     drawLine(_ctx, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3]);
   }
 
+  renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);
-  renderClutter(_ctx);
-
-  if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_ctx, m_arrow, 15, 4);
-    drawBitmap(_ctx, m_arrow, 15, 8);
-    drawBitmap(_ctx, m_arrow, 15, 12);
-  }
-
+  renderWallClutter(_ctx);
+  renderArrows(_ctx, 15, 4, 4);
 }
 
 bool tickMaze(bool _doInit) {
@@ -98,14 +96,11 @@ bool tickMaze(bool _doInit) {
    if (getPlayerChoice() != s_sollution[s_maze][s_path]) { //Wrong solution!
      if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
      else m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room + 1 ] = kDeath;
+     #ifdef DEV
+     APP_LOG(APP_LOG_LEVEL_INFO,"WRONG");
+     #endif
    }
-   switch (getPlayerChoice()) {
-     case 0: m_player.m_target = GPoint(SIZE*16, SIZE*5); break;
-     case 1: m_player.m_target = GPoint(SIZE*16, SIZE*9); break;
-     case 2: m_player.m_target = GPoint(SIZE*16, SIZE*13); break;
-   }
-   setGameState(kMovePlayer);
-   ++s_state;
+   moveToExit(&s_state);
  } else if (s_state == 4) {
    setGameState(kFadeOut);
  }

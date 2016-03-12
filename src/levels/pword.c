@@ -7,7 +7,7 @@ static uint16_t s_correct = 0;
 void updateProcPword(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
-
+  renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, false, true, false);
 
@@ -18,8 +18,7 @@ void updateProcPword(GContext* _ctx) {
     for (int _i = 2; _i < 18; _i += 2) drawBitmap(_ctx, m_blockWall[1], 9, _i);
     drawBitmap(_ctx, m_blockWall[2], 9, 18);
   }
-
-  renderClutter(_ctx);
+  renderWallClutter(_ctx);
 
   if (s_state == 5) {
     for (int _i = 0; _i < 3; ++_i) {
@@ -31,11 +30,7 @@ void updateProcPword(GContext* _ctx) {
         renderBorderText(_ctx, _r, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[_i]], 2, GTextAlignmentCenter, false);
       }
     }
-    if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-      drawBitmap(_ctx, m_arrow, 12, 3);
-      drawBitmap(_ctx, m_arrow, 12, 7);
-      drawBitmap(_ctx, m_arrow, 12, 11);
-    }
+    renderArrows(_ctx, 12, 3, 4);
   }
 
 }

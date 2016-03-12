@@ -3,19 +3,12 @@
 static uint16_t s_state = 0;
 
 void updateProcEmpty(GContext* _ctx) {
-
   renderFloor(_ctx, 0);
-
+  renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);
-  renderClutter(_ctx);
-
-  if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_ctx, m_arrow, 15, 4);
-    drawBitmap(_ctx, m_arrow, 15, 8);
-    drawBitmap(_ctx, m_arrow, 15, 12);
-  }
-
+  renderWallClutter(_ctx);
+  renderArrows(_ctx, 15, 4, 4);
 }
 
 bool tickEmpty(bool _doInit) {
@@ -32,13 +25,7 @@ bool tickEmpty(bool _doInit) {
     setGameState(kAwaitInput);
     ++s_state;
   } else if (s_state == 2) {
-    switch (getPlayerChoice()) {
-      case 0: m_player.m_target = GPoint(SIZE*16, SIZE*5); break;
-      case 1: m_player.m_target = GPoint(SIZE*16, SIZE*9); break;
-      case 2: m_player.m_target = GPoint(SIZE*16, SIZE*13); break;
-    }
-    setGameState(kMovePlayer);
-    ++s_state;
+    moveToExit(&s_state);
   } else if (s_state == 3) {
     setGameState(kFadeOut);
   }

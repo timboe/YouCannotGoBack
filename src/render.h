@@ -8,6 +8,7 @@ void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p);
 
 void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert);
 void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC);
+void renderWallClutter(GContext* _ctx);
 void renderFloor(GContext* _ctx, int mode);
 void renderPlayer(GContext* _ctx);
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in);
@@ -24,5 +25,6 @@ void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c);
 void renderProgressBar(Layer* _thisLayer, GContext* _ctx);
 void renderSawFloor(GContext* _ctx, int8_t _offset);
 void renderSawWalls(GContext* _ctx, int8_t _offset);
+void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd);
 
 GColor getShieldColor(int8_t _value);

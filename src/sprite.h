@@ -30,8 +30,8 @@ extern GBitmap* m_torchWall[4];
 
 extern GBitmap* m_stairs;
 extern GBitmap* m_saw;
-extern GBitmap* m_sawB[2];
-extern GBitmap* m_sawA[2];
+extern GBitmap* m_sawB;
+extern GBitmap* m_sawA;
 
 
 extern GBitmap* m_arrow;

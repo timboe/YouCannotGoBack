@@ -12,16 +12,11 @@ void updateProcChest(GContext* _ctx) {
     drawBitmap(_ctx, m_chest, 8, 4 + (_i * 4));
   }
 
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, false, true, false);
   renderClutter(_ctx);
-
-  if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_ctx, m_arrow, 8, 2);
-    drawBitmap(_ctx, m_arrow, 8, 6);
-    drawBitmap(_ctx, m_arrow, 8, 10);
-  }
-
+  renderPlayer(_ctx);
+  renderWalls(_ctx, true, true, true, true);
+  renderWallClutter(_ctx);
+  renderArrows(_ctx, 8, 2, 4);
 }
 
 bool tickChest(bool _doInit) {
@@ -63,10 +58,10 @@ bool tickChest(bool _doInit) {
       if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
     } else if ( _hint == kSpell) {
       setDisplayMsg(_goodC);
-      snprintf(_goodD, 16, "REMEMBER, %s", m_spellNames[ m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room] ]);
+      snprintf(_goodD, 16, "REMEMBER %s", m_spellNames[ m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room] ]);
     } else if (_hint == kNumber) {
       setDisplayMsg(_goodC);
-      snprintf(_goodD, 16, "REMEMBER, %i", m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room]);
+      snprintf(_goodD, 16, "REMEMBER %i", m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room]);
     } else {
       setDisplayMsg(_goodA);
       ++m_dungeon.m_lives;
@@ -80,9 +75,7 @@ bool tickChest(bool _doInit) {
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 5) {
-    m_player.m_target = GPoint(SIZE*16, SIZE*9);
-    setGameState(kMovePlayer);
-    ++s_state;
+    moveToExit(&s_state);
   } else if (s_state == 6) {
     setGameState(kFadeOut);
   }
