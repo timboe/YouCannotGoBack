@@ -73,6 +73,7 @@ bool tickSaw(bool _doInit) {
     }
   } else if (s_state == 2) {
     m_dungeon.m_gameOver = 1;
+    vibes_long_pulse();
     setGameState(kFadeOut);
   }
 

@@ -89,7 +89,7 @@ void gameLoop(void* data) {
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
   bool requestRedraw = false;
   #ifdef DEV
-  //if (s_frameCount == 0)  APP_LOG(APP_LOG_LEVEL_INFO,"f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
+  if (s_frameCount == 0)  APP_LOG(APP_LOG_LEVEL_INFO,"f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
   #endif
 
   #ifdef DEBUG_MODE
