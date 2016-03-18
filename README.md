@@ -1,6 +1,6 @@
 # You Cannot Go Back!
 
-Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon exploration game for Pebble Time and Round watches written in C.
+Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon exploration [game for Pebble Time and Round watches](https://apps.getpebble.com/en_US/application/56e4693181ff036ba9000020) written in C.
 
 ![Marketing](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/you-cannot-go-back-marketing.png?raw=true)
 
