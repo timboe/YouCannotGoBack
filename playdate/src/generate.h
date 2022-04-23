@@ -1,5 +1,4 @@
 #pragma once
-#include <pebble.h>
 #include "game.h"
 
 typedef struct {
@@ -12,4 +11,4 @@ typedef struct {
 
 #define HINT_CHANCE 65
 
-void generate();
+void generate(PlaydateAPI* pd);

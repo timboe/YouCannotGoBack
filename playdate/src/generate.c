@@ -1,3 +1,5 @@
+#include <time.h>
+
 #include "game.h"
 #include "generate.h"
 
@@ -81,7 +83,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
   }
 }
 
-void generate() {
+void generate(PlaydateAPI* _pd) {
 
   memset(&m_dungeon, 0, sizeof(Dungeon_t));
   m_dungeon.m_seed = time(NULL);
@@ -95,14 +97,14 @@ void generate() {
   m_dungeon.m_lives = 1;
 
   #ifdef DEV
-  APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
+  _pd->system->logToConsole("win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
   #endif
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
     int8_t _roomsInLevel = MIN_ROOMS + _level + (rand() % (MAX_ROOMS - MIN_ROOMS - _level));
     m_dungeon.m_totalRooms += _roomsInLevel;
     m_dungeon.m_roomsPerLevel[_level] = _roomsInLevel;
-    APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, _roomsInLevel);
+    _pd->system->logToConsole(" -- L%i R%i", _level, _roomsInLevel);
     for (int _room = 0; _room < _roomsInLevel; ++_room) {
 
       Hints_t _consumeHint = kNoHint;
@@ -111,7 +113,7 @@ void generate() {
       m_dungeon.m_rooms[_level][_room] = _roomType;
 
       #ifdef DEV
-      APP_LOG(APP_LOG_LEVEL_INFO,"[%i][%i] = t:%i", _level, _room, (int)_roomType);
+      pd->system->logToConsole("[%i][%i] = t:%i", _level, _room, (int)_roomType);
       #endif
 
       // Can we add a hint to this room?
@@ -124,7 +126,7 @@ void generate() {
         m_dungeon.m_roomGiveHint[_level][_room] = _addHint;
         m_dungeon.m_roomGiveHintValue[_level][_room] = m_hintValue[_addHint];
         #ifdef DEV
-        APP_LOG(APP_LOG_LEVEL_INFO,"      >> A t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
+        pd->system->logToConsole("      >> A t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
         #endif
       }
 
@@ -133,7 +135,7 @@ void generate() {
         m_dungeon.m_roomNeedHint[_level][_room] = _consumeHint;
         m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[_consumeHint];
         #ifdef DEV
-        APP_LOG(APP_LOG_LEVEL_INFO,"      << C t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
+        pd->system->logToConsole("      << C t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
         #endif
 
         --m_hintsInPlay;

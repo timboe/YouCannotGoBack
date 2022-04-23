@@ -7,18 +7,19 @@ static int8_t s_coloursA[3] = {0};
 static int8_t s_coloursB[3] = {0};
 static int8_t s_coloursC[3] = {0};
 
-void updateProcStones(GContext* _ctx) {
-  renderStonesCommon(_ctx, s_coloursA, s_coloursB, s_coloursC, s_correct, s_fire, s_state);
+void updateProcStones(PlaydateAPI* _pd) {
+  renderStonesCommon(_pd, s_coloursA, s_coloursB, s_coloursC, s_correct, s_fire, s_state);
 }
 
-bool tickStones(bool _doInit) {
+bool tickStones(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position = GPoint(0, SIZE*9);
+    m_player.m_position_x = 0;
+    m_player.m_position_y = SIZE*9;
     s_fire = -1;
-    s_correct[0] = randomiseChoices(s_coloursA, 0);
-    s_correct[1] = randomiseChoices(s_coloursB, 1);
-    s_correct[2] = randomiseChoices(s_coloursC, 2);
+    s_correct[0] = randomiseChoices(_pd, s_coloursA, 0);
+    s_correct[1] = randomiseChoices(_pd, s_coloursB, 1);
+    s_correct[2] = randomiseChoices(_pd, s_coloursC, 2);
     return false;
   }
 

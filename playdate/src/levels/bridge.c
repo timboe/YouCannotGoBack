@@ -5,49 +5,51 @@ static int8_t s_choices[3] = {0};
 static uint16_t s_correct = 0;
 static uint16_t s_breakPoint = 0;
 
-void updateProcBridge(GContext* _ctx) {
+void updateProcBridge(PlaydateAPI* _pd) {
 
-  renderFloor(_ctx, 1);
+  renderFloor(_pd, 1);
 
   for (int _i = 0; _i < 3; ++_i) {
-    drawBitmap(_ctx, m_bridge[0], 4,  5 + (_i * 4));
-    drawBitmap(_ctx, m_bridge[2], 13, 5 + (_i * 4));
+    drawBitmap(_pd, m_bridge[0], 4,  5 + (_i * 4));
+    drawBitmap(_pd, m_bridge[2], 13, 5 + (_i * 4));
 
     for (int _x = 5; _x < 13; ++_x) {
       if (s_state == 6 && _i != s_correct && _x > 6 && _x < s_breakPoint) continue;
-      drawBitmap(_ctx, m_bridge[1], _x, 5 + (_i * 4));
+      drawBitmap(_pd, m_bridge[1], _x, 5 + (_i * 4));
     }
   }
 
-  renderClutter(_ctx);
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, true, true, true);
-  renderWallClutter(_ctx);
+  renderClutter(_pd);
+  renderPlayer(_pd);
+  renderWalls(_pd, true, true, true, true);
+  renderWallClutter(_pd);
 
   for (int _s = 0; _s < 3; ++_s) {
     Hints_t _hint = m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room];
     if ( _hint == kNumber) {
-      GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);
-      renderFrame(_ctx, _b);
-      renderHintNumber(_ctx, GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s], true);
+      PDRect _b = {.x = 16*SIZE - 2, .y = (5 + (_s*4))*SIZE - 2, .width = 2*SIZE + 4, .height = 2*SIZE + 4};
+      renderFrame(_pd, _b);
+      PDRect _bHint = {.x = 16*SIZE - 1, .y = (5 + (_s*4))*SIZE - 1, .width = 16, .height = 16};
+      renderHintNumber(_pd, _bHint, s_choices[_s], true);
     } else if ( _hint == kSymbol ) {
-      drawBitmap(_ctx, m_symbol[ s_choices[_s] ], 16, 5 + (_s*4));
+      drawBitmap(_pd, m_symbol[ s_choices[_s] ], 16, 5 + (_s*4));
     } else if ( _hint == kGreek ) {
-      GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);
-      renderFrame(_ctx, _b);
-      drawBitmapAbs(_ctx, m_greek[ s_choices[_s] ], GPoint(16*SIZE + 4, (5 + (_s*4))*SIZE + 4));
+      PDRect _b = {.x = 16*SIZE - 2, .y = (5 + (_s*4))*SIZE - 2, .width = 2*SIZE + 4, .height = 2*SIZE + 4};
+      renderFrame(_pd, _b);
+      drawBitmapAbs(_pd, m_greek[ s_choices[_s] ], 16*SIZE + 4, (5 + (_s*4))*SIZE + 4);
     }
   }
 
-  renderArrows(_ctx, 8, 4, 4);
+  renderArrows(_pd, 8, 4, 4);
 }
 
-bool tickBridge(bool _doInit) {
+bool tickBridge(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position = GPoint(0, SIZE*9);
+    m_player.m_position_x = 0;
+    m_player.m_position_y = SIZE*9;
     addCluter(4, 0, 20);
-    s_correct = randomiseChoices(s_choices, 0);
+    s_correct = randomiseChoices(_pd, s_choices, 0);
     return false;
   }
 
@@ -57,15 +59,16 @@ bool tickBridge(bool _doInit) {
      setGameState(kAwaitInput);
      ++s_state;
   } else if (s_state == 2) { // Move to chosen bridge
+    m_player.m_target_x = SIZE*3;
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target = GPoint(SIZE*3, SIZE*5); break;
-      case 1: m_player.m_target = GPoint(SIZE*3, SIZE*9); break;
-      case 2: m_player.m_target = GPoint(SIZE*3, SIZE*13); break;
+      case 0: m_player.m_target_y = SIZE*5; break;
+      case 1: m_player.m_target_y = SIZE*9; break;
+      case 2: m_player.m_target_y = SIZE*13; break;
     }
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) { // move to center of bridge
-    m_player.m_target.x = SIZE*8;
+    m_player.m_target_x = SIZE*8;
     s_breakPoint = 11;
     if (getPlayerChoice() == s_correct) s_state = 5;
     else { // Wrong choice!
@@ -81,7 +84,7 @@ bool tickBridge(bool _doInit) {
   } else if (s_state == 4) { // LOOSE
    m_dungeon.m_gameOver = 1;
    m_dungeon.m_fallingDeath = true;
-   vibes_long_pulse();
+   //vibes_long_pulse();
    s_state = 6;
  } else if (s_state == 5) {
    moveToExit(&s_state);

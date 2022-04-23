@@ -33,46 +33,43 @@ static const Maze_t s_mazes[N_MAZES] = {
   [4].m_path2 = {5,16, 6,16, 11,11, 6,6, 9,3, 11,5, 10,6, 12,8, 14,6, 15,6}
 };
 
-void drawLine(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
+void drawLine(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2) {
   if (_x1 == 0 || _x2 == 0) return;
-  GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
-  GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
-#ifdef PBL_ROUND
-  _p1.x += ROUND_OFFSET_X;
-  _p1.y += ROUND_OFFSET_Y;
-  _p2.x += ROUND_OFFSET_X;
-  _p2.y += ROUND_OFFSET_Y;
-#endif
-  graphics_draw_line(_ctx, _p1, _p2);
+  //TODO
+  //GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
+  //GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
+  //graphics_draw_line(_pd, _p1, _p2);
 }
 
-void updateProcMaze(GContext* _ctx) {
+void updateProcMaze(PlaydateAPI* _pd) {
 
-  renderFloor(_ctx, 0);
+  renderFloor(_pd, 0);
 
-  graphics_context_set_stroke_width(_ctx, 2);
-  switch (m_dungeon.m_level) {
-    case 0: graphics_context_set_stroke_color(_ctx, GColorWhite); break;
-    case 1: graphics_context_set_stroke_color(_ctx, GColorBlack); break;
-    default: graphics_context_set_stroke_color(_ctx, GColorYellow); break;
-  }
+  // TODO
+  //graphics_context_set_stroke_width(_pd, 2);
+  //switch (m_dungeon.m_level) {
+  //  case 0: graphics_context_set_stroke_color(_pd, GColorWhite); break;
+  //  case 1: graphics_context_set_stroke_color(_pd, GColorBlack); break;
+  //  default: graphics_context_set_stroke_color(_pd, GColorYellow); break;
+  //}
   for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
-    drawLine(_ctx, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3]);
-    drawLine(_ctx, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3]);
-    drawLine(_ctx, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3]);
+    drawLine(_pd, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3]);
+    drawLine(_pd, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3]);
+    drawLine(_pd, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3]);
   }
 
-  renderClutter(_ctx);
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, true, true, true);
-  renderWallClutter(_ctx);
-  renderArrows(_ctx, 15, 4, 4);
+  renderClutter(_pd);
+  renderPlayer(_pd);
+  renderWalls(_pd, true, true, true, true);
+  renderWallClutter(_pd);
+  renderArrows(_pd, 15, 4, 4);
 }
 
-bool tickMaze(bool _doInit) {
+bool tickMaze(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position = GPoint(0, SIZE*9);
+    m_player.m_position_x = 0;
+    m_player.m_position_y = SIZE*9;
     addCluter(15, 20, 0);
     s_path = rand() % 3;
     s_maze = rand() % N_MAZES;
@@ -82,10 +79,11 @@ bool tickMaze(bool _doInit) {
  if (s_state == 0) { // start initial move
    enterRoom(&s_state);
  } else if (s_state == 1) { // initial move is done
+   m_player.m_target_x = SIZE*3;
    switch (s_path) {
-     case 0: m_player.m_target = GPoint(SIZE*3, SIZE*3); break;
-     case 1: m_player.m_target = GPoint(SIZE*3, SIZE*9); break;
-     case 2: m_player.m_target = GPoint(SIZE*3, SIZE*15); break;
+     case 0: m_player.m_target_y = SIZE*3; break;
+     case 1: m_player.m_target_y = SIZE*9; break;
+     case 2: m_player.m_target_y = SIZE*15; break;
    }
    setGameState(kMovePlayer);
    ++s_state;
@@ -97,7 +95,7 @@ bool tickMaze(bool _doInit) {
      if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
      else m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room + 1 ] = kDeath;
      #ifdef DEV
-     APP_LOG(APP_LOG_LEVEL_INFO,"WRONG");
+     _pd->system->logToConsole("WRONG");
      #endif
    }
    moveToExit(&s_state);

@@ -2,19 +2,20 @@
 
 static uint16_t s_state = 0;
 
-void updateProcEmpty(GContext* _ctx) {
-  renderFloor(_ctx, 0);
-  renderClutter(_ctx);
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, true, true, true);
-  renderWallClutter(_ctx);
-  renderArrows(_ctx, 15, 4, 4);
+void updateProcEmpty(PlaydateAPI* _pd) {
+  renderFloor(_pd, 0);
+  renderClutter(_pd);
+  renderPlayer(_pd);
+  renderWalls(_pd, true, true, true, true);
+  renderWallClutter(_pd);
+  renderArrows(_pd, 15, 4, 4);
 }
 
 bool tickEmpty(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position = GPoint(0, SIZE*9);
+    m_player.m_position_x = 0;
+    m_player.m_position_y = SIZE*9;
     addCluter(20, 20, 0);
     return false;
   }

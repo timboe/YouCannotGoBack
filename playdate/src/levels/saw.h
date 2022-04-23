@@ -1,8 +1,7 @@
 #pragma once
-#include <pebble.h>
 #include "../render.h"
 #include "../game.h"
 #include "common.h"
 
-void updateProcSaw(GContext* _ctx);
+void updateProcSaw(PlaydateAPI* _pd);
 bool tickSaw(bool _doInit);

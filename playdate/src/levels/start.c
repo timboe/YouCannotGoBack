@@ -2,38 +2,44 @@
 
 static uint16_t s_state = 0;
 
-void updateProcStart(GContext* _ctx) {
+void updateProcStart(PlaydateAPI* _pd) {
 
-  renderFloor(_ctx, 0);
+  renderFloor(_pd, 0);
 
   static const char* _a = "YOU";
   static const char* _b = "CANNOT";
   static const char* _c = "GO";
   static const char* _d = "BACK!";
 
-  renderBorderText(_ctx, GRect(45, 15, 80, 100),  fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _a, 2, GTextAlignmentCenter, false);
-  renderBorderText(_ctx, GRect(45, 45, 80, 100),  fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _b, 2, GTextAlignmentCenter, true);
-  renderBorderText(_ctx, GRect(45, 75, 80, 100),  fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _c, 2, GTextAlignmentCenter, false);
-  renderBorderText(_ctx, GRect(45, 105, 80, 100), fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _d, 2, GTextAlignmentCenter, true);
-  renderClutter(_ctx);
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, true, true, true);
-  renderWallClutter(_ctx);
+  PDRect _ra = {.x = 45, .y = 15, .width = 80, .height = 100};
+  PDRect _rb = {.x = 45, .y = 45, .width = 80, .height = 100};
+  PDRect _rc = {.x = 45, .y = 75, .width = 80, .height = 100};
+  PDRect _rd = {.x = 45, .y = 105, .width = 80, .height = 100};
 
-  drawBitmap(_ctx, m_flagstone[ m_dungeon.m_finalPuzzle ], 0, 9);
+  renderBorderText(_pd, _ra,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _a, 2, /*GTextAlignmentCenter,*/ false);
+  renderBorderText(_pd, _rb,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _b, 2, /*GTextAlignmentCenter,*/ true);
+  renderBorderText(_pd, _rc,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _c, 2, /*GTextAlignmentCenter,*/ false);
+  renderBorderText(_pd, _rd, /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _d, 2, /*GTextAlignmentCenter,*/ true);
+  renderClutter(_pd);
+  renderPlayer(_pd);
+  renderWalls(_pd, true, true, true, true);
+  renderWallClutter(_pd);
 
-  renderArrows(_ctx, 15, 4, 4);
+  drawBitmap(_pd, m_flagstone[ m_dungeon.m_finalPuzzle ], 0, 9);
+
+  renderArrows(_pd, 15, 4, 4);
 }
 
 bool tickStart(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position = GPoint(0, SIZE*9);
+    m_player.m_position_x = 0;
+    m_player.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
     return false;
   }
 
-  static bool _first = true;
+  static bool _first = true; // TODO remove this
   static const char _msgA[] = "SHAKE TO TURN...";
   static const char _msgB[] = "ON BACKLIGHT";
 

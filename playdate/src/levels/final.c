@@ -1,55 +1,59 @@
 #include "final.h"
 
 static uint16_t s_state = 0;
-static GPoint s_fire[2];
+static uint16_t s_fire_x[2];
+static uint16_t s_fire_y[2];
 
-void updateProcFinal(GContext* _ctx) {
+void updateProcFinal(PlaydateAPI* _pd) {
 
-  renderFloor(_ctx, 0);
+  renderFloor(_pd, 0);
 
   for (int _i = 0; _i < 3; ++_i) {
-    drawBitmap(_ctx, m_flagstone[_i], 5, 5 + (_i * 4));
+    drawBitmap(_pd, m_flagstone[_i], 5, 5 + (_i * 4));
   }
 
-  renderFinalPit(_ctx);
+  renderFinalPit(_pd);
 
   if (s_state > 5) {
-    drawBitmap(_ctx, m_innerCorner[3], 7, 6);
-    drawBitmap(_ctx, m_innerCorner[0], 7, 12);
-    drawBitmap(_ctx, m_innerWall[3], 9, 6);
-    drawBitmap(_ctx, m_innerWall[2], 9, 12);
-    drawBitmap(_ctx, getFloor(true), 7, 8);
-    drawBitmap(_ctx, getFloor(true), 7, 10);
-    drawBitmap(_ctx, getFloor(true), 9, 8);
-    drawBitmap(_ctx, getFloor(true), 9, 10);
+    drawBitmap(_pd, m_innerCorner[3], 7, 6);
+    drawBitmap(_pd, m_innerCorner[0], 7, 12);
+    drawBitmap(_pd, m_innerWall[3], 9, 6);
+    drawBitmap(_pd, m_innerWall[2], 9, 12);
+    drawBitmap(_pd, getFloor(true), 7, 8);
+    drawBitmap(_pd, getFloor(true), 7, 10);
+    drawBitmap(_pd, getFloor(true), 9, 8);
+    drawBitmap(_pd, getFloor(true), 9, 10);
   } else {
     for (int _i = 0; _i < 4; ++_i) rand(); // keep the wall the same
   }
 
-  drawBitmap(_ctx, m_treasure[0], 11, 7);
-  drawBitmap(_ctx, m_treasure[2], 14, 8);
-  drawBitmap(_ctx, m_chest, 12, 9);
+  drawBitmap(_pd, m_treasure[0], 11, 7);
+  drawBitmap(_pd, m_treasure[2], 14, 8);
+  drawBitmap(_pd, m_chest, 12, 9);
 
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, false, true, false);
+  renderPlayer(_pd);
+  renderWalls(_pd, true, false, true, false);
 
-  drawBitmap(_ctx, m_treasure[2], 11, 11);
-  drawBitmap(_ctx, m_treasure[1], 13, 10);
+  drawBitmap(_pd, m_treasure[2], 11, 11);
+  drawBitmap(_pd, m_treasure[1], 13, 10);
 
-  drawBitmapAbs(_ctx, m_fire[0], s_fire[0]);
-  drawBitmapAbs(_ctx, m_fire[1], GPoint(s_fire[0].x + SIZE, s_fire[0].y - SIZE));
-  drawBitmapAbs(_ctx, m_fire[0], s_fire[1]);
-  drawBitmapAbs(_ctx, m_fire[1], GPoint(s_fire[1].x + SIZE, s_fire[1].y - SIZE));
+  drawBitmapAbs(_pd, m_fire[0], s_fire_x[0], s_fire_y[0]);
+  drawBitmapAbs(_pd, m_fire[1], s_fire_x[0] + SIZE, s_fire_y[0] - SIZE);
+  drawBitmapAbs(_pd, m_fire[0], s_fire_x[1], s_fire_y[1]);
+  drawBitmapAbs(_pd, m_fire[1], s_fire_x[1] + SIZE, s_fire_y[1] - SIZE);
 
-  renderArrows(_ctx, 5, 4, 4);
+  renderArrows(_pd, 5, 4, 4);
 }
 
 bool tickFinal(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position = GPoint(0, SIZE*9);
-    s_fire[0] = GPoint(1*SIZE, 2*SIZE);
-    s_fire[1] = GPoint(1*SIZE, 16*SIZE);
+    m_player.m_position_x = 0;
+    m_player.m_position_y = SIZE*9;
+    s_fire_x[0] = 1*SIZE;
+    s_fire_y[0] = 2*SIZE;
+    s_fire_x[1] = 1*SIZE;
+    s_fire_y[1] = 16*SIZE;
     return false;
   }
 
@@ -62,16 +66,17 @@ bool tickFinal(bool _doInit) {
     setGameState(kAwaitInput);
     ++s_state;
   } else if (s_state == 2) {
+    m_player.m_target_x = SIZE*5;
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target = GPoint(SIZE*5, SIZE*5); break;
-      case 1: m_player.m_target = GPoint(SIZE*5, SIZE*9); break;
-      case 2: m_player.m_target = GPoint(SIZE*5, SIZE*13); break;
+      case 0: m_player.m_target_y = SIZE*5; break;
+      case 1: m_player.m_target_y = SIZE*9; break;
+      case 2: m_player.m_target_y = SIZE*13; break;
     }
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) {
     setDisplayMsg(_msgA);
-    vibes_double_pulse();
+    //vibes_double_pulse();
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 4) {
@@ -81,35 +86,36 @@ bool tickFinal(bool _doInit) {
     // LOOSE move fires
     for (int _f = 0; _f < 2; ++_f) {
       bool _move = false;
-      if (s_fire[_f].x < m_player.m_position.x - SIZE) {
-        ++s_fire[_f].x;
+      if (s_fire_x[_f] < m_player.m_position_x - SIZE) {
+        ++s_fire_x[_f];
         _move = true;
       }
-      if (s_fire[_f].y < m_player.m_position.y) {
-        ++s_fire[_f].y;
+      if (s_fire_y[_f] < m_player.m_position_y) {
+        ++s_fire_y[_f];
         _move = true;
-      } else if (s_fire[_f].y > m_player.m_position.y) {
-        --s_fire[_f].y;
+      } else if (s_fire_y[_f] > m_player.m_position_y) {
+        --s_fire_y[_f];
         _move = true;
       }
       if (_move == false) {
         m_dungeon.m_gameOver = 1;
-        vibes_long_pulse();
+        //vibes_long_pulse();
         setGameState(kFadeOut);
       }
     }
     return true; //redraw
   } else if (s_state == 6) {
-    m_player.m_target = GPoint(SIZE*12, SIZE*9);
+    m_player.m_target_x = SIZE*12;
+    m_player.m_target_y = SIZE*9;
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 7) {
     setDisplayMsg(_msgB);
     setGameState(kDisplayMsg);
-    vibes_long_pulse();
+    //vibes_long_pulse();
     ++s_state;
   } else if (s_state == 8) {
-    m_player.m_target.x = SIZE*15;
+    m_player.m_target_x = SIZE*15;
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 9) {

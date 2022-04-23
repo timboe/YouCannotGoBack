@@ -1,3 +1,5 @@
+#include <time.h>
+
 #include "game.h"
 #include "sprite.h"
 #include "generate.h"
@@ -17,6 +19,8 @@
 #include "levels/empty.h"
 #include "levels/saw.h"
 
+static PlaydateAPI* pd = NULL;
+
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
 Player_t m_player = {0};
@@ -24,14 +28,14 @@ static GameState_t s_gameState = kIdle;
 static int s_playerChoice = 0;
 static const char* s_displayMsg = NULL;
 Clutter_t m_clutter = {0};
-static bool s_renderQueued = false;
 
-static AppTimer* s_gameLoopTimer = NULL;
-static Layer* s_dungeonLayer;
+// static bool s_renderQueued = false; // no longer needed?
+
+//static Layer* s_dungeonLayer;
 bool movePlayer();
 
 #ifdef DEBUG_MODE
-static AppTimer* s_FPSTimer = NULL;
+//static AppTimer* s_FPSTimer = NULL;
 static int s_FPS = 0;
 static int s_lastSecondFPS = 0;
 void FPSTimer(void* data);
@@ -43,6 +47,9 @@ void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; }
 void setGameState(GameState_t _state) { s_gameState = _state; }
 int getPlayerChoice() { return s_playerChoice; }
 
+void setPDPtr(PlaydateAPI* p) { pd = p; }
+
+/*
 void gameClickConfigHandler(ClickRecognizerRef _recognizer, void* _context) {
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
   if (getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) {
@@ -53,6 +60,7 @@ void gameClickConfigHandler(ClickRecognizerRef _recognizer, void* _context) {
     setGameState(kLevelSpecific);
   }
 }
+*/
 
 bool newRoom() {
   if (m_dungeon.m_gameOver > 0) { // PLAYER HAS WON OR LOST
@@ -65,12 +73,15 @@ bool newRoom() {
   };
   ++m_dungeon.m_roomsVisited;
   m_clutter.m_nClutter = 0;
-  for (int _i = 0; _i < MAX_PLACE_CLUTTER; ++_i) m_clutter.m_position[_i] = GPoint(0,0);
+  for (int _i = 0; _i < MAX_PLACE_CLUTTER; ++_i) {
+    m_clutter.m_position_x[_i] = 0;
+    m_clutter.m_position_y[_i] = 0;
+  }
   ++m_dungeon.m_seed;
   s_gameState = kDoInit;
   s_playerChoice = 1;
   #ifdef DEV
-  APP_LOG(APP_LOG_LEVEL_WARNING,"ENTER %i [Give:%i val:%i] [Need:%i val:%i] ",
+  pd->system->logToConsole("ENTER %i [Give:%i val:%i] [Need:%i val:%i] ",
     m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ],
     m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room ],
     m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ],
@@ -80,16 +91,64 @@ bool newRoom() {
   return false;
 }
 
-void gameLoop(void* data) {
-  if (s_renderQueued == true) {
-    s_gameLoopTimer = app_timer_register(ANIM_DELAY, gameLoop, NULL);
-    return;
+void dungeonUpdateProc() {
+
+  //s_renderQueued = false;
+  if (getGameState() == kIdle || getGameState() == kDoInit) return;
+  srand(m_dungeon.m_seed);
+  //graphics_context_set_compositing_mode(_ctx, GCompOpSet);
+
+  switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
+    case kStart: updateProcStart(pd); break;
+    case kStairs: updateProcStairs(pd); break;
+    case kChest: updateProcChest(pd); break;
+    case kEmpty: updateProcEmpty(pd); break;
+    case kPword: updateProcPword(pd); break;
+    case kBridge: updateProcBridge(pd); break;
+    case kMaths: updateProcMaths(pd); break;
+    case kStones: updateProcStones(pd); break;
+    case kDark: updateProcDark(pd); break;
+    case kMaze: updateProcMaze(pd); break;
+    case kSaw: updateProcSaw(pd); break;
+    case kDeath: updateProcDeath(pd); break;
+    case kFinal: updateProcFinal(pd); break;
+    case kEnd: updateProcEnd(pd); break;
+    default: break;
   }
+
+  //Do msg
+  if (getGameState() == kDisplayMsg) {
+    renderMessage(pd, s_displayMsg);
+    setGameState(kDisplayingMsg);
+  }
+
+  if (m_dungeon.m_gameOver == 0) renderProgressBar(/*_thisLayer,*/ pd);
+
+  // Do fade
+  if (s_gameState == kFadeIn) renderFade(/*_thisLayer,*/ pd, true);
+  else if (s_gameState == kFadeOut) renderFade(/*_thisLayer,*/ pd, false);
+
+  // Draw FPS indicator (dbg only)
+  /*
+  #ifdef DEBUG_MODE
+  static char FPSBuffer[16];
+  snprintf(FPSBuffer, 16, "%i/%i %i L:%i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS, m_dungeon.m_lives);
+  GRect _fpsRect = GRect( 50, 155, 100, 15);
+  graphics_context_set_text_color(_ctx, GColorWhite);
+  graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+  #endif
+  */
+}
+
+int gameLoop(void* data) {
+  //if (s_renderQueued == true) {
+  //  return ;
+  //}
 
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
   bool requestRedraw = false;
   #ifdef DEV
-  if (s_frameCount == 0)  APP_LOG(APP_LOG_LEVEL_INFO,"f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
+  if (s_frameCount == 0) pd->system->logToConsole("f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
   #endif
 
   #ifdef DEBUG_MODE
@@ -115,92 +174,38 @@ void gameLoop(void* data) {
       case kStairs: requestRedraw = tickStairs(_doInit); break;
       case kChest: requestRedraw = tickChest(_doInit); break;
       case kEmpty: requestRedraw = tickEmpty(_doInit); break;
-      case kPword: requestRedraw = tickPword(_doInit); break;
-      case kBridge: requestRedraw = tickBridge(_doInit); break;
-      case kMaths: requestRedraw = tickMaths(_doInit); break;
-      case kStones: requestRedraw = tickStones(_doInit); break;
+      case kPword: requestRedraw = tickPword(pd, _doInit); break;
+      case kBridge: requestRedraw = tickBridge(pd, _doInit); break;
+      case kMaths: requestRedraw = tickMaths(pd,_doInit); break;
+      case kStones: requestRedraw = tickStones(pd, _doInit); break;
       case kDark: requestRedraw = tickDark(_doInit); break;
-      case kMaze: requestRedraw = tickMaze(_doInit); break;
+      case kMaze: requestRedraw = tickMaze(pd, _doInit); break;
       case kSaw: requestRedraw = tickSaw(_doInit); break;
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
-      case kEnd: requestRedraw = tickEnd(_doInit); break;
+      case kEnd: requestRedraw = tickEnd(pd, _doInit); break;
       default: break;
     } break;
     default: break;
   }
 
   if (requestRedraw == true) {
-    layer_mark_dirty(s_dungeonLayer);
-    s_renderQueued = true;
+    //s_renderQueued = true;
+    //layer_mark_dirty(s_dungeonLayer);
+    dungeonUpdateProc(); // TODO check the location of this
   }
 
-  s_gameLoopTimer = app_timer_register(ANIM_DELAY, gameLoop, NULL);
+  return (int)requestRedraw;
 }
 
-
-void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
-
-  s_renderQueued = false;
-  if (getGameState() == kIdle || getGameState() == kDoInit) return;
-  srand(m_dungeon.m_seed);
-  graphics_context_set_compositing_mode(_ctx, GCompOpSet);
-
-  switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
-    case kStart: updateProcStart(_ctx); break;
-    case kStairs: updateProcStairs(_ctx); break;
-    case kChest: updateProcChest(_ctx); break;
-    case kEmpty: updateProcEmpty(_ctx); break;
-    case kPword: updateProcPword(_ctx); break;
-    case kBridge: updateProcBridge(_ctx); break;
-    case kMaths: updateProcMaths(_ctx); break;
-    case kStones: updateProcStones(_ctx); break;
-    case kDark: updateProcDark(_ctx); break;
-    case kMaze: updateProcMaze(_ctx); break;
-    case kSaw: updateProcSaw(_ctx); break;
-    case kDeath: updateProcDeath(_ctx); break;
-    case kFinal: updateProcFinal(_ctx); break;
-    case kEnd: updateProcEnd(_ctx); break;
-    default: break;
-  }
-
-  //Do msg
-  if (getGameState() == kDisplayMsg) {
-    renderMessage(_ctx, s_displayMsg);
-    setGameState(kDisplayingMsg);
-  }
-
-  if (m_dungeon.m_gameOver == 0) renderProgressBar(_thisLayer, _ctx);
-
-  // Do fade
-  if (s_gameState == kFadeIn) renderFade(_thisLayer, _ctx, true);
-  else if (s_gameState == kFadeOut) renderFade(_thisLayer, _ctx, false);
-
-  // On round we need some masking borders
-  #ifdef PBL_ROUND
-  graphics_context_set_fill_color(_ctx, GColorBlack);
-  GRect _b = layer_get_bounds(_thisLayer);
-  graphics_fill_rect(_ctx, GRect(0,                        0, ROUND_OFFSET_X, _b.size.h), 0, GCornerNone);
-  graphics_fill_rect(_ctx, GRect(_b.size.w-ROUND_OFFSET_X, 0, ROUND_OFFSET_X, _b.size.h), 0, GCornerNone);
-  #endif
-
-  // Draw FPS indicator (dbg only)
-  #ifdef DEBUG_MODE
-  static char FPSBuffer[16];
-  snprintf(FPSBuffer, 16, "%i/%i %i L:%i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS, m_dungeon.m_lives);
-  GRect _fpsRect = GRect( 50, 155, 100, 15);
-  graphics_context_set_text_color(_ctx, GColorWhite);
-  graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
-  #endif
-}
 
 bool movePlayer() {
   if (s_frameCount % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
 
-  if      (m_player.m_target.x > m_player.m_position.x) m_player.m_position.x += PLAYER_SPEED;
-  if      (m_player.m_target.y > m_player.m_position.y) m_player.m_position.y += PLAYER_SPEED;
-  else if (m_player.m_target.y < m_player.m_position.y) m_player.m_position.y -= PLAYER_SPEED;
-  if (m_player.m_target.x == m_player.m_position.x && m_player.m_target.y == m_player.m_position.y) {
+  if      (m_player.m_target_x > m_player.m_position_x) m_player.m_position_x += PLAYER_SPEED;
+  if      (m_player.m_target_y > m_player.m_position_y) m_player.m_position_y += PLAYER_SPEED;
+  else if (m_player.m_target_y < m_player.m_position_y) m_player.m_position_y -= PLAYER_SPEED;
+  if (m_player.m_target_x == m_player.m_position_x && m_player.m_target_y == m_player.m_position_y) {
     m_player.m_playerFrame = 0;
     s_gameState = kLevelSpecific;
   }
@@ -208,26 +213,28 @@ bool movePlayer() {
 }
 
 
-void gameWindowLoad(Window* _window) {
-  GRect _b = layer_get_bounds( window_get_root_layer(_window) );
+void gameWindowLoad(/*Window* _window*/) {
+  //GRect _b = layer_get_bounds( window_get_root_layer(_window) );
   setGameState(kIdle);
 
-  s_dungeonLayer = layer_create( _b );
-  layer_add_child(window_get_root_layer(_window), s_dungeonLayer);
-  layer_set_update_proc(s_dungeonLayer, dungeonUpdateProc);
+  //s_dungeonLayer = layer_create( _b );
+  //layer_add_child(window_get_root_layer(_window), s_dungeonLayer);
+  //layer_set_update_proc(s_dungeonLayer, dungeonUpdateProc);
 
-  generate();
+  generate(pd);
 
-  gameLoop(NULL);
-  #ifdef DEBUG_MODE
-  FPSTimer(NULL);
-  #endif
+  // gameLoop(NULL); // Moved to main.c
+
+  //#ifdef DEBUG_MODE
+  //FPSTimer(NULL);
+  //#endif
 }
 
 void gameWindowUnload() {
-  layer_destroy(s_dungeonLayer);
+  //layer_destroy(s_dungeonLayer);
 }
 
+/*
 void gameClickConfigProvider(Window* _window) {
   window_single_click_subscribe(BUTTON_ID_UP, gameClickConfigHandler);
   window_single_click_subscribe(BUTTON_ID_DOWN, gameClickConfigHandler);
@@ -241,6 +248,7 @@ void FPSTimer(void* data) {
   s_FPSTimer = app_timer_register(1000, FPSTimer, NULL);
 }
 #endif
+*/
 
 int getHintValueMax(Hints_t _hint) {
   switch (_hint) {

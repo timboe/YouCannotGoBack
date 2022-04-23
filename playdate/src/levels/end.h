@@ -1,8 +1,7 @@
 #pragma once
-#include <pebble.h>
 #include "../render.h"
 #include "../game.h"
 #include "common.h"
 
-void updateProcEnd(GContext* _ctx);
-bool tickEnd(bool _doInit);
+void updateProcEnd(PlaydateAPI* _pd);
+bool tickEnd(PlaydateAPI* _pd, bool _doInit);

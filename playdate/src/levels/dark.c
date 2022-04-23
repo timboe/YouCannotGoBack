@@ -6,29 +6,27 @@ static int8_t s_correct[3] = {0};
 static int8_t s_colours[3] = {32,32,32}; // Defaults to gray
 static int8_t s_ringSize = 0;
 
-void updateProcDark(GContext* _ctx) {
+void updateProcDark(PlaydateAPI* _pd) {
 
-  //APP_LOG(APP_LOG_LEVEL_INFO,"   !!! RS: %i", (int) s_state);
+  //_pd->system->logToConsole("   !!! RS: %i", (int) s_state);
 
   if (s_state < 4) { // Render hint
-    graphics_context_set_stroke_color(_ctx, GColorWhite);
-    graphics_context_set_stroke_width(_ctx, 3);
-    GPoint _p = GPoint((7 + 4*s_state)*SIZE, (6 + 4*s_correct[s_state])*SIZE);
-#ifdef PBL_ROUND
-    _p.x += ROUND_OFFSET_X;
-    _p.y += ROUND_OFFSET_Y;
-#endif
-    graphics_draw_circle(_ctx, _p, s_ringSize);
+    // TODO
+    //graphics_context_set_stroke_color(_pd, GColorWhite);
+    //graphics_context_set_stroke_width(_pd, 3);
+    //GPoint _p = GPoint((7 + 4*s_state)*SIZE, (6 + 4*s_correct[s_state])*SIZE);
+    //graphics_draw_circle(_pd, _p, s_ringSize);
     return;
   }
 
-  renderStonesCommon(_ctx, s_colours, s_colours, s_colours, s_correct, s_fire, s_state);
+  renderStonesCommon(_pd, s_colours, s_colours, s_colours, s_correct, s_fire, s_state);
 }
 
 bool tickDark(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position = GPoint(SIZE*3, SIZE*9);
+    m_player.m_position_x = SIZE*3;
+    m_player.m_position_y = SIZE*9;
     s_fire = -1;
     s_ringSize = 0;
     for (int _i = 0; _i < 3; ++_i) {

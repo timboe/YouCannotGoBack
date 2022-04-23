@@ -1,14 +1,15 @@
 #pragma once
-#include <pebble.h>
 
 //#define DEBUG_MODE
 //#define DEV
 
+#include "pd_api.h"
+
+#include <stdio.h>
+#include <stdbool.h> 
+
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
-
-#define ROUND_OFFSET_X 18
-#define ROUND_OFFSET_Y 10
 
 #define PERSIST_KEY_VICTORY 0
 
@@ -69,8 +70,6 @@ typedef enum {
   kBRR,
   kNShieldTypes
 } ShieldTypes_t;
-//RGBWb
-//https://www.random.org/integer-sets/?sets=10&num=3&min=1&max=5&commas=on&order=random&format=html&rnd=new
 
 #define MAX_LEVELS 3
 #define MIN_ROOMS 5
@@ -98,19 +97,26 @@ typedef struct {
 #define PLAYER_SPEED 2
 typedef struct {
   uint16_t m_playerFrame;
-  GPoint m_position;
-  GPoint m_target;
+  int16_t m_position_x;
+  int16_t m_position_y;
+  int16_t m_target_x;
+  int16_t m_target_y;
 } Player_t;
 
 #define MAX_PLACE_CLUTTER 5
 typedef struct {
   int16_t m_nClutter;
-  GPoint m_position[MAX_PLACE_CLUTTER];
+  int16_t m_position_x[MAX_PLACE_CLUTTER];
+  int16_t m_position_y[MAX_PLACE_CLUTTER];
 } Clutter_t;
 
 extern Dungeon_t m_dungeon;
 extern Player_t m_player;
 extern Clutter_t m_clutter;
+
+void setPDPtr(PlaydateAPI* p);
+
+int gameLoop(void* data);
 
 int getFrameCount();
 int getPlayerChoice();
@@ -125,6 +131,6 @@ int getShieldA(int _value);
 int getShieldB(int _value);
 int getShieldC(int _value);
 
-void gameWindowLoad(Window* _window);
+void gameWindowLoad(/*Window* _window*/);
 void gameWindowUnload();
-void gameClickConfigProvider(Window* _window);
+//void gameClickConfigProvider(Window* _window);

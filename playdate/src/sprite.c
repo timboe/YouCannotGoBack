@@ -1,65 +1,66 @@
 #include "sprite.h"
 
 
-GBitmap* m_spriteMap;
-GBitmap* m_saw;
-GBitmap* m_sawA;
-GBitmap* m_sawB;
+LCDBitmap* m_spriteMap;
+LCDBitmap* m_saw;
+LCDBitmap* m_sawA;
+LCDBitmap* m_sawB;
 
-GBitmap* m_UOuterWall[3];
-GBitmap* m_DOuterWall[3];
-GBitmap* m_LOuterWall[3];
-GBitmap* m_ROuterWall[3];
+LCDBitmap* m_UOuterWall[3];
+LCDBitmap* m_DOuterWall[3];
+LCDBitmap* m_LOuterWall[3];
+LCDBitmap* m_ROuterWall[3];
 
-GBitmap* m_outerCorner[4];
-GBitmap* m_innerCorner[4];
-GBitmap* m_innerWall[4];
-GBitmap* m_torchWall[4];
+LCDBitmap* m_outerCorner[4];
+LCDBitmap* m_innerCorner[4];
+LCDBitmap* m_innerWall[4];
+LCDBitmap* m_torchWall[4];
 
-GBitmap* m_floorA[MAX_FLOOR];
-GBitmap* m_floorB[MAX_FLOOR];
-GBitmap* m_floorC[MAX_FLOOR];
+LCDBitmap* m_floorA[MAX_FLOOR];
+LCDBitmap* m_floorB[MAX_FLOOR];
+LCDBitmap* m_floorC[MAX_FLOOR];
 
-GBitmap* m_LOpenDoor;
-GBitmap* m_ROpenDoor;
-GBitmap* m_RShutDoor;
-GBitmap* m_LDoorstep;
-GBitmap* m_RDoorstep;
+LCDBitmap* m_LOpenDoor;
+LCDBitmap* m_ROpenDoor;
+LCDBitmap* m_RShutDoor;
+LCDBitmap* m_LDoorstep;
+LCDBitmap* m_RDoorstep;
 
-GBitmap* m_greek[MAX_GREEK];
-GBitmap* m_playerSprite[MAX_FRAMES];
-GBitmap* m_stairs;
-GBitmap* m_arrow;
-GBitmap* m_clutterSprite[MAX_CLUTTER];
-GBitmap* m_tapestrySprite[3];
-GBitmap* m_shieldSprite;
+LCDBitmap* m_greek[MAX_GREEK];
+LCDBitmap* m_playerSprite[MAX_FRAMES];
+LCDBitmap* m_stairs;
+LCDBitmap* m_arrow;
+LCDBitmap* m_clutterSprite[MAX_CLUTTER];
+LCDBitmap* m_tapestrySprite[3];
+LCDBitmap* m_shieldSprite;
 
-GBitmap* m_guardian;
-GBitmap* m_blockWall[3];
-GBitmap* m_block;
-GBitmap* m_bridge[3];
-GBitmap* m_grave;
-GBitmap* m_fire[2];
-GBitmap* m_flagstone[3];
-GBitmap* m_chest;
-GBitmap* m_table;
-GBitmap* m_black;
-GBitmap* m_treasureBanner;
-GBitmap* m_treasure[3];
-GBitmap* m_symbol[MAX_SYMBOL];
+LCDBitmap* m_guardian;
+LCDBitmap* m_blockWall[3];
+LCDBitmap* m_block;
+LCDBitmap* m_bridge[3];
+LCDBitmap* m_grave;
+LCDBitmap* m_fire[2];
+LCDBitmap* m_flagstone[3];
+LCDBitmap* m_chest;
+LCDBitmap* m_table;
+LCDBitmap* m_black;
+LCDBitmap* m_treasureBanner;
+LCDBitmap* m_treasure[3];
+LCDBitmap* m_symbol[MAX_SYMBOL];
 
-GBitmap* m_halfUpperWall[2];
-GBitmap* m_halfLowerWall[2];
+LCDBitmap* m_halfUpperWall[2];
+LCDBitmap* m_halfLowerWall[2];
 
-GBitmap* getSprite(int _x, int _y, int _w, int _h) {
-  return gbitmap_create_as_sub_bitmap(m_spriteMap, GRect(SIZE * _x, SIZE * _y, SIZE * _w, SIZE * _h));
+LCDBitmap* getSprite(int _x, int _y, int _w, int _h) {
+  return NULL; // TODO
+  //return gbitmap_create_as_sub_bitmap(m_spriteMap, GRect(SIZE * _x, SIZE * _y, SIZE * _w, SIZE * _h));
 }
 
-GBitmap* getClutter(bool _broken) {
+LCDBitmap* getClutter(bool _broken) {
   return m_clutterSprite[ rand() % (_broken == true ? 3 :MAX_CLUTTER) ];
 }
 
-GBitmap* getOuterWall(int _d) {
+LCDBitmap* getOuterWall(int _d) {
   int _r = rand() % 3;
   switch (_d) {
     case 0:  return m_UOuterWall[_r];
@@ -69,7 +70,7 @@ GBitmap* getOuterWall(int _d) {
   }
 }
 
-GBitmap* getFloor(bool _random) {
+LCDBitmap* getFloor(bool _random) {
   int _r = rand() % MAX_FLOOR;
   if (_random == false) _r = 0;
   switch (m_dungeon.m_level) {
@@ -80,13 +81,13 @@ GBitmap* getFloor(bool _random) {
 }
 
 void initSprite() {
-  m_spriteMap = gbitmap_create_with_resource(RESOURCE_ID_SPRITESHEET);
-  m_grave = gbitmap_create_with_resource(RESOURCE_ID_GRAVE);
-  m_treasureBanner = gbitmap_create_with_resource(RESOURCE_ID_TREASURE);
+  //m_spriteMap = gbitmap_create_with_resource(RESOURCE_ID_SPRITESHEET);
+  //m_grave = gbitmap_create_with_resource(RESOURCE_ID_GRAVE);
+  //m_treasureBanner = gbitmap_create_with_resource(RESOURCE_ID_TREASURE);
 
-  m_saw = gbitmap_create_with_resource(RESOURCE_ID_SAW);
-  m_sawA = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 0, 80, 40));
-  m_sawB = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 40, 80, 40));
+  //m_saw = gbitmap_create_with_resource(RESOURCE_ID_SAW);
+  //m_sawA = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 0, 80, 40));
+  //m_sawB = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 40, 80, 40));
 
 
   for (int _w = 0; _w < 3; ++_w) { // Walls
@@ -192,62 +193,62 @@ void initSprite() {
 void deinitSprite() {
 
   for (int _i = 1; _i < 4; ++_i) {
-    gbitmap_destroy(m_outerCorner[_i]);
-    gbitmap_destroy(m_innerCorner[_i]);
-    gbitmap_destroy(m_innerWall[_i]);
-    gbitmap_destroy(m_torchWall[_i]);
+    //gbitmap_destroy(m_outerCorner[_i]);
+    //gbitmap_destroy(m_innerCorner[_i]);
+    //gbitmap_destroy(m_innerWall[_i]);
+    //gbitmap_destroy(m_torchWall[_i]);
 
     if (_i >= 3) continue;
-    gbitmap_destroy(m_UOuterWall[_i]);
-    gbitmap_destroy(m_DOuterWall[_i]);
-    gbitmap_destroy(m_LOuterWall[_i]);
-    gbitmap_destroy(m_ROuterWall[_i]);
+    //gbitmap_destroy(m_UOuterWall[_i]);
+    //gbitmap_destroy(m_DOuterWall[_i]);
+    //gbitmap_destroy(m_LOuterWall[_i]);
+    //gbitmap_destroy(m_ROuterWall[_i]);
 
-    gbitmap_destroy(m_tapestrySprite[_i]);
-    gbitmap_destroy(m_blockWall[_i]);
-    gbitmap_destroy(m_bridge[_i]);
-    gbitmap_destroy(m_flagstone[_i]);
-    gbitmap_destroy(m_treasure[_i]);
+    //gbitmap_destroy(m_tapestrySprite[_i]);
+    //gbitmap_destroy(m_blockWall[_i]);
+    //gbitmap_destroy(m_bridge[_i]);
+    //gbitmap_destroy(m_flagstone[_i]);
+    //gbitmap_destroy(m_treasure[_i]);
 
     if (_i >= 2) continue;
-    gbitmap_destroy(m_fire[_i]);
+    //gbitmap_destroy(m_fire[_i]);
 
-    gbitmap_destroy(m_halfUpperWall[_i]);
-    gbitmap_destroy(m_halfLowerWall[_i]);
+    //gbitmap_destroy(m_halfUpperWall[_i]);
+    //gbitmap_destroy(m_halfLowerWall[_i]);
   }
 
   for (int _i = 1; _i < MAX_FLOOR; ++_i) {
-    gbitmap_destroy(m_floorA[_i]);
-    gbitmap_destroy(m_floorB[_i]);
-    gbitmap_destroy(m_floorC[_i]);
+    //gbitmap_destroy(m_floorA[_i]);
+    //gbitmap_destroy(m_floorB[_i]);
+    //gbitmap_destroy(m_floorC[_i]);
   }
 
-  for (int _i = 1; _i < MAX_GREEK; ++_i) gbitmap_destroy(m_greek[_i]);
-  for (int _i = 1; _i < MAX_CLUTTER; ++_i) gbitmap_destroy(m_clutterSprite[_i]);
-  for (int _i = 1; _i < MAX_FRAMES; ++_i) gbitmap_destroy(m_playerSprite[_i]);
-  for (int _i = 1; _i < MAX_SYMBOL; ++_i) gbitmap_destroy(m_symbol[_i]);
+  //for (int _i = 1; _i < MAX_GREEK; ++_i) gbitmap_destroy(m_greek[_i]);
+  //for (int _i = 1; _i < MAX_CLUTTER; ++_i) gbitmap_destroy(m_clutterSprite[_i]);
+  //for (int _i = 1; _i < MAX_FRAMES; ++_i) gbitmap_destroy(m_playerSprite[_i]);
+  //for (int _i = 1; _i < MAX_SYMBOL; ++_i) gbitmap_destroy(m_symbol[_i]);
 
-  gbitmap_destroy(m_sawA);
-  gbitmap_destroy(m_sawB);
+  //gbitmap_destroy(m_sawA);
+  //gbitmap_destroy(m_sawB);
 
-  gbitmap_destroy(m_LOpenDoor);
-  gbitmap_destroy(m_ROpenDoor);
-  gbitmap_destroy(m_RShutDoor);
-  gbitmap_destroy(m_LDoorstep);
-  gbitmap_destroy(m_RDoorstep);
-  gbitmap_destroy(m_stairs);
-  gbitmap_destroy(m_arrow);
-  gbitmap_destroy(m_shieldSprite);
+  //gbitmap_destroy(m_LOpenDoor);
+  //gbitmap_destroy(m_ROpenDoor);
+  //gbitmap_destroy(m_RShutDoor);
+  //gbitmap_destroy(m_LDoorstep);
+  //gbitmap_destroy(m_RDoorstep);
+  //gbitmap_destroy(m_stairs);
+  //gbitmap_destroy(m_arrow);
+  //gbitmap_destroy(m_shieldSprite);
 
-  gbitmap_destroy(m_guardian);
-  gbitmap_destroy(m_block);
-  gbitmap_destroy(m_chest);
-  gbitmap_destroy(m_table);
-  gbitmap_destroy(m_black);
+  //gbitmap_destroy(m_guardian);
+  //gbitmap_destroy(m_block);
+  //gbitmap_destroy(m_chest);
+  //gbitmap_destroy(m_table);
+  //gbitmap_destroy(m_black);
 
   // Actual bitmaps
-  gbitmap_destroy(m_spriteMap);
-  gbitmap_destroy(m_grave);
-  gbitmap_destroy(m_treasureBanner);
-  gbitmap_destroy(m_saw);
+  ////gbitmap_destroy(m_spriteMap);
+  ////gbitmap_destroy(m_grave);
+  ////gbitmap_destroy(m_treasureBanner);
+  ////gbitmap_destroy(m_saw);
 }

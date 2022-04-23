@@ -3,26 +3,27 @@
 static uint16_t s_state = 0;
 static int8_t s_bad = 0;
 
-void updateProcChest(GContext* _ctx) {
+void updateProcChest(PlaydateAPI* _pd) {
 
-  renderFloor(_ctx, 0);
+  renderFloor(_pd, 0);
 
   for (int _i = 0; _i < 3; ++_i) {
-    drawBitmap(_ctx, m_table, 7, 5 + (_i * 4));
-    drawBitmap(_ctx, m_chest, 8, 4 + (_i * 4));
+    drawBitmap(_pd, m_table, 7, 5 + (_i * 4));
+    drawBitmap(_pd, m_chest, 8, 4 + (_i * 4));
   }
 
-  renderClutter(_ctx);
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, true, true, true);
-  renderWallClutter(_ctx);
-  renderArrows(_ctx, 8, 2, 4);
+  renderClutter(_pd);
+  renderPlayer(_pd);
+  renderWalls(_pd, true, true, true, true);
+  renderWallClutter(_pd);
+  renderArrows(_pd, 8, 2, 4);
 }
 
 bool tickChest(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position = GPoint(0, SIZE*9);
+    m_player.m_position_x = 0;
+    m_player.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
     s_bad = rand() % 3;
     return false;
@@ -45,10 +46,11 @@ bool tickChest(bool _doInit) {
     setGameState(kAwaitInput);
     ++s_state;
   } else if (s_state == 2) {
+    m_player.m_target_x = SIZE*8;
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target = GPoint(SIZE*8, SIZE*6); break;
-      case 1: m_player.m_target = GPoint(SIZE*8, SIZE*10); break;
-      case 2: m_player.m_target = GPoint(SIZE*8, SIZE*14); break;
+      case 0: m_player.m_target_y = SIZE*6; break;
+      case 1: m_player.m_target_y = SIZE*10; break;
+      case 2: m_player.m_target_y = SIZE*14; break;
     }
     setGameState(kMovePlayer);
     ++s_state;

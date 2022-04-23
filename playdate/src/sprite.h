@@ -1,5 +1,4 @@
 #pragma once
-#include <pebble.h>
 #include "game.h"
 
 #define SIZE 8
@@ -11,54 +10,54 @@
 void initSprite();
 void deinitSprite();
 
-GBitmap* getOuterWall(int _d);
-GBitmap* getFloor(bool _random);
-GBitmap* getClutter(bool _broken);
+LCDBitmap* getOuterWall(int _d);
+LCDBitmap* getFloor(bool _random);
+LCDBitmap* getClutter(bool _broken);
 
-extern GBitmap* m_UOuterWall[3];
-extern GBitmap* m_DOuterWall[3];
-extern GBitmap* m_LOuterWall[3];
-extern GBitmap* m_ROuterWall[3];
+extern LCDBitmap* m_UOuterWall[3];
+extern LCDBitmap* m_DOuterWall[3];
+extern LCDBitmap* m_LOuterWall[3];
+extern LCDBitmap* m_ROuterWall[3];
 
-extern GBitmap* m_halfUpperWall[2];
-extern GBitmap* m_halfLowerWall[2];
+extern LCDBitmap* m_halfUpperWall[2];
+extern LCDBitmap* m_halfLowerWall[2];
 
-extern GBitmap* m_outerCorner[4];
-extern GBitmap* m_innerCorner[4];
-extern GBitmap* m_innerWall[4];
-extern GBitmap* m_torchWall[4];
+extern LCDBitmap* m_outerCorner[4];
+extern LCDBitmap* m_innerCorner[4];
+extern LCDBitmap* m_innerWall[4];
+extern LCDBitmap* m_torchWall[4];
 
-extern GBitmap* m_stairs;
-extern GBitmap* m_saw;
-extern GBitmap* m_sawB;
-extern GBitmap* m_sawA;
+extern LCDBitmap* m_stairs;
+extern LCDBitmap* m_saw;
+extern LCDBitmap* m_sawB;
+extern LCDBitmap* m_sawA;
 
 
-extern GBitmap* m_arrow;
+extern LCDBitmap* m_arrow;
 
-extern GBitmap* m_playerSprite[MAX_FRAMES];
+extern LCDBitmap* m_playerSprite[MAX_FRAMES];
 
-extern GBitmap* m_LOpenDoor;
-extern GBitmap* m_ROpenDoor;
-extern GBitmap* m_RShutDoor;
-extern GBitmap* m_LDoorstep;
-extern GBitmap* m_RDoorstep;
+extern LCDBitmap* m_LOpenDoor;
+extern LCDBitmap* m_ROpenDoor;
+extern LCDBitmap* m_RShutDoor;
+extern LCDBitmap* m_LDoorstep;
+extern LCDBitmap* m_RDoorstep;
 
-extern GBitmap* m_greek[MAX_GREEK];
-extern GBitmap* m_tapestrySprite[3];
-extern GBitmap* m_shieldSprite;
+extern LCDBitmap* m_greek[MAX_GREEK];
+extern LCDBitmap* m_tapestrySprite[3];
+extern LCDBitmap* m_shieldSprite;
 
-extern GBitmap* m_guardian;
-extern GBitmap* m_blockWall[3];
-extern GBitmap* m_block;
-extern GBitmap* m_fire[2];
+extern LCDBitmap* m_guardian;
+extern LCDBitmap* m_blockWall[3];
+extern LCDBitmap* m_block;
+extern LCDBitmap* m_fire[2];
 
-extern GBitmap* m_bridge[3];
-extern GBitmap* m_grave;
-extern GBitmap* m_flagstone[3];
-extern GBitmap* m_chest;
-extern GBitmap* m_table;
-extern GBitmap* m_black;
-extern GBitmap* m_treasureBanner;
-extern GBitmap* m_treasure[3];
-extern GBitmap* m_symbol[MAX_SYMBOL];
+extern LCDBitmap* m_bridge[3];
+extern LCDBitmap* m_grave;
+extern LCDBitmap* m_flagstone[3];
+extern LCDBitmap* m_chest;
+extern LCDBitmap* m_table;
+extern LCDBitmap* m_black;
+extern LCDBitmap* m_treasureBanner;
+extern LCDBitmap* m_treasure[3];
+extern LCDBitmap* m_symbol[MAX_SYMBOL];
