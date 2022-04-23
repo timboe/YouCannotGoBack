@@ -113,7 +113,7 @@ void generate(PlaydateAPI* _pd) {
       m_dungeon.m_rooms[_level][_room] = _roomType;
 
       #ifdef DEV
-      pd->system->logToConsole("[%i][%i] = t:%i", _level, _room, (int)_roomType);
+      _pd->system->logToConsole("[%i][%i] = t:%i", _level, _room, (int)_roomType);
       #endif
 
       // Can we add a hint to this room?
@@ -126,7 +126,7 @@ void generate(PlaydateAPI* _pd) {
         m_dungeon.m_roomGiveHint[_level][_room] = _addHint;
         m_dungeon.m_roomGiveHintValue[_level][_room] = m_hintValue[_addHint];
         #ifdef DEV
-        pd->system->logToConsole("      >> A t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
+        _pd->system->logToConsole("      >> A t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
         #endif
       }
 
@@ -135,7 +135,7 @@ void generate(PlaydateAPI* _pd) {
         m_dungeon.m_roomNeedHint[_level][_room] = _consumeHint;
         m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[_consumeHint];
         #ifdef DEV
-        pd->system->logToConsole("      << C t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
+        _pd->system->logToConsole("      << C t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
         #endif
 
         --m_hintsInPlay;

@@ -5,18 +5,18 @@ static uint16_t s_state = 0;
 void updateProcStairs(PlaydateAPI* _pd) {
 
   renderFloor(_pd, 0);
-  drawBitmap(_pd, m_stairs, 9, 8);
-  drawBitmap(_pd, m_stairs, 9, 10);
+  drawCBitmap(_pd, &m_stairs, 9, 8);
+  drawCBitmap(_pd, &m_stairs, 9, 10);
   renderClutter(_pd);
   renderPlayer(_pd);
   renderWalls(_pd, true, false, false, false);
   renderWallClutter(_pd);
-  drawBitmap(_pd, getFloor(true), 11, 10); //Draw some more floor to cover the player
-  drawBitmap(_pd, getFloor(true), 11, 12);
-  drawBitmap(_pd, getFloor(true), 9, 12);
+  drawCBitmap(_pd, getFloor(true), 11, 10); //Draw some more floor to cover the player
+  drawCBitmap(_pd, getFloor(true), 11, 12);
+  drawCBitmap(_pd, getFloor(true), 9, 12);
 
   if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_pd, m_arrow, 9, 8);
+    drawCBitmap(_pd, &m_arrow, 9, 8);
   }
 
 }

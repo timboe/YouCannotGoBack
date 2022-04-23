@@ -10,12 +10,12 @@ void updateProcBridge(PlaydateAPI* _pd) {
   renderFloor(_pd, 1);
 
   for (int _i = 0; _i < 3; ++_i) {
-    drawBitmap(_pd, m_bridge[0], 4,  5 + (_i * 4));
-    drawBitmap(_pd, m_bridge[2], 13, 5 + (_i * 4));
+    drawCBitmap(_pd, &m_bridge[0], 4,  5 + (_i * 4));
+    drawCBitmap(_pd, &m_bridge[2], 13, 5 + (_i * 4));
 
     for (int _x = 5; _x < 13; ++_x) {
       if (s_state == 6 && _i != s_correct && _x > 6 && _x < s_breakPoint) continue;
-      drawBitmap(_pd, m_bridge[1], _x, 5 + (_i * 4));
+      drawCBitmap(_pd, &m_bridge[1], _x, 5 + (_i * 4));
     }
   }
 
@@ -32,11 +32,11 @@ void updateProcBridge(PlaydateAPI* _pd) {
       PDRect _bHint = {.x = 16*SIZE - 1, .y = (5 + (_s*4))*SIZE - 1, .width = 16, .height = 16};
       renderHintNumber(_pd, _bHint, s_choices[_s], true);
     } else if ( _hint == kSymbol ) {
-      drawBitmap(_pd, m_symbol[ s_choices[_s] ], 16, 5 + (_s*4));
+      drawCBitmap(_pd, &m_symbol[ s_choices[_s] ], 16, 5 + (_s*4));
     } else if ( _hint == kGreek ) {
       PDRect _b = {.x = 16*SIZE - 2, .y = (5 + (_s*4))*SIZE - 2, .width = 2*SIZE + 4, .height = 2*SIZE + 4};
       renderFrame(_pd, _b);
-      drawBitmapAbs(_pd, m_greek[ s_choices[_s] ], 16*SIZE + 4, (5 + (_s*4))*SIZE + 4);
+      drawCBitmapAbs(_pd, &m_greek[ s_choices[_s] ], 16*SIZE + 4, (5 + (_s*4))*SIZE + 4);
     }
   }
 

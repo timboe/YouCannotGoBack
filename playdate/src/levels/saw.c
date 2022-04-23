@@ -13,12 +13,12 @@ void updateProcSaw(PlaydateAPI* _pd) {
   renderSawFloor(_pd, s_offset);
   renderPlayer(_pd);
   if (s_type == 1) {
-     drawBitmapAbs(_pd, m_sawB, s_position, 5*SIZE);
+     drawBitmapAbs(_pd, m_saw, s_position, 5*SIZE);
   } else if (s_type == 3) {
-     drawBitmapAbs(_pd, m_sawA, s_position, 8*SIZE);
+     drawBitmapAbs(_pd, m_saw, s_position, 8*SIZE);
   } else if (s_type == 2) {
-     drawBitmapAbs(_pd, m_sawB, s_position, 3*SIZE);
-     drawBitmapAbs(_pd, m_sawA, s_position, 10*SIZE);
+     drawBitmapAbs(_pd, m_saw, s_position, 3*SIZE);
+     drawBitmapAbs(_pd, m_saw, s_position, 10*SIZE);
   }
   renderSawWalls(_pd, s_offset);
   renderArrows(_pd, 0, 5, 2);

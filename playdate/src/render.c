@@ -2,17 +2,38 @@
 #include "pd_api.h"
 
 void drawBitmap(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y) {
-  //GRect _r = LCDBitmap_get_bounds(_bitmap);
-  //_r.origin.x = _x * SIZE;
-  //_r.origin.y = _y * SIZE;
-  //graphics_draw_bitmap_in_rect(_pd, _bitmap, _r);
+  drawBitmapAbs(_pd, _bitmap, _x * SIZE, _y * SIZE);
+}
+
+void drawBitmapAbs(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y) {
+  _pd->graphics->drawBitmap(_bitmap, _x, _y, 0);
+}
+
+void drawCBitmap(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y) {
+  for (int _ww = 0; _ww < _cbitmap->w; ++_ww) {
+    for (int _hh = 0; _hh < _cbitmap->h; ++_hh) {
+      const int _loc = (_hh * CBITMAP_MAX) + _ww;
+      LCDBitmap* _region = _cbitmap->bitmap[_loc];
+      drawBitmap(_pd, _region, _x + _ww, _y + _hh);
+    }
+  }
+}
+
+void drawCBitmapAbs(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y) {
+  for (int _ww = 0; _ww < _cbitmap->w; ++_ww) {
+    for (int _hh = 0; _hh < _cbitmap->h; ++_hh) {
+      const int _loc = (_hh * CBITMAP_MAX) + _ww;
+      LCDBitmap* _region = _cbitmap->bitmap[_loc];
+      drawBitmapAbs(_pd, _region, _x + (_ww * SIZE), _y + (_hh * SIZE));
+    }
+  }
 }
 
 void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
   if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_pd, m_arrow, _x, _yStart);
-    drawBitmap(_pd, m_arrow, _x, _yStart + _yAdd);
-    drawBitmap(_pd, m_arrow, _x, _yStart + _yAdd + _yAdd);
+    drawCBitmap(_pd, &m_arrow, _x, _yStart);
+    drawCBitmap(_pd, &m_arrow, _x, _yStart + _yAdd);
+    drawCBitmap(_pd, &m_arrow, _x, _yStart + _yAdd + _yAdd);
   }
 }
 
@@ -27,21 +48,21 @@ void renderClutter(PlaydateAPI* _pd) {
   int _hintValue = m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room];
   for (int _c = 0; _c < m_clutter.m_nClutter; ++_c) {
     if (_c == 0 && _hint == kGreek) {
-      drawBitmap(_pd, getClutter(true), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
+      drawCBitmap(_pd, getClutter(true), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
       int _px = (m_clutter.m_position_x[_c] * SIZE) + 4;
       int _py = (m_clutter.m_position_y[_c] * SIZE) + 2;
-      drawBitmapAbs(_pd, m_greek[ _hintValue ], _px, _py);
+      drawCBitmapAbs(_pd, &m_greek[ _hintValue ], _px, _py);
     } else if (_c == 0 && _hint == kNumber) {
-      drawBitmap(_pd, getClutter(true), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
+      drawCBitmap(_pd, getClutter(true), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
       PDRect r = {.x = m_clutter.m_position_x[_c] * SIZE, .y = (m_clutter.m_position_y[_c] * SIZE)-3, .width = 16, .height = 16};
       renderHintNumber(_pd, r, _hintValue, true);
     } else {
-      drawBitmap(_pd, getClutter(false), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
+      drawCBitmap(_pd, getClutter(false), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
     }
   }
 }
 
-void renderProgressBar(/*Layer* _thisLayer,*/ PlaydateAPI* _pd) {
+void renderProgressBar(PlaydateAPI* _pd) {
   //GRect _b = layer_get_bounds(_thisLayer);
   //int _x1 = 0;
   //int _w = _b.size.w;
@@ -54,11 +75,7 @@ void renderProgressBar(/*Layer* _thisLayer,*/ PlaydateAPI* _pd) {
   //graphics_draw_line(_pd, _s, _e);
 }
 
-void drawBitmapAbs(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y) {
-  //GRect _r = LCDBitmap_get_bounds(_bitmap);
-  //_r.origin = _p;
-  //graphics_draw_bitmap_in_rect(_pd, _bitmap, _r);
-}
+
 
 static void endRenderMsg(void* _data) {
   // Stop displaying message timeout
@@ -140,29 +157,29 @@ void renderMessage(PlaydateAPI* _pd, const char* _msg) {
 }
 
 void renderWalls(PlaydateAPI* _pd, bool _l, bool _rA, bool _rB, bool _rC) {
-  drawBitmap(_pd, m_outerCorner[0], 1, 0);
-  drawBitmap(_pd, m_outerCorner[1], 15, 0);
-  drawBitmap(_pd, m_outerCorner[2], 1, 18);
-  drawBitmap(_pd, m_outerCorner[3], 15, 18);
+  drawCBitmap(_pd, &m_outerCorner[0], 1, 0);
+  drawCBitmap(_pd, &m_outerCorner[1], 15, 0);
+  drawCBitmap(_pd, &m_outerCorner[2], 1, 18);
+  drawCBitmap(_pd, &m_outerCorner[3], 15, 18);
   bool _torches = (rand() % 2 == 0);
   for (int _x = 3; _x < 15; _x += 2) {  //Draw top and bottom wall
     if (_torches && (_x == 5 || _x == 11)) {
-      drawBitmap(_pd, m_torchWall[0], _x, 0);
-      drawBitmap(_pd, m_torchWall[2], _x, 18);
+      drawCBitmap(_pd, &m_torchWall[0], _x, 0);
+      drawCBitmap(_pd, &m_torchWall[2], _x, 18);
     } else {
-      drawBitmap(_pd, getOuterWall(0), _x, 0); // top
-      drawBitmap(_pd, getOuterWall(2), _x, 18);
+      drawCBitmap(_pd, getOuterWall(0), _x, 0); // top
+      drawCBitmap(_pd, getOuterWall(2), _x, 18);
     }
   }
   _torches = (rand() % 2 == 0);
   for (int _y = 2; _y < 18; _y += 2) { // Draw left wall
     if (_y == 8 && _l == true) {
-      drawBitmap(_pd, m_LOpenDoor, 0,  _y);
+      drawCBitmap(_pd, &m_LOpenDoor, 0,  _y);
       _y += 2;
     } else if (_torches && (_y == 6 || _y == 12)) {
-      drawBitmap(_pd, m_torchWall[1], 0,  _y);
+      drawCBitmap(_pd, &m_torchWall[1], 0,  _y);
     } else {
-      drawBitmap(_pd, getOuterWall(1), 1,  _y);
+      drawCBitmap(_pd, getOuterWall(1), 1,  _y);
     }
   }
   _torches = (rand() % 2 == 0);
@@ -175,15 +192,15 @@ void renderWalls(PlaydateAPI* _pd, bool _l, bool _rA, bool _rB, bool _rC) {
       default: _open = 0; break;
     }
     if (_open == 1) {
-      drawBitmap(_pd, m_RShutDoor, 15,  _y);
+      drawCBitmap(_pd, &m_RShutDoor, 15,  _y);
       _y += 2;
     } else if (_open == 2) {
-      drawBitmap(_pd, m_ROpenDoor, 15,  _y);
+      drawCBitmap(_pd, &m_ROpenDoor, 15,  _y);
       _y += 2;
     } else if (_torches && (_y == 2 || _y == 16)) {
-      drawBitmap(_pd, m_torchWall[3], 15,  _y);
+      drawCBitmap(_pd, &m_torchWall[3], 15,  _y);
     } else {
-      drawBitmap(_pd, getOuterWall(3), 15, _y);
+      drawCBitmap(_pd, getOuterWall(3), 15, _y);
     }
   }
 }
@@ -196,7 +213,7 @@ void renderWallClutter(PlaydateAPI* _pd) {
       //GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
       int _px = (_r + 1) * SIZE;
       int _py = SIZE;
-      drawBitmap(_pd, m_shieldSprite, _r, 0);
+      drawCBitmap(_pd, &m_shieldSprite, _r, 0);
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldA(_hintValue)));
       //graphics_fill_circle(_pd, _p, 3);
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldC(_hintValue)));
@@ -206,32 +223,32 @@ void renderWallClutter(PlaydateAPI* _pd) {
       _px -= SIZE;
       //graphics_fill_circle(_pd, _p, 3);
     } else if (_hint == kSpell) { // Check spell
-      drawBitmap(_pd, m_tapestrySprite[0], _r, 0);
-      for (int _i=1; _i<5; ++_i) drawBitmap(_pd, m_tapestrySprite[1], _r+_i, 0);
-      drawBitmap(_pd, m_tapestrySprite[2], _r+5, 0);
+      drawCBitmap(_pd, &m_tapestrySprite[0], _r, 0);
+      for (int _i=1; _i<5; ++_i) drawCBitmap(_pd, &m_tapestrySprite[1], _r+_i, 0);
+      drawCBitmap(_pd, &m_tapestrySprite[2], _r+5, 0);
       PDRect rect =  {.x = _r * SIZE, .y = -2, .width = 48, .height = 16};
       renderBorderText(_pd, rect, /*fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),*/ m_spellNames[_hintValue], 1, /*GTextAlignmentCenter,*/ false);
     } else if (_hint == kSymbol) { // Check symbol
-      drawBitmap(_pd, m_symbol[_hintValue], _r, 18);
+      drawCBitmap(_pd, &m_symbol[_hintValue], _r, 18);
     }
 }
 
 void renderSawFloor(PlaydateAPI* _pd, int8_t _offset) {
   for (int _x = 0; _x < 20; _x += 2) {
     for (int _y = 6; _y < 12; _y += 2) {
-      drawBitmapAbs(_pd, getFloor(false), (_x*SIZE) - _offset, _y*SIZE);
+      drawCBitmapAbs(_pd, getFloor(false), (_x*SIZE) - _offset, _y*SIZE);
     }
-    drawBitmapAbs(_pd, m_halfUpperWall[0], (_x*SIZE) - _offset, 5*SIZE);
-    drawBitmapAbs(_pd, m_halfLowerWall[0], (_x*SIZE) - _offset, 12*SIZE);
+    drawCBitmapAbs(_pd, &m_halfUpperWall[0], (_x*SIZE) - _offset, 5*SIZE);
+    drawCBitmapAbs(_pd, &m_halfLowerWall[0], (_x*SIZE) - _offset, 12*SIZE);
   }
 }
 
 void renderSawWalls(PlaydateAPI* _pd, int8_t _offset) {
   for (int _x = 0; _x < 20; _x += 2) {
-    drawBitmapAbs(_pd, m_halfUpperWall[1], (_x*SIZE) - _offset, 4*SIZE);
-    drawBitmapAbs(_pd, m_halfLowerWall[1], (_x*SIZE) - _offset, 13*SIZE);
-    drawBitmapAbs(_pd, m_black, (_x*SIZE) - _offset, 2*SIZE);
-    drawBitmapAbs(_pd, m_black, (_x*SIZE) - _offset, 14*SIZE);
+    drawCBitmapAbs(_pd, &m_halfUpperWall[1], (_x*SIZE) - _offset, 4*SIZE);
+    drawCBitmapAbs(_pd, &m_halfLowerWall[1], (_x*SIZE) - _offset, 13*SIZE);
+    drawCBitmapAbs(_pd, &m_black, (_x*SIZE) - _offset, 2*SIZE);
+    drawCBitmapAbs(_pd, &m_black, (_x*SIZE) - _offset, 14*SIZE);
 
   }
 }
@@ -240,90 +257,90 @@ void renderFloor(PlaydateAPI* _pd, int _mode) {
   for (int _x = 3; _x < 15; _x += 2) {
     if (_mode == 1 && !(_x == 3 || _x == 13)) continue; // Pit
     for (int _y = 2; _y < 18; _y += 2) {
-      drawBitmap(_pd, getFloor(true), _x, _y);
+      drawCBitmap(_pd, getFloor(true), _x, _y);
     }
   }
   if (_mode == 1) { // Pit with one space on either side
     for (int _y = 4; _y < 16; _y += 2) {
-      drawBitmap(_pd, m_innerWall[0], 5,  _y);
-      drawBitmap(_pd, m_innerWall[1], 11, _y);
+      drawCBitmap(_pd, &m_innerWall[0], 5,  _y);
+      drawCBitmap(_pd, &m_innerWall[1], 11, _y);
     }
-    drawBitmap(_pd, m_innerCorner[0], 5,  2);
-    drawBitmap(_pd, m_innerCorner[1], 11, 2);
-    drawBitmap(_pd, m_innerCorner[2], 11, 16);
-    drawBitmap(_pd, m_innerCorner[3], 5,  16);
-    drawBitmap(_pd, m_innerWall[2], 7, 2);
-    drawBitmap(_pd, m_innerWall[2], 9, 2);
-    drawBitmap(_pd, m_innerWall[3], 7, 16);
-    drawBitmap(_pd, m_innerWall[3], 9, 16);
+    drawCBitmap(_pd, &m_innerCorner[0], 5,  2);
+    drawCBitmap(_pd, &m_innerCorner[1], 11, 2);
+    drawCBitmap(_pd, &m_innerCorner[2], 11, 16);
+    drawCBitmap(_pd, &m_innerCorner[3], 5,  16);
+    drawCBitmap(_pd, &m_innerWall[2], 7, 2);
+    drawCBitmap(_pd, &m_innerWall[2], 9, 2);
+    drawCBitmap(_pd, &m_innerWall[3], 7, 16);
+    drawCBitmap(_pd, &m_innerWall[3], 9, 16);
   }
   // Extra bits where the doors can go
-  drawBitmap(_pd, m_LDoorstep, 2, 8); // TODO this on its own call
-  drawBitmap(_pd, m_RDoorstep, 15, 4);
-  drawBitmap(_pd, m_RDoorstep, 15, 8);
-  drawBitmap(_pd, m_RDoorstep, 15, 12);
+  drawCBitmap(_pd, &m_LDoorstep, 2, 8); // TODO this on its own call
+  drawCBitmap(_pd, &m_RDoorstep, 15, 4);
+  drawCBitmap(_pd, &m_RDoorstep, 15, 8);
+  drawCBitmap(_pd, &m_RDoorstep, 15, 12);
 }
 
 void renderPit(PlaydateAPI* _pd) {
   for (int _y = 4; _y < 16; _y += 2) {
-    drawBitmap(_pd, m_innerWall[0], 3,  _y);
-    drawBitmap(_pd, m_innerWall[1], 13, _y);
+    drawCBitmap(_pd, &m_innerWall[0], 3,  _y);
+    drawCBitmap(_pd, &m_innerWall[1], 13, _y);
   }
   for (int _x = 5; _x < 15; _x += 2) {
-    drawBitmap(_pd, m_innerWall[2], _x, 2);
-    drawBitmap(_pd, m_innerWall[3], _x, 16);
+    drawCBitmap(_pd, &m_innerWall[2], _x, 2);
+    drawCBitmap(_pd, &m_innerWall[3], _x, 16);
   }
-  drawBitmap(_pd, m_innerCorner[0], 3,  2);
-  drawBitmap(_pd, m_innerCorner[1], 13, 2);
-  drawBitmap(_pd, m_innerCorner[2], 13, 16);
-  drawBitmap(_pd, m_innerCorner[3], 3,  16);
+  drawCBitmap(_pd, &m_innerCorner[0], 3,  2);
+  drawCBitmap(_pd, &m_innerCorner[1], 13, 2);
+  drawCBitmap(_pd, &m_innerCorner[2], 13, 16);
+  drawCBitmap(_pd, &m_innerCorner[3], 3,  16);
 
   // Extra bits where the doors can go
-  drawBitmap(_pd, m_LDoorstep, 2, 8); // TODO this on its own call
-  drawBitmap(_pd, m_RDoorstep, 15, 4);
-  drawBitmap(_pd, m_RDoorstep, 15, 8);
-  drawBitmap(_pd, m_RDoorstep, 15, 12);
+  drawCBitmap(_pd, &m_LDoorstep, 2, 8); // TODO this on its own call
+  drawCBitmap(_pd, &m_RDoorstep, 15, 4);
+  drawCBitmap(_pd, &m_RDoorstep, 15, 8);
+  drawCBitmap(_pd, &m_RDoorstep, 15, 12);
 }
 
 void renderFinalPit(PlaydateAPI* _pd) {
   for (int _w = 0; _w < 4; ++_w) { //0=l, 1=r
-    drawBitmap(_pd, m_innerWall[0], 7, 6 + (_w*2));
-    drawBitmap(_pd, m_innerWall[1], 9, 6 + (_w*2));
+    drawCBitmap(_pd, &m_innerWall[0], 7, 6 + (_w*2));
+    drawCBitmap(_pd, &m_innerWall[1], 9, 6 + (_w*2));
     if (_w >= 2) continue;
-    drawBitmap(_pd, m_innerWall[2], 9 + (_w*2), 2);
-    drawBitmap(_pd, m_innerWall[3], 9 + (_w*2), 6);
-    drawBitmap(_pd, m_innerWall[2], 9 + (_w*2), 12);
-    drawBitmap(_pd, m_innerWall[3], 9 + (_w*2), 16);
+    drawCBitmap(_pd, &m_innerWall[2], 9 + (_w*2), 2);
+    drawCBitmap(_pd, &m_innerWall[3], 9 + (_w*2), 6);
+    drawCBitmap(_pd, &m_innerWall[2], 9 + (_w*2), 12);
+    drawCBitmap(_pd, &m_innerWall[3], 9 + (_w*2), 16);
   }
 
-  drawBitmap(_pd, m_innerWall[0], 7, 4);
-  drawBitmap(_pd, m_innerWall[1], 13, 4);
+  drawCBitmap(_pd, &m_innerWall[0], 7, 4);
+  drawCBitmap(_pd, &m_innerWall[1], 13, 4);
 
-  drawBitmap(_pd, m_innerWall[0], 7, 14);
-  drawBitmap(_pd, m_innerWall[1], 13, 14);
+  drawCBitmap(_pd, &m_innerWall[0], 7, 14);
+  drawCBitmap(_pd, &m_innerWall[1], 13, 14);
 
-  drawBitmap(_pd, m_innerCorner[0], 7, 2);
-  drawBitmap(_pd, m_innerCorner[1], 13, 2);
-  drawBitmap(_pd, m_innerCorner[2], 13, 16);
-  drawBitmap(_pd, m_innerCorner[3], 7, 16);
+  drawCBitmap(_pd, &m_innerCorner[0], 7, 2);
+  drawCBitmap(_pd, &m_innerCorner[1], 13, 2);
+  drawCBitmap(_pd, &m_innerCorner[2], 13, 16);
+  drawCBitmap(_pd, &m_innerCorner[3], 7, 16);
 
-  drawBitmap(_pd, m_innerCorner[2], 13, 6);
-  drawBitmap(_pd, m_innerCorner[1], 13, 12);
+  drawCBitmap(_pd, &m_innerCorner[2], 13, 6);
+  drawCBitmap(_pd, &m_innerCorner[1], 13, 12);
 
-  drawBitmap(_pd, m_outerCorner[0], 9, 6);
-  drawBitmap(_pd, m_outerCorner[2], 9, 12);
+  drawCBitmap(_pd, &m_outerCorner[0], 9, 6);
+  drawCBitmap(_pd, &m_outerCorner[2], 9, 12);
 
-  drawBitmap(_pd, m_black, 9, 14);
-  drawBitmap(_pd, m_black, 11, 14);
-  drawBitmap(_pd, m_black, 9, 4);
-  drawBitmap(_pd, m_black, 11, 4);
+  drawCBitmap(_pd, &m_black, 9, 14);
+  drawCBitmap(_pd, &m_black, 11, 14);
+  drawCBitmap(_pd, &m_black, 9, 4);
+  drawCBitmap(_pd, &m_black, 11, 4);
 }
 
 void renderPlayer(PlaydateAPI* _pd) {
   uint16_t _pos_x = m_player.m_position_x;
   uint16_t _pos_y = m_player.m_position_y;
   if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) --_pos_y;
-  drawBitmapAbs(_pd, m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
+  drawCBitmapAbs(_pd, &m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
 }
 
 void renderBorderText(PlaydateAPI* _pd, PDRect _loc, /*GFont _f,*/ const char* _buffer, uint8_t _offset, /*GTextAlignment _al,*/ bool _invert) {
@@ -351,7 +368,7 @@ void renderBorderText(PlaydateAPI* _pd, PDRect _loc, /*GFont _f,*/ const char* _
 }
 
 #define FADE_LEVELS 8
-void renderFade(/*Layer* _thisLayer,*/ PlaydateAPI* _pd, bool _in) {
+void renderFade(PlaydateAPI* _pd, bool _in) {
   if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y++;
   static int s_progress = 1;
   //GRect _b = layer_get_bounds(_thisLayer);

@@ -7,57 +7,69 @@
 #define N_MED_CLUTTER 2
 #define MAX_CLUTTER (N_SMALL_CLUTTER+N_MED_CLUTTER)
 
-void initSprite();
+#define SSHEET_X 16
+#define SSHEET_Y 16
+
+void initSprite(PlaydateAPI* _pd);
 void deinitSprite();
 
-LCDBitmap* getOuterWall(int _d);
-LCDBitmap* getFloor(bool _random);
-LCDBitmap* getClutter(bool _broken);
+#define CBITMAP_MAX 6
+struct CBitmap {
+  LCDBitmap* bitmap[CBITMAP_MAX*CBITMAP_MAX];
+  uint16_t w;
+  uint16_t h;
+};
 
-extern LCDBitmap* m_UOuterWall[3];
-extern LCDBitmap* m_DOuterWall[3];
-extern LCDBitmap* m_LOuterWall[3];
-extern LCDBitmap* m_ROuterWall[3];
+struct CBitmap* getOuterWall(int _d);
+struct CBitmap* getFloor(bool _random);
+struct CBitmap* getClutter(bool _broken);
 
-extern LCDBitmap* m_halfUpperWall[2];
-extern LCDBitmap* m_halfLowerWall[2];
+extern LCDBitmap* m_grave;
+extern LCDBitmap* m_treasureBanner;
 
-extern LCDBitmap* m_outerCorner[4];
-extern LCDBitmap* m_innerCorner[4];
-extern LCDBitmap* m_innerWall[4];
-extern LCDBitmap* m_torchWall[4];
-
-extern LCDBitmap* m_stairs;
 extern LCDBitmap* m_saw;
 extern LCDBitmap* m_sawB;
 extern LCDBitmap* m_sawA;
 
 
-extern LCDBitmap* m_arrow;
+extern struct CBitmap m_UOuterWall[3];
+extern struct CBitmap m_DOuterWall[3];
+extern struct CBitmap m_LOuterWall[3];
+extern struct CBitmap m_ROuterWall[3];
 
-extern LCDBitmap* m_playerSprite[MAX_FRAMES];
+extern struct CBitmap m_halfUpperWall[2];
+extern struct CBitmap m_halfLowerWall[2];
 
-extern LCDBitmap* m_LOpenDoor;
-extern LCDBitmap* m_ROpenDoor;
-extern LCDBitmap* m_RShutDoor;
-extern LCDBitmap* m_LDoorstep;
-extern LCDBitmap* m_RDoorstep;
+extern struct CBitmap m_outerCorner[4];
+extern struct CBitmap m_innerCorner[4];
+extern struct CBitmap m_innerWall[4];
+extern struct CBitmap m_torchWall[4];
 
-extern LCDBitmap* m_greek[MAX_GREEK];
-extern LCDBitmap* m_tapestrySprite[3];
-extern LCDBitmap* m_shieldSprite;
+extern struct CBitmap m_stairs;
 
-extern LCDBitmap* m_guardian;
-extern LCDBitmap* m_blockWall[3];
-extern LCDBitmap* m_block;
-extern LCDBitmap* m_fire[2];
+extern struct CBitmap m_arrow;
 
-extern LCDBitmap* m_bridge[3];
-extern LCDBitmap* m_grave;
-extern LCDBitmap* m_flagstone[3];
-extern LCDBitmap* m_chest;
-extern LCDBitmap* m_table;
-extern LCDBitmap* m_black;
-extern LCDBitmap* m_treasureBanner;
-extern LCDBitmap* m_treasure[3];
-extern LCDBitmap* m_symbol[MAX_SYMBOL];
+extern struct CBitmap m_playerSprite[MAX_FRAMES];
+
+extern struct CBitmap m_LOpenDoor;
+extern struct CBitmap m_ROpenDoor;
+extern struct CBitmap m_RShutDoor;
+extern struct CBitmap m_LDoorstep;
+extern struct CBitmap m_RDoorstep;
+
+extern struct CBitmap m_greek[MAX_GREEK];
+extern struct CBitmap m_tapestrySprite[3];
+extern struct CBitmap m_shieldSprite;
+
+extern struct CBitmap m_guardian;
+extern struct CBitmap m_blockWall[3];
+extern struct CBitmap m_block;
+extern struct CBitmap m_fire[2];
+
+extern struct CBitmap m_bridge[3];
+extern struct CBitmap m_flagstone[3];
+extern struct CBitmap m_chest;
+extern struct CBitmap m_table;
+extern struct CBitmap m_black;
+extern struct CBitmap m_treasure[3];
+extern struct CBitmap m_symbol[MAX_SYMBOL];

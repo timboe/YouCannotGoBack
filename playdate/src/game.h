@@ -1,7 +1,7 @@
 #pragma once
 
-//#define DEBUG_MODE
-//#define DEV
+#define DEBUG_MODE
+#define DEV
 
 #include "pd_api.h"
 

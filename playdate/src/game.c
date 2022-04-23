@@ -34,13 +34,6 @@ Clutter_t m_clutter = {0};
 //static Layer* s_dungeonLayer;
 bool movePlayer();
 
-#ifdef DEBUG_MODE
-//static AppTimer* s_FPSTimer = NULL;
-static int s_FPS = 0;
-static int s_lastSecondFPS = 0;
-void FPSTimer(void* data);
-#endif
-
 int getFrameCount() { return s_frameCount; }
 GameState_t getGameState() { return s_gameState; }
 void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; }
@@ -129,15 +122,10 @@ void dungeonUpdateProc() {
   else if (s_gameState == kFadeOut) renderFade(/*_thisLayer,*/ pd, false);
 
   // Draw FPS indicator (dbg only)
-  /*
   #ifdef DEBUG_MODE
-  static char FPSBuffer[16];
-  snprintf(FPSBuffer, 16, "%i/%i %i L:%i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS, m_dungeon.m_lives);
-  GRect _fpsRect = GRect( 50, 155, 100, 15);
-  graphics_context_set_text_color(_ctx, GColorWhite);
-  graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+  pd->system->drawFPS(0, 0);
   #endif
-  */
+
 }
 
 int gameLoop(void* data) {
@@ -147,15 +135,6 @@ int gameLoop(void* data) {
 
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
   bool requestRedraw = false;
-  #ifdef DEV
-  if (s_frameCount == 0) pd->system->logToConsole("f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
-  #endif
-
-  #ifdef DEBUG_MODE
-  ++s_FPS;
-  #endif
-
-  //APP_LOG(APP_LOG_LEVEL_INFO,"GS: %i", (int) s_gameState);
 
   bool _doInit = false;
   switch (s_gameState) {
@@ -189,11 +168,20 @@ int gameLoop(void* data) {
     default: break;
   }
 
+  // TODO: The docs say that returning 0 does not request a redraw,
+  // but it is currently 
+  requestRedraw = true;
+
   if (requestRedraw == true) {
     //s_renderQueued = true;
     //layer_mark_dirty(s_dungeonLayer);
     dungeonUpdateProc(); // TODO check the location of this
   }
+
+  
+  #ifdef DEV
+  if (s_frameCount % 1000 == 0) pd->system->logToConsole("TICK %i: Redraw %i", s_frameCount, requestRedraw);
+  #endif
 
   return (int)requestRedraw;
 }
@@ -224,10 +212,6 @@ void gameWindowLoad(/*Window* _window*/) {
   generate(pd);
 
   // gameLoop(NULL); // Moved to main.c
-
-  //#ifdef DEBUG_MODE
-  //FPSTimer(NULL);
-  //#endif
 }
 
 void gameWindowUnload() {
@@ -240,14 +224,6 @@ void gameClickConfigProvider(Window* _window) {
   window_single_click_subscribe(BUTTON_ID_DOWN, gameClickConfigHandler);
   window_single_click_subscribe(BUTTON_ID_SELECT, gameClickConfigHandler);
 }
-
-#ifdef DEBUG_MODE
-void FPSTimer(void* data) {
-  s_lastSecondFPS = s_FPS;
-  s_FPS = 0;
-  s_FPSTimer = app_timer_register(1000, FPSTimer, NULL);
-}
-#endif
 */
 
 int getHintValueMax(Hints_t _hint) {

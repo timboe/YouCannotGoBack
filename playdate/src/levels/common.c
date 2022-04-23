@@ -139,8 +139,8 @@ void renderStonesCommon(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, 
     if (_fire < _f) break;
     for (int _i = 0; _i < 3; ++_i) {
       if (_correct[_f] == _i) continue;
-      drawBitmap(_pd, m_fire[0], 5 + (4 * _f) , 5 + (4 * _i));
-      drawBitmap(_pd, m_fire[1], 6 + (4 * _f) , 4 + (4 * _i));
+      drawCBitmap(_pd, &m_fire[0], 5 + (4 * _f) , 5 + (4 * _i));
+      drawCBitmap(_pd, &m_fire[1], 6 + (4 * _f) , 4 + (4 * _i));
     }
   }
 

@@ -8,8 +8,8 @@ void updateProcChest(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
 
   for (int _i = 0; _i < 3; ++_i) {
-    drawBitmap(_pd, m_table, 7, 5 + (_i * 4));
-    drawBitmap(_pd, m_chest, 8, 4 + (_i * 4));
+    drawCBitmap(_pd, &m_table, 7, 5 + (_i * 4));
+    drawCBitmap(_pd, &m_chest, 8, 4 + (_i * 4));
   }
 
   renderClutter(_pd);

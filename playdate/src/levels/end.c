@@ -16,8 +16,8 @@ void updateProcEnd(PlaydateAPI* _pd) {
     PDRect _rect2 = {.x = 28, .y = 125, .width = 88, .height = 43};
     renderTextInFrame(_pd, _end2, _rect2);
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-      drawBitmap(_pd, m_arrow, 3, 13);
-      drawBitmap(_pd, m_arrow, 13, 13);
+      drawCBitmap(_pd, &m_arrow, 3, 13);
+      drawCBitmap(_pd, &m_arrow, 13, 13);
     }
   } else {
     static const char _end1[] = "NICELY DONE! DUNGEONEER";
@@ -27,7 +27,7 @@ void updateProcEnd(PlaydateAPI* _pd) {
     PDRect _rect2 = {.x = 0, .y = 145, .width = 144, .height = 20};
     renderBorderText(_pd, _rect2, /*fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),*/ s_victories, 2, /*GTextAlignmentCenter,*/ false);
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-      drawBitmap(_pd, m_arrow, 8, 12);
+      drawCBitmap(_pd, &m_arrow, 8, 12);
     }
   }
 }

@@ -29,8 +29,8 @@ int main(void) {
 }
 */
 
-static void init(void) {
-  initSprite();
+static void init(PlaydateAPI* _pd) {
+  initSprite(_pd);
   gameWindowLoad();
 
   //s_gameWindow = window_create();
@@ -54,7 +54,7 @@ static void deinit(void) {
 int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
   if (event == kEventInit) {
     setPDPtr(playdate);
-    init();
+    init(playdate);
     playdate->display->setRefreshRate(20);
     playdate->system->setUpdateCallback(gameLoop, NULL);
   } else if (event == kEventTerminate) {

@@ -9,38 +9,38 @@ void updateProcFinal(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
 
   for (int _i = 0; _i < 3; ++_i) {
-    drawBitmap(_pd, m_flagstone[_i], 5, 5 + (_i * 4));
+    drawCBitmap(_pd, &m_flagstone[_i], 5, 5 + (_i * 4));
   }
 
   renderFinalPit(_pd);
 
   if (s_state > 5) {
-    drawBitmap(_pd, m_innerCorner[3], 7, 6);
-    drawBitmap(_pd, m_innerCorner[0], 7, 12);
-    drawBitmap(_pd, m_innerWall[3], 9, 6);
-    drawBitmap(_pd, m_innerWall[2], 9, 12);
-    drawBitmap(_pd, getFloor(true), 7, 8);
-    drawBitmap(_pd, getFloor(true), 7, 10);
-    drawBitmap(_pd, getFloor(true), 9, 8);
-    drawBitmap(_pd, getFloor(true), 9, 10);
+    drawCBitmap(_pd, &m_innerCorner[3], 7, 6);
+    drawCBitmap(_pd, &m_innerCorner[0], 7, 12);
+    drawCBitmap(_pd, &m_innerWall[3], 9, 6);
+    drawCBitmap(_pd, &m_innerWall[2], 9, 12);
+    drawCBitmap(_pd, getFloor(true), 7, 8);
+    drawCBitmap(_pd, getFloor(true), 7, 10);
+    drawCBitmap(_pd, getFloor(true), 9, 8);
+    drawCBitmap(_pd, getFloor(true), 9, 10);
   } else {
     for (int _i = 0; _i < 4; ++_i) rand(); // keep the wall the same
   }
 
-  drawBitmap(_pd, m_treasure[0], 11, 7);
-  drawBitmap(_pd, m_treasure[2], 14, 8);
-  drawBitmap(_pd, m_chest, 12, 9);
+  drawCBitmap(_pd, &m_treasure[0], 11, 7);
+  drawCBitmap(_pd, &m_treasure[2], 14, 8);
+  drawCBitmap(_pd, &m_chest, 12, 9);
 
   renderPlayer(_pd);
   renderWalls(_pd, true, false, true, false);
 
-  drawBitmap(_pd, m_treasure[2], 11, 11);
-  drawBitmap(_pd, m_treasure[1], 13, 10);
+  drawCBitmap(_pd, &m_treasure[2], 11, 11);
+  drawCBitmap(_pd, &m_treasure[1], 13, 10);
 
-  drawBitmapAbs(_pd, m_fire[0], s_fire_x[0], s_fire_y[0]);
-  drawBitmapAbs(_pd, m_fire[1], s_fire_x[0] + SIZE, s_fire_y[0] - SIZE);
-  drawBitmapAbs(_pd, m_fire[0], s_fire_x[1], s_fire_y[1]);
-  drawBitmapAbs(_pd, m_fire[1], s_fire_x[1] + SIZE, s_fire_y[1] - SIZE);
+  drawCBitmapAbs(_pd, &m_fire[0], s_fire_x[0], s_fire_y[0]);
+  drawCBitmapAbs(_pd, &m_fire[1], s_fire_x[0] + SIZE, s_fire_y[0] - SIZE);
+  drawCBitmapAbs(_pd, &m_fire[0], s_fire_x[1], s_fire_y[1]);
+  drawCBitmapAbs(_pd, &m_fire[1], s_fire_x[1] + SIZE, s_fire_y[1] - SIZE);
 
   renderArrows(_pd, 5, 4, 4);
 }

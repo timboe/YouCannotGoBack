@@ -25,7 +25,7 @@ void updateProcStart(PlaydateAPI* _pd) {
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
 
-  drawBitmap(_pd, m_flagstone[ m_dungeon.m_finalPuzzle ], 0, 9);
+  drawCBitmap(_pd, &m_flagstone[ m_dungeon.m_finalPuzzle ], 0, 9);
 
   renderArrows(_pd, 15, 4, 4);
 }

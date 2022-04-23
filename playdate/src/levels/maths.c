@@ -17,8 +17,8 @@ void updateProcMaths(PlaydateAPI* _pd) {
 
   renderFloor(_pd, 0);
 
-  drawBitmap(_pd, m_block, 5, 9);
-  drawBitmap(_pd, m_block, 13, 9);
+  drawCBitmap(_pd, &m_block, 5, 9);
+  drawCBitmap(_pd, &m_block, 13, 9);
 
   for (int _s = 0; _s < 3; ++_s) {
     PDRect _b = {.x = (7 + _s*2)*SIZE, .y = 9*SIZE, .width = 16, .height = 16};

@@ -11,12 +11,12 @@ void updateProcPword(PlaydateAPI* _pd) {
   renderPlayer(_pd);
   renderWalls(_pd, true, false, true, false);
 
-  drawBitmap(_pd, m_guardian, 5, 6);
+  drawCBitmap(_pd, &m_guardian, 5, 6);
 
   if (s_state < 7) {
-    drawBitmap(_pd, m_blockWall[0], 9, 0);
-    for (int _i = 2; _i < 18; _i += 2) drawBitmap(_pd, m_blockWall[1], 9, _i);
-    drawBitmap(_pd, m_blockWall[2], 9, 18);
+    drawCBitmap(_pd, &m_blockWall[0], 9, 0);
+    for (int _i = 2; _i < 18; _i += 2) drawCBitmap(_pd, &m_blockWall[1], 9, _i);
+    drawCBitmap(_pd, &m_blockWall[2], 9, 18);
   }
   renderWallClutter(_pd);
 
