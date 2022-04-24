@@ -29,6 +29,9 @@ static int s_playerChoice = 0;
 static const char* s_displayMsg = NULL;
 Clutter_t m_clutter = {0};
 
+bool m_rotated = true;
+LCDBitmap* m_rotatedBitmap = NULL;
+
 // static bool s_renderQueued = false; // no longer needed?
 
 //static Layer* s_dungeonLayer;
@@ -36,24 +39,26 @@ bool movePlayer();
 
 int getFrameCount() { return s_frameCount; }
 GameState_t getGameState() { return s_gameState; }
-void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; }
+void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; pd->system->resetElapsedTime(); }
 void setGameState(GameState_t _state) { s_gameState = _state; }
 int getPlayerChoice() { return s_playerChoice; }
 
 void setPDPtr(PlaydateAPI* p) { pd = p; }
 
-/*
-void gameClickConfigHandler(ClickRecognizerRef _recognizer, void* _context) {
+void gameClickConfigHandler(uint32_t buttonPressed) {
+  pd->system->logToConsole("PRESSED: %i", buttonPressed);
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
+  if (kButtonA == buttonPressed) {
+    m_rotated = !m_rotated;
+  }
   if (getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) {
-    ButtonId _button = click_recognizer_get_button_id(_recognizer);
-    if (BUTTON_ID_UP == _button) s_playerChoice = 0;
-    else if (BUTTON_ID_SELECT == _button) s_playerChoice = 1;
-    else if (BUTTON_ID_DOWN == _button) s_playerChoice = 2;
+    if (kButtonUp == buttonPressed) s_playerChoice = 0;
+    else if (kButtonRight == buttonPressed) s_playerChoice = 1;
+    else if (kButtonDown == buttonPressed) s_playerChoice = 2;
+    else return; // Note: Do NOT update game state if another button was pressed
     setGameState(kLevelSpecific);
   }
 }
-*/
 
 bool newRoom() {
   if (m_dungeon.m_gameOver > 0) { // PLAYER HAS WON OR LOST
@@ -84,12 +89,21 @@ bool newRoom() {
   return false;
 }
 
+
 void dungeonUpdateProc() {
 
   //s_renderQueued = false;
   if (getGameState() == kIdle || getGameState() == kDoInit) return;
   srand(m_dungeon.m_seed);
   //graphics_context_set_compositing_mode(_ctx, GCompOpSet);
+
+
+  if (m_rotated) {
+    pd->graphics->pushContext(m_rotatedBitmap);
+  }
+
+  pd->display->setScale(1);
+  pd->graphics->clear(kColorBlack);
 
   switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
     case kStart: updateProcStart(pd); break;
@@ -126,12 +140,44 @@ void dungeonUpdateProc() {
   pd->system->drawFPS(0, 0);
   #endif
 
+  if (m_rotated) {
+    pd->graphics->popContext();
+
+    pd->graphics->clear(kColorWhite);
+    pd->display->setScale(2);
+    // Offset to align in the centre of the rotates screen
+    pd->graphics->drawRotatedBitmap(m_rotatedBitmap, -64+8, -8, 90.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+  }
+
+}
+
+// Temporary until the playdate eventHandler is functional for inputs
+void clickHandlerReplacement() {
+  uint32_t current, pushed, released = 0;
+  pd->system->getButtonState(&current, &pushed, &released);
+  if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
+  if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
+  if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
+  if (pushed & kButtonA) gameClickConfigHandler(kButtonA);
+  if (pushed & kButtonB) gameClickConfigHandler(kButtonB);
+}
+
+// We don't have timer callbacks, replaces endRenderMsg
+void callbackReplacement() {
+  if (getGameState() != kDisplayingMsg) { return; }
+  if (pd->system->getElapsedTime() >= 1.5f) {
+    pd->system->logToConsole("mssage ellapsed");
+    setGameState(kLevelSpecific);
+  }
 }
 
 int gameLoop(void* data) {
   //if (s_renderQueued == true) {
   //  return ;
   //}
+
+  clickHandlerReplacement();
+  callbackReplacement();
 
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
   bool requestRedraw = false;
@@ -168,9 +214,6 @@ int gameLoop(void* data) {
     default: break;
   }
 
-  // TODO: The docs say that returning 0 does not request a redraw,
-  // but it is currently 
-  requestRedraw = true;
 
   if (requestRedraw == true) {
     //s_renderQueued = true;
@@ -178,10 +221,10 @@ int gameLoop(void* data) {
     dungeonUpdateProc(); // TODO check the location of this
   }
 
-  
-  #ifdef DEV
-  if (s_frameCount % 1000 == 0) pd->system->logToConsole("TICK %i: Redraw %i", s_frameCount, requestRedraw);
-  #endif
+  // TODO: The docs say that returning 0 does not request a redraw,
+  // but it is currently 
+  requestRedraw = true;
+
 
   return (int)requestRedraw;
 }
@@ -201,9 +244,10 @@ bool movePlayer() {
 }
 
 
-void gameWindowLoad(/*Window* _window*/) {
-  //GRect _b = layer_get_bounds( window_get_root_layer(_window) );
+void gameWindowLoad() {
   setGameState(kIdle);
+
+  m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
 
   //s_dungeonLayer = layer_create( _b );
   //layer_add_child(window_get_root_layer(_window), s_dungeonLayer);
@@ -211,20 +255,12 @@ void gameWindowLoad(/*Window* _window*/) {
 
   generate(pd);
 
-  // gameLoop(NULL); // Moved to main.c
 }
 
 void gameWindowUnload() {
-  //layer_destroy(s_dungeonLayer);
+  pd->graphics->freeBitmap(m_rotatedBitmap);
+  m_rotatedBitmap = NULL;
 }
-
-/*
-void gameClickConfigProvider(Window* _window) {
-  window_single_click_subscribe(BUTTON_ID_UP, gameClickConfigHandler);
-  window_single_click_subscribe(BUTTON_ID_DOWN, gameClickConfigHandler);
-  window_single_click_subscribe(BUTTON_ID_SELECT, gameClickConfigHandler);
-}
-*/
 
 int getHintValueMax(Hints_t _hint) {
   switch (_hint) {

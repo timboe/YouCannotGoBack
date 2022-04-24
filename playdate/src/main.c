@@ -57,8 +57,16 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
     init(playdate);
     playdate->display->setRefreshRate(20);
     playdate->system->setUpdateCallback(gameLoop, NULL);
-  } else if (event == kEventTerminate) {
+    playdate->system->logToConsole("EH: init");
+// Does not work in 1.9.3
+//  } else if (event == kEventKeyPressed) {
+//    playdate->system->logToConsole("EH: pressed %i", arg);
+    gameClickConfigHandler(arg);
+  } else if (event == kEventTerminate || event == kEventKeyReleased) {
     deinit();
+    playdate->system->logToConsole("EH: deinit");
+  } else {
+    playdate->system->logToConsole("EH: unknown event %i with arg %i", event, arg);
   }
   
   return 0;

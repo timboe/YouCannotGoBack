@@ -33,29 +33,30 @@ static const Maze_t s_mazes[N_MAZES] = {
   [4].m_path2 = {5,16, 6,16, 11,11, 6,6, 9,3, 11,5, 10,6, 12,8, 14,6, 15,6}
 };
 
-void drawLine(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2) {
+void drawLine(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2, LCDColor _c) {
   if (_x1 == 0 || _x2 == 0) return;
-  //TODO
   //GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
   //GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
   //graphics_draw_line(_pd, _p1, _p2);
+  _pd->graphics->drawLine(_x1*SIZE, _y1*SIZE, _x2*SIZE, _y2*SIZE, /*width=*/ 2, _c);
 }
 
 void updateProcMaze(PlaydateAPI* _pd) {
 
   renderFloor(_pd, 0);
 
-  // TODO
+  // TODO gray
+  LCDColor _c;
   //graphics_context_set_stroke_width(_pd, 2);
-  //switch (m_dungeon.m_level) {
-  //  case 0: graphics_context_set_stroke_color(_pd, GColorWhite); break;
-  //  case 1: graphics_context_set_stroke_color(_pd, GColorBlack); break;
-  //  default: graphics_context_set_stroke_color(_pd, GColorYellow); break;
-  //}
+  switch (m_dungeon.m_level) {
+    case 0: _c = kColorWhite; break;
+    case 1: _c = kColorBlack; break;
+    default: _c = kColorWhite; break;
+  }
   for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
-    drawLine(_pd, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3]);
-    drawLine(_pd, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3]);
-    drawLine(_pd, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3]);
+    drawLine(_pd, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3], _c);
+    drawLine(_pd, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3], _c);
+    drawLine(_pd, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3], _c);
   }
 
   renderClutter(_pd);

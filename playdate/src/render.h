@@ -4,6 +4,7 @@
 
 void drawBitmap(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y);
 void drawBitmapAbs(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y);
+void drawBitmapAbsRot(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y, float _rot);
 
 void drawCBitmap(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y);
 void drawCBitmapAbs(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y);

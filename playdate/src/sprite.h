@@ -7,8 +7,9 @@
 #define N_MED_CLUTTER 2
 #define MAX_CLUTTER (N_SMALL_CLUTTER+N_MED_CLUTTER)
 
-#define SSHEET_X 16
-#define SSHEET_Y 16
+// Number of sprites in x and y
+#define SSHEET_X 32
+#define SSHEET_Y 32
 
 void initSprite(PlaydateAPI* _pd);
 void deinitSprite();
@@ -27,10 +28,8 @@ struct CBitmap* getClutter(bool _broken);
 extern LCDBitmap* m_grave;
 extern LCDBitmap* m_treasureBanner;
 
-extern LCDBitmap* m_saw;
 extern LCDBitmap* m_sawB;
 extern LCDBitmap* m_sawA;
-
 
 extern struct CBitmap m_UOuterWall[3];
 extern struct CBitmap m_DOuterWall[3];

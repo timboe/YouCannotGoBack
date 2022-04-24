@@ -16,10 +16,11 @@ void updateProcStart(PlaydateAPI* _pd) {
   PDRect _rc = {.x = 45, .y = 75, .width = 80, .height = 100};
   PDRect _rd = {.x = 45, .y = 105, .width = 80, .height = 100};
 
-  renderBorderText(_pd, _ra,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _a, 2, /*GTextAlignmentCenter,*/ false);
-  renderBorderText(_pd, _rb,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _b, 2, /*GTextAlignmentCenter,*/ true);
-  renderBorderText(_pd, _rc,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _c, 2, /*GTextAlignmentCenter,*/ false);
-  renderBorderText(_pd, _rd, /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _d, 2, /*GTextAlignmentCenter,*/ true);
+  static const int _offset = 1;
+  renderBorderText(_pd, _ra,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _a, _offset, /*GTextAlignmentCenter,*/ false);
+  renderBorderText(_pd, _rb,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _b, _offset, /*GTextAlignmentCenter,*/ true);
+  renderBorderText(_pd, _rc,  /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _c, _offset, /*GTextAlignmentCenter,*/ false);
+  renderBorderText(_pd, _rd, /*fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),*/ _d, _offset, /*GTextAlignmentCenter,*/ true);
   renderClutter(_pd);
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);
@@ -39,7 +40,7 @@ bool tickStart(bool _doInit) {
     return false;
   }
 
-  static bool _first = true; // TODO remove this
+  static bool _first = false; // Redundant on playdate
   static const char _msgA[] = "SHAKE TO TURN...";
   static const char _msgB[] = "ON BACKLIGHT";
 

@@ -2,23 +2,24 @@
 
 static uint16_t s_state = 0; // game state
 static int8_t s_offset = 0; // moving backdrop
-//static int8_t s_rotation = 0; // rotate status
+static float s_rotation = 0; // rotate status
 static int8_t s_type = 0; // which blades
 static int16_t s_position = 0; //y axis
 static int8_t s_count = 0; // how many blades dodged
 
+#define PD_OFFSET SIZE*4
 
 void updateProcSaw(PlaydateAPI* _pd) {
 
   renderSawFloor(_pd, s_offset);
   renderPlayer(_pd);
   if (s_type == 1) {
-     drawBitmapAbs(_pd, m_saw, s_position, 5*SIZE);
+     drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 5*SIZE, s_rotation);
   } else if (s_type == 3) {
-     drawBitmapAbs(_pd, m_saw, s_position, 8*SIZE);
+     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 12*SIZE, -s_rotation);
   } else if (s_type == 2) {
-     drawBitmapAbs(_pd, m_saw, s_position, 3*SIZE);
-     drawBitmapAbs(_pd, m_saw, s_position, 10*SIZE);
+     drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 3*SIZE, s_rotation);
+     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 14*SIZE, -s_rotation);
   }
   renderSawWalls(_pd, s_offset);
   renderArrows(_pd, 0, 5, 2);
@@ -30,7 +31,7 @@ bool tickSaw(bool _doInit) {
     m_player.m_position_x = -2*SIZE;
     m_player.m_position_y = SIZE*8;
     s_offset = 0; // moving backdrop
-    //s_rotation = 0; // rotate status
+    s_rotation = 0; // rotate status
     s_type = 0; // which blades
     s_position = 0; //y axis
     s_count = 0;
@@ -44,7 +45,7 @@ bool tickSaw(bool _doInit) {
      ++s_state;
   } else if (s_state == 1) {
     setGameState(kLevelSpecificWButtons);
-    //if (getFrameCount() % 2 == 0 && ++s_rotation == 2) s_rotation = 0;
+    s_rotation += 5.0f;
     if (getFrameCount() % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
     if (++s_offset == 16) s_offset = 0;
 
@@ -61,8 +62,6 @@ bool tickSaw(bool _doInit) {
     } else if (s_count < 5 + m_dungeon.m_level) {
       s_position -= 3 + m_dungeon.m_level;
       if (s_position < -80) s_type = 0;
-
-      // top is at 6, middle is 8 bottom is at 10
 
       if (abs( s_position+40 - m_player.m_position_x ) < 30) {
         if (s_type == 1 && m_player.m_position_y < 9*SIZE) s_state = 2;

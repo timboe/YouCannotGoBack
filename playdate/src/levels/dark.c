@@ -11,11 +11,18 @@ void updateProcDark(PlaydateAPI* _pd) {
   //_pd->system->logToConsole("   !!! RS: %i", (int) s_state);
 
   if (s_state < 4) { // Render hint
-    // TODO
     //graphics_context_set_stroke_color(_pd, GColorWhite);
     //graphics_context_set_stroke_width(_pd, 3);
     //GPoint _p = GPoint((7 + 4*s_state)*SIZE, (6 + 4*s_correct[s_state])*SIZE);
     //graphics_draw_circle(_pd, _p, s_ringSize);
+    _pd->graphics->drawEllipse(/*x*/ (7 + 4*s_state)*SIZE - s_ringSize,
+      /*y*/ (6 + 4*s_correct[s_state])*SIZE - s_ringSize,
+      /*width*/ s_ringSize*2,
+      /*height*/ s_ringSize*2,
+      /*lineWidth*/ 3,
+      /*startAngle*/ 0,
+      /*endAngle*/ 0,
+      /*LCDColor*/ kColorWhite);
     return;
   }
 

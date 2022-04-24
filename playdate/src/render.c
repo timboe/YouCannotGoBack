@@ -1,12 +1,19 @@
 #include "render.h"
 #include "pd_api.h"
 
+
 void drawBitmap(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y) {
   drawBitmapAbs(_pd, _bitmap, _x * SIZE, _y * SIZE);
 }
 
 void drawBitmapAbs(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y) {
   _pd->graphics->drawBitmap(_bitmap, _x, _y, 0);
+}
+
+void drawBitmapAbsRot(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y, float _rot) {
+  _pd->graphics->drawRotatedBitmap(/*LCDBitmap**/ _bitmap,
+    /*x*/ _x, /*y*/ _y, /*degrees*/ _rot,
+    /*centerx*/ 0.5f, /*centery*/ 0.5f, /*xscale*/ 1.0f, /*yscale*/ 1.0f);
 }
 
 void drawCBitmap(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y) {
@@ -63,24 +70,14 @@ void renderClutter(PlaydateAPI* _pd) {
 }
 
 void renderProgressBar(PlaydateAPI* _pd) {
-  //GRect _b = layer_get_bounds(_thisLayer);
-  //int _x1 = 0;
-  //int _w = _b.size.w;
-  //int _x2 = ( _w * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
-  //int _h = _b.size.h - (SIZE/2);
-  //GPoint _s = GPoint(_x1, _h);
-  //GPoint _e = GPoint(_x1 + _x2, _h);
-  //graphics_context_set_stroke_width(_pd, 3);
-  //graphics_context_set_stroke_color(_pd, GColorRed);
-  //graphics_draw_line(_pd, _s, _e);
+  const static PDRect _b = {.x = 0, .y = 0, .width = 144, .height = 168}; // Based on pebble screen
+  int _x1 = 0;
+  int _w = _b.width;
+  int _x2 = ( _w * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
+  int _h = _b.height - (SIZE/2);
+  _pd->graphics->drawLine(_x1, _h, _x1 + _x2, _h, /*width=*/ 3, kColorWhite);
 }
 
-
-
-static void endRenderMsg(void* _data) {
-  // Stop displaying message timeout
-  if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific);
-}
 
 void renderStandingStoneGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC) {
 
@@ -112,27 +109,21 @@ void renderStandingStoneGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _colou
 }
 
 void renderLinePath(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2) {
-  //GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
-  //GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
-  //graphics_context_set_stroke_width(_pd, 7);
-  //graphics_context_set_stroke_color(_pd, GColorDarkGray);
-  //graphics_draw_line(_pd, _p1, _p2);
-  //graphics_context_set_stroke_width(_pd, 3);
-  //graphics_context_set_stroke_color(_pd, GColorLightGray);
-  //graphics_draw_line(_pd, _p1, _p2);
+  // Draw GColorDarkGray width=7 then GColorLightGray width=3
+  _pd->graphics->drawLine(_x1*SIZE, _y1*SIZE, _x2*SIZE, _y2*SIZE, /*width=*/ 7, kColorBlack); // TODO, use gray
+  _pd->graphics->drawLine(_x1*SIZE, _y1*SIZE, _x2*SIZE, _y2*SIZE, /*width=*/ 3, kColorWhite);
 }
 
 void renderStandingStone(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c) {
-  //GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
-  //graphics_context_set_fill_color(_pd, GColorLightGray);
-  //graphics_fill_circle(_pd, _p1, SIZE);
-  //graphics_context_set_fill_color(_pd, GColorBlack);
-  //graphics_fill_circle(_pd, _p1, SIZE - 2);
-  //graphics_context_set_fill_color(_pd, _c);
-  //graphics_fill_circle(_pd, _p1, SIZE - 4);
+  // Fill GColorLightGray, then SIZE-2 with GColorBlack then SIZE-4 with c
+  _pd->graphics->fillEllipse(_x1*SIZE - SIZE-0, _y1*SIZE - SIZE-0, (SIZE*2)-0, (SIZE*2)-0, 0, 0, kColorWhite);
+  _pd->graphics->fillEllipse(_x1*SIZE - SIZE-1, _y1*SIZE - SIZE-1, (SIZE*2)-2, (SIZE*2)-2, 0, 0, kColorBlack);
+  _pd->graphics->fillEllipse(_x1*SIZE - SIZE-2, _y1*SIZE - SIZE-2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, _c);
 }
 
 void renderFrame(PlaydateAPI* _pd, PDRect _b) {
+  _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorBlack);
+  _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorWhite);
   //graphics_context_set_fill_color(_pd, GColorDarkGray);
   //graphics_context_set_stroke_color(_pd, GColorWhite);
   //graphics_context_set_stroke_width(_pd, 2);
@@ -141,6 +132,14 @@ void renderFrame(PlaydateAPI* _pd, PDRect _b) {
 }
 
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
+  //yyy
+  //_pd->graphics->setDrawMode(kDrawModeFillWhite);
+  _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorWhite);
+  _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorBlack);
+  _pd->graphics->setDrawMode(kDrawModeFillBlack);
+  _pd->graphics->drawText(_msg, strlen(_msg), kASCIIEncoding, _b.x, _b.y);
+  _pd->graphics->setDrawMode(kDrawModeCopy);
+
   //graphics_context_set_fill_color(_pd, GColorWhite);
   //graphics_fill_rect(_pd, _b, 13, 0);
   //graphics_context_set_stroke_color(_pd, GColorBlack);
@@ -151,9 +150,8 @@ void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
 }
 
 void renderMessage(PlaydateAPI* _pd, const char* _msg) {
-  //GRect _b = GRect(0*SIZE, 8*SIZE, 18*SIZE, 5*SIZE);
-  //renderTextInFrame(_pd, _msg, _b);
-  //app_timer_register(1500, endRenderMsg, NULL);
+  PDRect _b = {.x = 0*SIZE, .y = 8*SIZE, .width = 18*SIZE, .height = 5*SIZE};
+  renderTextInFrame(_pd, _msg, _b);
 }
 
 void renderWalls(PlaydateAPI* _pd, bool _l, bool _rA, bool _rB, bool _rC) {
@@ -216,12 +214,15 @@ void renderWallClutter(PlaydateAPI* _pd) {
       drawCBitmap(_pd, &m_shieldSprite, _r, 0);
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldA(_hintValue)));
       //graphics_fill_circle(_pd, _p, 3);
+      _pd->graphics->fillEllipse(_px, _py, /*sizeH*/3, /*sizeV*/3, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldA(_hintValue)));
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldC(_hintValue)));
       _px += SIZE*2;
       //graphics_fill_circle(_pd, _p, 3);
+      _pd->graphics->fillEllipse(_px, _py, /*sizeH*/3, /*sizeV*/3, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldC(_hintValue)));
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldB(_hintValue)));
       _px -= SIZE;
       //graphics_fill_circle(_pd, _p, 3);
+      _pd->graphics->fillEllipse(_px, _py, /*sizeH*/3, /*sizeV*/3, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldB(_hintValue)));
     } else if (_hint == kSpell) { // Check spell
       drawCBitmap(_pd, &m_tapestrySprite[0], _r, 0);
       for (int _i=1; _i<5; ++_i) drawCBitmap(_pd, &m_tapestrySprite[1], _r+_i, 0);
@@ -344,27 +345,29 @@ void renderPlayer(PlaydateAPI* _pd) {
 }
 
 void renderBorderText(PlaydateAPI* _pd, PDRect _loc, /*GFont _f,*/ const char* _buffer, uint8_t _offset, /*GTextAlignment _al,*/ bool _invert) {
+  _pd->graphics->setDrawMode(kDrawModeFillBlack);
+  if (_invert == true) _pd->graphics->setDrawMode(kDrawModeFillWhite);
 
-  //graphics_context_set_text_color(_pd, GColorBlack);
-  //if (_invert == true) graphics_context_set_text_color(_pd, GColorWhite);
-
-  //_loc.origin.y += _offset; // CU
-  //graphics_draw_text(_pd, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
-  //_loc.origin.x += _offset; // RU
-  //_loc.origin.y -= _offset; // CR
-  //graphics_draw_text(_pd, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
-  //_loc.origin.y -= _offset; // DR
-  //_loc.origin.x -= _offset; // DC
-  //graphics_draw_text(_pd, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
-  //_loc.origin.x -= _offset; // DR
-  //_loc.origin.y += _offset; // CR
-  //graphics_draw_text(_pd, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
+  _loc.y += _offset; // CU
+  _pd->graphics->drawText(_buffer, strlen(_buffer), kASCIIEncoding, _loc.x, _loc.y);
+  _loc.x += _offset; // RU
+  _loc.y -= _offset; // CR
+  _pd->graphics->drawText(_buffer, strlen(_buffer), kASCIIEncoding, _loc.x, _loc.y);
+  _loc.y -= _offset; // DR
+  _loc.x -= _offset; // DC
+  _pd->graphics->drawText(_buffer, strlen(_buffer), kASCIIEncoding, _loc.x, _loc.y);
+  _loc.x -= _offset; // DR
+  _loc.y += _offset; // CR
+  _pd->graphics->drawText(_buffer, strlen(_buffer), kASCIIEncoding, _loc.x, _loc.y);
 
   // main
-  //graphics_context_set_text_color(_pd, GColorWhite);
-  //if (_invert == true) graphics_context_set_text_color(_pd, GColorBlack);
-  //_loc.origin.x += _offset; // O
-  //graphics_draw_text(_pd, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
+  _pd->graphics->setDrawMode(kDrawModeFillWhite);
+  if (_invert == true) _pd->graphics->setDrawMode(kDrawModeFillBlack);
+  _loc.x += _offset; // O
+  _pd->graphics->drawText(_buffer, strlen(_buffer), kASCIIEncoding, _loc.x, _loc.y);
+
+  // reset
+  _pd->graphics->setDrawMode(kDrawModeCopy);
 }
 
 #define FADE_LEVELS 8

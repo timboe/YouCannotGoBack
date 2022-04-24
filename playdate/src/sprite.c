@@ -2,9 +2,8 @@
 
 
 LCDBitmapTable* m_spriteMap;
-LCDBitmap* m_saw;
-//LCDBitmap* m_sawA;
-//LCDBitmap* m_sawB;
+LCDBitmap* m_sawA;
+LCDBitmap* m_sawB;
 
 LCDBitmap* m_treasureBanner;
 
@@ -53,27 +52,26 @@ struct CBitmap m_halfUpperWall[2];
 struct CBitmap m_halfLowerWall[2];
 
 LCDBitmap *loadImageAtPath(PlaydateAPI* _pd, const char* _path) {
-  const char* outErr = NULL;
-  LCDBitmap* _img = _pd->graphics->loadBitmap(_path, &outErr);
-  if (outErr != NULL) {
-    _pd->system->error("Error loading image at path '%s': %s", _path, outErr);
+  const char* _outErr = NULL;
+  LCDBitmap* _img = _pd->graphics->loadBitmap(_path, &_outErr);
+  if (_outErr != NULL) {
+    _pd->system->error("Error loading image at path '%s': %s", _path, _outErr);
   }
   return _img;
 }
 
 LCDBitmapTable *loadImageTableAtPath(PlaydateAPI* _pd, const char* _path) {
-  const char *outErr = NULL;
-  LCDBitmapTable* _table = _pd->graphics->newBitmapTable(1024, 32, 32);
-  _pd->graphics->loadIntoBitmapTable(_path, _table, &outErr);
-  if ( outErr != NULL ) {
-    _pd->system->error("Error loading image table at path '%s': %s", _path, outErr);
+  const char* _outErr = NULL;
+  LCDBitmapTable* _table = _pd->graphics->loadBitmapTable(_path, &_outErr);
+  if (_outErr != NULL) {
+    _pd->system->error("Error loading image table at path '%s': %s", _path, _outErr);
   }
   return _table;
 }
 
 struct CBitmap getSprite(PlaydateAPI* _pd, int _x, int _y, int _w, int _h) {
-  if (_w >= CBITMAP_MAX || _h >= CBITMAP_MAX) {
-    _pd->system->error("Cannot request such a large sprite");
+  if (_w > CBITMAP_MAX || _h > CBITMAP_MAX) {
+    _pd->system->error("Cannot request such a large sprite %i %i", _w, _h);
   }
   struct CBitmap _cb;
   _cb.w = _w;
@@ -116,7 +114,8 @@ struct CBitmap* getFloor(bool _random) {
 
 void initSprite(PlaydateAPI* _pd) {
   m_grave = loadImageAtPath(_pd, "images/gameover");
-  m_saw = loadImageAtPath(_pd, "images/saw");
+  m_sawA = loadImageAtPath(_pd, "images/saw_a");
+  m_sawB = loadImageAtPath(_pd, "images/saw_b");
   m_treasureBanner = loadImageAtPath(_pd, "images/treasure");
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
@@ -182,10 +181,6 @@ void initSprite(PlaydateAPI* _pd) {
     m_symbol[_g + MAX_SYMBOL/2] = getSprite(_pd, 24 + (_g*2), 2, 2, 2);
   }
 
-  // These have moved
-  //for (int _p = 0; _p < MAX_FRAMES; ++_p) {
-  //  m_playerSprite[_p] = getSprite(_pd, 16 + (_p*2), 14, 2, 2);
-  //}
   int _player = 0;
   m_playerSprite[_player++] = getSprite(_pd, 28, 8, 2, 2);
   m_playerSprite[_player++] = getSprite(_pd, 30, 8, 2, 2);
@@ -197,10 +192,6 @@ void initSprite(PlaydateAPI* _pd) {
   m_playerSprite[_player++] = getSprite(_pd, 30, 12, 2, 2);
 
   int _clutter = 0;
-  // These have moved
-  //for (int _c = 0; _c < N_SMALL_CLUTTER; ++_c) {
-  //  m_clutterSprite[_clutter++] = getSprite(_pd, _c*2, 14, 2, 2);
-  //}
   m_clutterSprite[_clutter++] = getSprite(_pd, 28, 0, 2, 2); // small 1
   m_clutterSprite[_clutter++] = getSprite(_pd, 30, 0, 2, 2); // small 2
 

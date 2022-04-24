@@ -131,6 +131,7 @@ int getShieldA(int _value);
 int getShieldB(int _value);
 int getShieldC(int _value);
 
-void gameWindowLoad(/*Window* _window*/);
+void gameWindowLoad();
 void gameWindowUnload();
-//void gameClickConfigProvider(Window* _window);
+void gameClickConfigHandler(uint32_t buttonPressed);
+
