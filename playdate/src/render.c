@@ -36,6 +36,27 @@ void drawCBitmapAbs(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y) 
   }
 }
 
+void renderGameFrame(PlaydateAPI* _pd) {
+  drawBitmapAbs(_pd, m_borderL, 0, 0);
+  drawBitmapAbs(_pd, m_borderR, 144+128, 0);
+  _pd->graphics->fillRect(128, 0, 144, 36, kColorBlack);
+  _pd->graphics->fillRect(128, 36+168, 144, 36, kColorBlack);
+
+}
+
+void renderClear(PlaydateAPI* _pd, bool transparentCentre) {
+  if (transparentCentre) {
+    _pd->graphics->clear(kColorChekerboard);
+    _pd->graphics->fillRect(0, 0, SIZE*18, SIZE*2, kColorBlack);
+    _pd->graphics->fillRect(0, 0, SIZE*2, SIZE*21, kColorBlack);
+    _pd->graphics->fillRect(0, SIZE*20, SIZE*18, SIZE*2, kColorBlack);
+    _pd->graphics->fillRect(SIZE*17, 0, SIZE*1, SIZE*21, kColorBlack);
+  } else {
+    _pd->graphics->clear(kColorChekerboard);
+    _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*24, kColorBlack);
+  }
+}
+
 void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
   if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
     drawCBitmap(_pd, &m_arrow, _x, _yStart);
@@ -47,7 +68,7 @@ void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
 void renderHintNumber(PlaydateAPI* _pd, PDRect _r, int _value, bool _invert) {
   static char _hintText[3];
   snprintf(_hintText, 3, "%i", _value);
-  renderBorderText(_pd, _r,  /*fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),*/ _hintText, 1, /*GTextAlignmentCenter,*/ _invert);
+  renderBorderText(_pd, _r, m_fontMain, _hintText, 1, /*GTextAlignmentCenter,*/ _invert);
 }
 
 void renderClutter(PlaydateAPI* _pd) {
@@ -61,7 +82,7 @@ void renderClutter(PlaydateAPI* _pd) {
       drawCBitmapAbs(_pd, &m_greek[ _hintValue ], _px, _py);
     } else if (_c == 0 && _hint == kNumber) {
       drawCBitmap(_pd, getClutter(true), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
-      PDRect r = {.x = m_clutter.m_position_x[_c] * SIZE, .y = (m_clutter.m_position_y[_c] * SIZE)-3, .width = 16, .height = 16};
+      PDRect r = {.x = m_clutter.m_position_x[_c] * SIZE, .y = (m_clutter.m_position_y[_c] * SIZE)+3, .width = 16, .height = 16}; // TODO tune .y
       renderHintNumber(_pd, r, _hintValue, true);
     } else {
       drawCBitmap(_pd, getClutter(false), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
@@ -74,8 +95,8 @@ void renderProgressBar(PlaydateAPI* _pd) {
   int _x1 = 0;
   int _w = _b.width;
   int _x2 = ( _w * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
-  int _h = _b.height - (SIZE/2);
-  _pd->graphics->drawLine(_x1, _h, _x1 + _x2, _h, /*width=*/ 3, kColorWhite);
+  int _h = _b.height;
+  _pd->graphics->drawLine(_x1, _h, _x1 + _x2, _h, /*width=*/ 4, kColorWhite);
 }
 
 
@@ -116,9 +137,9 @@ void renderLinePath(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2) {
 
 void renderStandingStone(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c) {
   // Fill GColorLightGray, then SIZE-2 with GColorBlack then SIZE-4 with c
-  _pd->graphics->fillEllipse(_x1*SIZE - SIZE-0, _y1*SIZE - SIZE-0, (SIZE*2)-0, (SIZE*2)-0, 0, 0, kColorWhite);
-  _pd->graphics->fillEllipse(_x1*SIZE - SIZE-1, _y1*SIZE - SIZE-1, (SIZE*2)-2, (SIZE*2)-2, 0, 0, kColorBlack);
-  _pd->graphics->fillEllipse(_x1*SIZE - SIZE-2, _y1*SIZE - SIZE-2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, _c);
+  _pd->graphics->fillEllipse(_x1*SIZE - SIZE+0, _y1*SIZE - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, 0, 0, kColorWhite);
+  _pd->graphics->fillEllipse(_x1*SIZE - SIZE+1, _y1*SIZE - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, 0, 0, kColorBlack);
+  _pd->graphics->fillEllipse(_x1*SIZE - SIZE+2, _y1*SIZE - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, _c);
 }
 
 void renderFrame(PlaydateAPI* _pd, PDRect _b) {
@@ -134,10 +155,17 @@ void renderFrame(PlaydateAPI* _pd, PDRect _b) {
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
   //yyy
   //_pd->graphics->setDrawMode(kDrawModeFillWhite);
+
+
+  const static int _text_y_offset = SIZE*2;
   _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorWhite);
   _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorBlack);
+  
   _pd->graphics->setDrawMode(kDrawModeFillBlack);
-  _pd->graphics->drawText(_msg, strlen(_msg), kASCIIEncoding, _b.x, _b.y);
+  _pd->graphics->setFont(m_fontMain);
+  int _len = _pd->graphics->getTextWidth(m_fontMain, _msg, strlen(_msg), kASCIIEncoding, /*tracking*/ 0);
+  _b.x += (_b.width - _len)/2;
+  _pd->graphics->drawText(_msg, strlen(_msg), kASCIIEncoding, _b.x, _b.y + _text_y_offset);
   _pd->graphics->setDrawMode(kDrawModeCopy);
 
   //graphics_context_set_fill_color(_pd, GColorWhite);
@@ -211,24 +239,28 @@ void renderWallClutter(PlaydateAPI* _pd) {
       //GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
       int _px = (_r + 1) * SIZE;
       int _py = SIZE;
+      int _w = 8;
       drawCBitmap(_pd, &m_shieldSprite, _r, 0);
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldA(_hintValue)));
       //graphics_fill_circle(_pd, _p, 3);
-      _pd->graphics->fillEllipse(_px, _py, /*sizeH*/3, /*sizeV*/3, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldA(_hintValue)));
+      _pd->graphics->fillEllipse(_px - _w/2, _py - _w/2, /*sizeH*/_w, /*sizeV*/_w, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldA(_hintValue)));
+      _pd->graphics->drawEllipse(_px - _w/2, _py - _w/2, _w, _w, /*lineWidth*/1, 0, 0, kColorBlack);      
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldC(_hintValue)));
       _px += SIZE*2;
       //graphics_fill_circle(_pd, _p, 3);
-      _pd->graphics->fillEllipse(_px, _py, /*sizeH*/3, /*sizeV*/3, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldC(_hintValue)));
+      _pd->graphics->fillEllipse(_px - _w/2, _py - _w/2, /*sizeH*/_w, /*sizeV*/_w, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldC(_hintValue)));
+      _pd->graphics->drawEllipse(_px - _w/2, _py - _w/2, _w, _w, /*lineWidth*/1, 0, 0, kColorBlack); 
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldB(_hintValue)));
       _px -= SIZE;
       //graphics_fill_circle(_pd, _p, 3);
-      _pd->graphics->fillEllipse(_px, _py, /*sizeH*/3, /*sizeV*/3, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldB(_hintValue)));
+      _pd->graphics->fillEllipse(_px - _w/2, _py - _w/2, /*sizeH*/_w, /*sizeV*/_w, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldB(_hintValue)));
+      _pd->graphics->drawEllipse(_px - _w/2, _py - _w/2, _w, _w, /*lineWidth*/1, 0, 0, kColorBlack); 
     } else if (_hint == kSpell) { // Check spell
       drawCBitmap(_pd, &m_tapestrySprite[0], _r, 0);
       for (int _i=1; _i<5; ++_i) drawCBitmap(_pd, &m_tapestrySprite[1], _r+_i, 0);
       drawCBitmap(_pd, &m_tapestrySprite[2], _r+5, 0);
-      PDRect rect =  {.x = _r * SIZE, .y = -2, .width = 48, .height = 16};
-      renderBorderText(_pd, rect, /*fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),*/ m_spellNames[_hintValue], 1, /*GTextAlignmentCenter,*/ false);
+      PDRect rect =  {.x = _r * SIZE, .y = 4, .width = 48, .height = 16};
+      renderBorderText(_pd, rect, m_fontMain, m_spellNames[_hintValue], 1, false);
     } else if (_hint == kSymbol) { // Check symbol
       drawCBitmap(_pd, &m_symbol[_hintValue], _r, 18);
     }
@@ -245,6 +277,8 @@ void renderSawFloor(PlaydateAPI* _pd, int8_t _offset) {
 }
 
 void renderSawWalls(PlaydateAPI* _pd, int8_t _offset) {
+  _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*2, kColorBlack);
+  _pd->graphics->fillRect(0, SIZE*15, SIZE*19, SIZE*5, kColorBlack);
   for (int _x = 0; _x < 20; _x += 2) {
     drawCBitmapAbs(_pd, &m_halfUpperWall[1], (_x*SIZE) - _offset, 4*SIZE);
     drawCBitmapAbs(_pd, &m_halfLowerWall[1], (_x*SIZE) - _offset, 13*SIZE);
@@ -344,9 +378,13 @@ void renderPlayer(PlaydateAPI* _pd) {
   drawCBitmapAbs(_pd, &m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
 }
 
-void renderBorderText(PlaydateAPI* _pd, PDRect _loc, /*GFont _f,*/ const char* _buffer, uint8_t _offset, /*GTextAlignment _al,*/ bool _invert) {
+void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _buffer, uint8_t _offset, /*GTextAlignment _al,*/ bool _invert) {
+  _pd->graphics->setFont(_f);
   _pd->graphics->setDrawMode(kDrawModeFillBlack);
   if (_invert == true) _pd->graphics->setDrawMode(kDrawModeFillWhite);
+
+  int _len = _pd->graphics->getTextWidth(_f, _buffer, strlen(_buffer), kASCIIEncoding, /*tracking*/ 0);
+  _loc.x += (_loc.width - _len)/2;
 
   _loc.y += _offset; // CU
   _pd->graphics->drawText(_buffer, strlen(_buffer), kASCIIEncoding, _loc.x, _loc.y);
@@ -395,10 +433,9 @@ void renderFade(PlaydateAPI* _pd, bool _in) {
 
 LCDColor getShieldColor(int8_t _value) {
   switch (_value) {
-    case 0: return kColorBlack; // GColorRed
-    case 1: return kColorWhite; // GColorBlack
-    case 2: return kColorBlack; // GColorWhite
-    case 3: return kColorWhite; // GColorBlue
-    default: return kColorBlack; // GColorLightGray
+    case 0: return kColorBlack;
+    case 1: return kColorWhite;
+    case 2: return kColorChekerboard;
+    default: return kColorBlack;
   }
 }

@@ -23,14 +23,14 @@ void updateProcPword(PlaydateAPI* _pd) {
   if (s_state == 5) {
     for (int _i = 0; _i < 3; ++_i) {
       if (m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room] == kNumber ) {
-        PDRect _r = {.x = SIZE*10, .y = SIZE*(5 + 4*_i), .width = SIZE*6, .height = SIZE*2};
+        PDRect _r = {.x = SIZE*10, .y = SIZE*(6 + 4*_i), .width = SIZE*6, .height = SIZE*2};
         renderHintNumber(_pd, _r, s_choices[_i], true);
       } else {
-        PDRect _r = {.x = SIZE*10, .y = SIZE*(4 + 4*_i), .width = SIZE*6, .height = SIZE*2};
-        renderBorderText(_pd, _r, /*fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),*/ m_spellNames[s_choices[_i]], 2, /*GTextAlignmentCenter,*/ false);
+        PDRect _r = {.x = SIZE*10, .y = SIZE*(6 + 4*_i), .width = SIZE*6, .height = SIZE*2};
+        renderBorderText(_pd, _r, m_fontMain, m_spellNames[s_choices[_i]], 2, false);
       }
     }
-    renderArrows(_pd, 12, 3, 4);
+    renderArrows(_pd, 12, 4, 4);
   }
 
 }
@@ -45,7 +45,7 @@ bool tickPword(PlaydateAPI* _pd, bool _doInit) {
     return false;
   }
 
-  static const char _msg[] = "PASSWORD?";
+  static const char _msg[] = "PASSWORD";
 
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);

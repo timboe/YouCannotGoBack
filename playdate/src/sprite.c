@@ -5,9 +5,14 @@ LCDBitmapTable* m_spriteMap;
 LCDBitmap* m_sawA;
 LCDBitmap* m_sawB;
 
+LCDBitmap* m_borderL;
+LCDBitmap* m_borderR;
+
 LCDBitmap* m_treasureBanner;
 
 LCDBitmap* m_grave;
+
+LCDFont* m_fontMain;
 
 struct CBitmap m_UOuterWall[3];
 struct CBitmap m_DOuterWall[3];
@@ -50,6 +55,8 @@ struct CBitmap m_treasure[3];
 struct CBitmap m_symbol[MAX_SYMBOL];
 struct CBitmap m_halfUpperWall[2];
 struct CBitmap m_halfLowerWall[2];
+
+LCDPattern kColorChekerboard = {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55};
 
 LCDBitmap *loadImageAtPath(PlaydateAPI* _pd, const char* _path) {
   const char* _outErr = NULL;
@@ -117,8 +124,18 @@ void initSprite(PlaydateAPI* _pd) {
   m_sawA = loadImageAtPath(_pd, "images/saw_a");
   m_sawB = loadImageAtPath(_pd, "images/saw_b");
   m_treasureBanner = loadImageAtPath(_pd, "images/treasure");
+  m_borderL = loadImageAtPath(_pd, "images/border_left");
+  m_borderR = loadImageAtPath(_pd, "images/border_right");
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
+
+  const char* _fontPath = "fonts/marblemadness_as";
+  const char* _outErr = NULL;
+  m_fontMain = _pd->graphics->loadFont(_fontPath, &_outErr);
+  if (_outErr != NULL) {
+    _pd->system->error("Error loading font at path '%s': %s", _fontPath, _outErr);
+  }
+  _pd->graphics->setFont(m_fontMain);
 
   for (int _w = 0; _w < 3; ++_w) { // Walls
     m_UOuterWall[_w] = getSprite(_pd, _w + 0, 6, 2, 2);

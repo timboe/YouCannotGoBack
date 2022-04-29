@@ -62,12 +62,12 @@ typedef enum {
 } GameState_t;
 
 typedef enum {
-  kRWb,
-  kRbB,
-  kbBb,
-  kbRW,
-  kBbR,
-  kBRR,
+  kBWC,
+  kBCW,
+  kWCB,
+  kWBC,
+  kCBW,
+  kCWB,
   kNShieldTypes
 } ShieldTypes_t;
 

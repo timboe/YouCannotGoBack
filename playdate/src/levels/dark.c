@@ -15,6 +15,7 @@ void updateProcDark(PlaydateAPI* _pd) {
     //graphics_context_set_stroke_width(_pd, 3);
     //GPoint _p = GPoint((7 + 4*s_state)*SIZE, (6 + 4*s_correct[s_state])*SIZE);
     //graphics_draw_circle(_pd, _p, s_ringSize);
+    renderClear(_pd, false);
     _pd->graphics->drawEllipse(/*x*/ (7 + 4*s_state)*SIZE - s_ringSize,
       /*y*/ (6 + 4*s_correct[s_state])*SIZE - s_ringSize,
       /*width*/ s_ringSize*2,

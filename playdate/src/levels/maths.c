@@ -21,7 +21,7 @@ void updateProcMaths(PlaydateAPI* _pd) {
   drawCBitmap(_pd, &m_block, 13, 9);
 
   for (int _s = 0; _s < 3; ++_s) {
-    PDRect _b = {.x = (7 + _s*2)*SIZE, .y = 9*SIZE, .width = 16, .height = 16};
+    PDRect _b = {.x = (5 + _s*3)*SIZE, .y = 9*SIZE + 4, .width = 16, .height = 16};
     renderHintNumber(_pd, _b, s_sequence[_s], false);   // sequence
   }
 
@@ -33,7 +33,7 @@ void updateProcMaths(PlaydateAPI* _pd) {
   for (int _s = 0; _s < 3; ++_s) {
     PDRect _b = {.x = 16*SIZE - 2, .y = (5 + (_s*4))*SIZE - 2, .width = 2*SIZE + 4, .height = 2*SIZE + 4};   // Choices
     renderFrame(_pd, _b);
-    PDRect _b2 = {.x = 16*SIZE - 1, .y = (5 + (_s*4))*SIZE - 1, .width = 16, .height = 16};
+    PDRect _b2 = {.x = 16*SIZE - 1, .y = (6 + (_s*4))*SIZE - 4, .width = 16, .height = 16};
     renderHintNumber(_pd, _b2, s_choices[_s], false);
   }
   renderArrows(_pd, 14, 4, 4);
@@ -44,7 +44,7 @@ bool tickMaths(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE;
+    m_player.m_position_y = SIZE*9;
     addCluter(5, 20, 1);
 
     s_puzzle = rand() % kNMathsPuzzles; // Choose seq

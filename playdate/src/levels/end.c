@@ -7,6 +7,7 @@ static char s_victories[16];
 
 void updateProcEnd(PlaydateAPI* _pd) {
 
+  renderClear(_pd, false);
   if (m_dungeon.m_gameOver == 1) {
     static const char _end1[] = "OOOOH, NASTY...";
     PDRect _rect = {.x = 0, .y = 0, .width = 144, .height = 43};
@@ -25,7 +26,7 @@ void updateProcEnd(PlaydateAPI* _pd) {
     renderTextInFrame(_pd, _end1, _rect);
     drawBitmapAbs(_pd, m_treasureBanner, 19, 68);
     PDRect _rect2 = {.x = 0, .y = 145, .width = 144, .height = 20};
-    renderBorderText(_pd, _rect2, /*fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),*/ s_victories, 2, /*GTextAlignmentCenter,*/ false);
+    renderBorderText(_pd, _rect2, m_fontMain, s_victories, 2, false);
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawCBitmap(_pd, &m_arrow, 8, 12);
     }

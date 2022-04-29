@@ -90,6 +90,17 @@ bool newRoom() {
 }
 
 
+int getHorizontalOffset() {
+  int off = 0;
+  switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
+    case kStart: off = (m_player.m_position_x * -1) + 24; break;
+    case kEnd: off = -12; break;
+    default: off = m_player.m_position_x * -1;
+  }
+  if (off > 0) off = 0;
+  return off < -24 ? -24 : off;
+}
+
 void dungeonUpdateProc() {
 
   //s_renderQueued = false;
@@ -100,10 +111,15 @@ void dungeonUpdateProc() {
 
   if (m_rotated) {
     pd->graphics->pushContext(m_rotatedBitmap);
+    pd->graphics->setDrawOffset(0, 0);
+  } else {
+    pd->graphics->setDrawOffset(128, 36); 
+    // 128 left border, 144 pebble display (18 8-pix tiles), 128 right border = 400
+    // 36 top border, 168, 36 = 240
   }
 
   pd->display->setScale(1);
-  pd->graphics->clear(kColorBlack);
+  renderClear(pd, true);
 
   switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
     case kStart: updateProcStart(pd); break;
@@ -131,6 +147,8 @@ void dungeonUpdateProc() {
 
   if (m_dungeon.m_gameOver == 0) renderProgressBar(/*_thisLayer,*/ pd);
 
+  pd->graphics->fillRect(64, 64, 128, 128, kColorChekerboard);
+
   // Do fade
   if (s_gameState == kFadeIn) renderFade(/*_thisLayer,*/ pd, true);
   else if (s_gameState == kFadeOut) renderFade(/*_thisLayer,*/ pd, false);
@@ -143,10 +161,13 @@ void dungeonUpdateProc() {
   if (m_rotated) {
     pd->graphics->popContext();
 
-    pd->graphics->clear(kColorWhite);
+    pd->graphics->clear(kColorBlack);
     pd->display->setScale(2);
-    // Offset to align in the centre of the rotates screen
-    pd->graphics->drawRotatedBitmap(m_rotatedBitmap, -64+8, -8, 90.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+    // Offset to align in the center of the rotates screen
+    pd->graphics->drawRotatedBitmap(m_rotatedBitmap, -56, getHorizontalOffset(), 90.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+  } else {
+    pd->graphics->setDrawOffset(0, 0);
+    renderGameFrame(pd);
   }
 
 }
@@ -166,15 +187,12 @@ void clickHandlerReplacement() {
 void callbackReplacement() {
   if (getGameState() != kDisplayingMsg) { return; }
   if (pd->system->getElapsedTime() >= 1.5f) {
-    pd->system->logToConsole("mssage ellapsed");
+    pd->system->logToConsole("message elapsed");
     setGameState(kLevelSpecific);
   }
 }
 
 int gameLoop(void* data) {
-  //if (s_renderQueued == true) {
-  //  return ;
-  //}
 
   clickHandlerReplacement();
   callbackReplacement();
@@ -216,15 +234,12 @@ int gameLoop(void* data) {
 
 
   if (requestRedraw == true) {
-    //s_renderQueued = true;
-    //layer_mark_dirty(s_dungeonLayer);
-    dungeonUpdateProc(); // TODO check the location of this
+    dungeonUpdateProc();
   }
 
   // TODO: The docs say that returning 0 does not request a redraw,
-  // but it is currently 
+  // but it is currently required
   requestRedraw = true;
-
 
   return (int)requestRedraw;
 }
@@ -249,10 +264,6 @@ void gameWindowLoad() {
 
   m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
 
-  //s_dungeonLayer = layer_create( _b );
-  //layer_add_child(window_get_root_layer(_window), s_dungeonLayer);
-  //layer_set_update_proc(s_dungeonLayer, dungeonUpdateProc);
-
   generate(pd);
 
 }
@@ -273,42 +284,44 @@ int getHintValueMax(Hints_t _hint) {
   }
 }
 
-// case 0: return GColorRed;
-// case 1: return GColorBlack;
-// case 2: return GColorWhite;
-// case 3: return GColorBlue;
-// default: return GColorLightGray;
+// Mappings below are
+//case 0: return kColorBlack;
+//case 1: return kColorWhite;
+//case 2: return kColorChekerboard;
 
 int getShieldA(int _value) {
   switch (_value) {
-    case kRWb: return 0;
-    case kRbB: return 0;
-    case kbBb: return 1;
-    case kbRW: return 1;
-    case kBbR: return 3;
-    case kBRR: default: return 3;
+    case kBWC: return 0;
+    case kBCW: return 0;
+    case kWCB: return 1;
+    case kWBC: return 1;
+    case kCBW: return 2;
+    case kCWB: return 2;
+    default: return 0;
   }
 }
 
 int getShieldB(int _value) {
   switch (_value) {
-    case kRWb: return 2;
-    case kRbB: return 1;
-    case kbBb: return 3;
-    case kbRW: return 0;
-    case kBbR: return 1;
-    case kBRR: default: return 0;
+    case kBWC: return 1;
+    case kBCW: return 2;
+    case kWCB: return 2;
+    case kWBC: return 0;
+    case kCBW: return 0;
+    case kCWB: return 1;
+    default: return 0;
   }
 }
 
 int getShieldC(int _value) {
   switch (_value) {
-    case kRWb: return 1;
-    case kRbB: return 3;
-    case kbBb: return 1;
-    case kbRW: return 2;
-    case kBbR: return 0;
-    case kBRR: default: return 0;
+    case kBWC: return 2;
+    case kBCW: return 1;
+    case kWCB: return 0;
+    case kWBC: return 2;
+    case kCBW: return 1;
+    case kCWB: return 0;
+    default: return 0;
   }
 }
 
