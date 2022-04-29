@@ -36,7 +36,7 @@ void updateProcMaths(PlaydateAPI* _pd) {
     PDRect _b2 = {.x = 16*SIZE - 1, .y = (6 + (_s*4))*SIZE - 4, .width = 16, .height = 16};
     renderHintNumber(_pd, _b2, s_choices[_s], false);
   }
-  renderArrows(_pd, 14, 4, 4);
+  renderArrows(_pd, 14, 5, 4);
 
 }
 

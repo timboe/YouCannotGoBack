@@ -147,5 +147,5 @@ void renderStonesCommon(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, 
   int _off = 0;
   if (_state == 7) _off = 4;
   else if (_state == 9) _off = 8;
-  renderArrows(_pd, 6 + _off, 3, 4);
+  renderArrows(_pd, 6 + _off, 5, 4);
 }

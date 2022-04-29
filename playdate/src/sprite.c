@@ -37,7 +37,9 @@ struct CBitmap m_RDoorstep;
 struct CBitmap m_greek[MAX_GREEK];
 struct CBitmap m_playerSprite[MAX_FRAMES];
 struct CBitmap m_stairs;
-struct CBitmap m_arrow;
+struct CBitmap m_arrow_u;
+struct CBitmap m_arrow_r;
+struct CBitmap m_arrow_d;
 struct CBitmap m_clutterSprite[MAX_CLUTTER];
 struct CBitmap m_tapestrySprite[3];
 struct CBitmap m_shieldSprite;
@@ -171,7 +173,9 @@ void initSprite(PlaydateAPI* _pd) {
   m_torchWall[2] = getSprite(_pd, 10, 4, 2, 3);
   m_torchWall[3] = getSprite(_pd, 6,  6, 3, 2);
 
-  m_arrow = getSprite(_pd, 10, 0, 2, 2);
+  m_arrow_d = getSprite(_pd, 10, 0, 2, 2);
+  m_arrow_u = getSprite(_pd, 0, 14, 2, 2);
+  m_arrow_r = getSprite(_pd, 2, 14, 2, 2);
 
   m_stairs = getSprite(_pd, 10, 8, 2, 2);
 

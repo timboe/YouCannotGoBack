@@ -16,10 +16,10 @@ void updateProcSaw(PlaydateAPI* _pd) {
   if (s_type == 1) {
      drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 5*SIZE, s_rotation);
   } else if (s_type == 3) {
-     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 12*SIZE, -s_rotation);
+     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 13*SIZE, -s_rotation);
   } else if (s_type == 2) {
      drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 3*SIZE, s_rotation);
-     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 14*SIZE, -s_rotation);
+     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 15*SIZE, -s_rotation);
   }
   renderSawWalls(_pd, s_offset);
   renderArrows(_pd, 0, 5, 2);
@@ -70,6 +70,7 @@ bool tickSaw(bool _doInit) {
       }
     } else {
       setGameState(kLevelSpecific);
+      s_type = 0;
       m_player.m_position_x += (PLAYER_SPEED * 2);
       if (m_player.m_position_x > 20*SIZE) setGameState(kFadeOut);
     }

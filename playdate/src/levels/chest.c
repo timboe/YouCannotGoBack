@@ -16,7 +16,7 @@ void updateProcChest(PlaydateAPI* _pd) {
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
-  renderArrows(_pd, 8, 2, 4);
+  renderArrows(_pd, 8, 3, 4);
 }
 
 bool tickChest(bool _doInit) {

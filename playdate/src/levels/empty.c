@@ -8,7 +8,7 @@ void updateProcEmpty(PlaydateAPI* _pd) {
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
-  renderArrows(_pd, 15, 4, 4);
+  renderArrows(_pd, 15, 5, 4);
 }
 
 bool tickEmpty(bool _doInit) {

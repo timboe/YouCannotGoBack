@@ -30,6 +30,7 @@ static const char* s_displayMsg = NULL;
 Clutter_t m_clutter = {0};
 
 bool m_rotated = true;
+bool m_autoRotation = true;
 LCDBitmap* m_rotatedBitmap = NULL;
 
 // static bool s_renderQueued = false; // no longer needed?
@@ -145,7 +146,7 @@ void dungeonUpdateProc() {
     setGameState(kDisplayingMsg);
   }
 
-  if (m_dungeon.m_gameOver == 0) renderProgressBar(/*_thisLayer,*/ pd);
+  if (m_dungeon.m_gameOver == 0 && !m_rotated) renderProgressBar(pd, m_rotated);
 
   pd->graphics->fillRect(64, 64, 128, 128, kColorChekerboard);
 
@@ -153,23 +154,28 @@ void dungeonUpdateProc() {
   if (s_gameState == kFadeIn) renderFade(/*_thisLayer,*/ pd, true);
   else if (s_gameState == kFadeOut) renderFade(/*_thisLayer,*/ pd, false);
 
-  // Draw FPS indicator (dbg only)
-  #ifdef DEBUG_MODE
-  pd->system->drawFPS(0, 0);
-  #endif
 
   if (m_rotated) {
     pd->graphics->popContext();
 
     pd->graphics->clear(kColorBlack);
     pd->display->setScale(2);
+    pd->graphics->setDrawOffset(0, 0);
     // Offset to align in the center of the rotates screen
     pd->graphics->drawRotatedBitmap(m_rotatedBitmap, -56, getHorizontalOffset(), 90.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+    // Need to also fill a gap at the bottom...
+    pd->graphics->fillRect(0, 0, SIZE, 240, kColorBlack);
   } else {
     pd->graphics->setDrawOffset(0, 0);
     renderGameFrame(pd);
   }
 
+  if (m_dungeon.m_gameOver == 0 && m_rotated) renderProgressBar(pd, m_rotated);
+
+  // Draw FPS indicator (dbg only)
+  #ifdef DEBUG_MODE
+  pd->system->drawFPS(0, 0);
+  #endif
 }
 
 // Temporary until the playdate eventHandler is functional for inputs
@@ -181,6 +187,12 @@ void clickHandlerReplacement() {
   if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
   if (pushed & kButtonA) gameClickConfigHandler(kButtonA);
   if (pushed & kButtonB) gameClickConfigHandler(kButtonB);
+
+  static float fx, fy, fz;
+  if (m_autoRotation) {
+    pd->system->getAccelerometer(&fx, &fy, &fz);
+    m_rotated = fabs(fx) > fabs(fy);
+  }
 }
 
 // We don't have timer callbacks, replaces endRenderMsg
@@ -258,11 +270,34 @@ bool movePlayer() {
   return true;
 }
 
+// TODO figure out how to get the callback data...
+void menuOptionsCallback(void* callback) {
+  if ((char*)callback == "Landscape") {
+    m_rotated = false;
+    m_autoRotation = false;
+    pd->system->setPeripheralsEnabled(kNone);
+    pd->system->logToConsole("Set portrait");
+  } else if ((char*)callback == "Portrait") {
+    m_rotated = true; 
+    m_autoRotation = false;
+    pd->system->setPeripheralsEnabled(kNone);
+    pd->system->logToConsole("Set landscape");
+  } else {
+    m_autoRotation = true;
+    pd->system->setPeripheralsEnabled(kAccelerometer);
+  }
+  pd->system->logToConsole("CALLBACK %i", callback);
+}
 
 void gameWindowLoad() {
   setGameState(kIdle);
 
   m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
+
+  const char* options[] = {"Auto", "Landscape", "Portrait"};
+  pd->system->addOptionsMenuItem("Rotate", options, 3, menuOptionsCallback, NULL);
+
+  pd->system->setPeripheralsEnabled(kAccelerometer);
 
   generate(pd);
 

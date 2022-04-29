@@ -62,9 +62,17 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
 //  } else if (event == kEventKeyPressed) {
 //    playdate->system->logToConsole("EH: pressed %i", arg);
     gameClickConfigHandler(arg);
-  } else if (event == kEventTerminate || event == kEventKeyReleased) {
+  } else if (event == kEventTerminate) {
     deinit();
     playdate->system->logToConsole("EH: deinit");
+  } else if (event == kEventLock) {
+    playdate->system->logToConsole("EH: lock");
+  } else if (event == kEventUnlock) {
+    playdate->system->logToConsole("EH: unlock");
+  } else if (event == kEventPause) {
+    playdate->system->logToConsole("EH: pause");
+  } else if (event == kEventResume) {
+    playdate->system->logToConsole("EH: resume");
   } else {
     playdate->system->logToConsole("EH: unknown event %i with arg %i", event, arg);
   }

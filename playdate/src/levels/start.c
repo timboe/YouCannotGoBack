@@ -29,7 +29,7 @@ void updateProcStart(PlaydateAPI* _pd) {
 
   drawCBitmap(_pd, &m_flagstone[ m_dungeon.m_finalPuzzle ], 0, 9);
 
-  renderArrows(_pd, 15, 4, 4);
+  renderArrows(_pd, 13, 5, 4);
 }
 
 bool tickStart(bool _doInit) {

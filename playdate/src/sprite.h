@@ -51,7 +51,9 @@ extern struct CBitmap m_torchWall[4];
 
 extern struct CBitmap m_stairs;
 
-extern struct CBitmap m_arrow;
+extern struct CBitmap m_arrow_u;
+extern struct CBitmap m_arrow_r;
+extern struct CBitmap m_arrow_d;
 
 extern struct CBitmap m_playerSprite[MAX_FRAMES];
 

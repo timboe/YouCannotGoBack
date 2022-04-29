@@ -59,9 +59,9 @@ void renderClear(PlaydateAPI* _pd, bool transparentCentre) {
 
 void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
   if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
-    drawCBitmap(_pd, &m_arrow, _x, _yStart);
-    drawCBitmap(_pd, &m_arrow, _x, _yStart + _yAdd);
-    drawCBitmap(_pd, &m_arrow, _x, _yStart + _yAdd + _yAdd);
+    drawCBitmap(_pd, &m_arrow_u, _x, _yStart);
+    drawCBitmap(_pd, &m_arrow_r, _x, _yStart + _yAdd);
+    drawCBitmap(_pd, &m_arrow_d, _x, _yStart + _yAdd + _yAdd);
   }
 }
 
@@ -90,13 +90,25 @@ void renderClutter(PlaydateAPI* _pd) {
   }
 }
 
-void renderProgressBar(PlaydateAPI* _pd) {
-  const static PDRect _b = {.x = 0, .y = 0, .width = 144, .height = 168}; // Based on pebble screen
-  int _x1 = 0;
-  int _w = _b.width;
-  int _x2 = ( _w * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
-  int _h = _b.height;
-  _pd->graphics->drawLine(_x1, _h, _x1 + _x2, _h, /*width=*/ 4, kColorWhite);
+void renderProgressBar(PlaydateAPI* _pd, bool isRotated) {
+  _pd->graphics->setLineCapStyle(kLineCapStyleRound);
+  if (isRotated) {
+    const static PDRect _b = {.x = 0, .y = 0, .width = 400/2, .height = 240/2}; // We are scaled in
+    // Based on playdate screen (rendered late, ignores side-scroll)
+    int _x1 = SIZE;
+    int _y1 = 0;
+    int _x2 = SIZE;
+    int _y2 = ( _b.height * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
+    _pd->graphics->drawLine(_x1, _y1, _x1, _y2, /*width=*/ 8, kColorWhite);
+  } else {
+    const static PDRect _b = {.x = 0, .y = 0, .width = 144, .height = 168}; 
+    // Based on pebble screen
+    int _x1 = 0;
+    int _w = _b.width;
+    int _x2 = ( _w * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
+    int _h = _b.height;
+    _pd->graphics->drawLine(_x1, _h, _x1 + _x2, _h, /*width=*/ 4, kColorWhite);
+  }
 }
 
 

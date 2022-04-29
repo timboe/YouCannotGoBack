@@ -16,7 +16,7 @@ void updateProcStairs(PlaydateAPI* _pd) {
   drawCBitmap(_pd, getFloor(true), 9, 12);
 
   if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-    drawCBitmap(_pd, &m_arrow, 9, 8);
+    drawCBitmap(_pd, &m_arrow_d, 9, 9);
   }
 
 }

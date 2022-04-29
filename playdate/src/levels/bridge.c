@@ -40,7 +40,7 @@ void updateProcBridge(PlaydateAPI* _pd) {
     }
   }
 
-  renderArrows(_pd, 8, 4, 4);
+  renderArrows(_pd, 8, 5, 4);
 }
 
 bool tickBridge(PlaydateAPI* _pd, bool _doInit) {
