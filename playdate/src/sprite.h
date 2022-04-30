@@ -81,5 +81,8 @@ extern struct CBitmap m_treasure[3];
 extern struct CBitmap m_symbol[MAX_SYMBOL];
 
 extern LCDFont* m_fontMain;
+extern LCDFont* m_fontMsg;
+extern LCDFont* m_fontIntro;
+
 
 extern LCDPattern kColorChekerboard;

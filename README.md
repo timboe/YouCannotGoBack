@@ -1,6 +1,6 @@
 # You Cannot Go Back!
 
-Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon exploration [game for Pebble Time and Round watches](https://apps.getpebble.com/en_US/application/56e4693181ff036ba9000020) written in C.
+Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon exploration game written in C [for Pebble Time and Round watches](https://apps.getpebble.com/en_US/application/56e4693181ff036ba9000020) and now also for Playdate by Panic!
 
 ![Marketing](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/you-cannot-go-back-marketing.png?raw=true)
 
@@ -23,3 +23,4 @@ Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon expl
   * Promotional Art: Frank Martinez Jr.
   * http://opengameart.org/users/clint-bellanger
   * http://opengameart.org/content/blocky-animated-classic-hero-edit
+  * https://deepglowing.itch.io/dead-forest-pixel-art-asset

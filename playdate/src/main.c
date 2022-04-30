@@ -4,6 +4,7 @@
 #include "pd_api.h"
 #include "game.h"
 #include "sprite.h"
+#include "sound.h"
 
 #ifdef _WINDLL
 __declspec(dllexport)
@@ -31,22 +32,15 @@ int main(void) {
 
 static void init(PlaydateAPI* _pd) {
   initSprite(_pd);
+  initSound(_pd);
   gameWindowLoad();
-
-  //s_gameWindow = window_create();
-  //window_set_click_config_provider(s_gameWindow, (ClickConfigProvider) gameClickConfigProvider);
-  //window_set_background_color(s_gameWindow, GColorBlack);
-  //window_set_window_handlers(s_gameWindow, (WindowHandlers) {
-  //  .load = gameWindowLoad,
-  //  .unload = gameWindowUnload,
-  //});
-
-  //accel_tap_service_subscribe(tapHandle);
 }
 
 static void deinit(void) {
   //window_destroy(s_gameWindow);
   deinitSprite();
+  deinitSound();
+
   //accel_tap_service_unsubscribe();
   gameWindowUnload();
 }

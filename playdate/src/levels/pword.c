@@ -45,7 +45,7 @@ bool tickPword(PlaydateAPI* _pd, bool _doInit) {
     return false;
   }
 
-  static const char _msg[] = "PASSWORD";
+  static const char _msg[] = "PASSWORD?";
 
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);

@@ -99,7 +99,7 @@ void renderProgressBar(PlaydateAPI* _pd, bool isRotated) {
     int _y1 = 0;
     int _x2 = SIZE;
     int _y2 = ( _b.height * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
-    _pd->graphics->drawLine(_x1, _y1, _x1, _y2, /*width=*/ 8, kColorWhite);
+    _pd->graphics->drawLine(_x1, _y1, _x1, _y2, /*width=*/ 4, kColorWhite);
   } else {
     const static PDRect _b = {.x = 0, .y = 0, .width = 144, .height = 168}; 
     // Based on pebble screen
@@ -165,32 +165,24 @@ void renderFrame(PlaydateAPI* _pd, PDRect _b) {
 }
 
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
-  //yyy
-  //_pd->graphics->setDrawMode(kDrawModeFillWhite);
-
 
   const static int _text_y_offset = SIZE*2;
   _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorWhite);
   _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorBlack);
   
   _pd->graphics->setDrawMode(kDrawModeFillBlack);
-  _pd->graphics->setFont(m_fontMain);
-  int _len = _pd->graphics->getTextWidth(m_fontMain, _msg, strlen(_msg), kASCIIEncoding, /*tracking*/ 0);
+  _pd->graphics->setFont(m_fontMsg);
+  int _len = _pd->graphics->getTextWidth(m_fontMsg, _msg, strlen(_msg), kASCIIEncoding, /*tracking*/ 0);
   _b.x += (_b.width - _len)/2;
   _pd->graphics->drawText(_msg, strlen(_msg), kASCIIEncoding, _b.x, _b.y + _text_y_offset);
   _pd->graphics->setDrawMode(kDrawModeCopy);
-
-  //graphics_context_set_fill_color(_pd, GColorWhite);
-  //graphics_fill_rect(_pd, _b, 13, 0);
-  //graphics_context_set_stroke_color(_pd, GColorBlack);
-  //graphics_context_set_stroke_width(_pd, 3);
-  //graphics_draw_rect(_pd, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
-  //graphics_context_set_text_color(_pd, GColorBlack);
-  //graphics_draw_text(_pd, _msg, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), GRect(_b.origin.x, _b.origin.y + 4, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 }
 
-void renderMessage(PlaydateAPI* _pd, const char* _msg) {
-  PDRect _b = {.x = 0*SIZE, .y = 8*SIZE, .width = 18*SIZE, .height = 5*SIZE};
+void renderMessage(PlaydateAPI* _pd, const char* _msg, bool _isRotated) {
+  int _x = _isRotated ? SIZE*3 : 0;
+  int _w = _isRotated ? 15*SIZE : 18*SIZE;
+  PDRect _b = {.x = _x, .y = 8*SIZE, .width = _w, .height = 5*SIZE};
+  _pd->graphics->setFont(m_fontMain);
   renderTextInFrame(_pd, _msg, _b);
 }
 

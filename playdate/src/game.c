@@ -1,4 +1,5 @@
 #include <time.h>
+#include <math.h>
 
 #include "game.h"
 #include "sprite.h"
@@ -33,9 +34,6 @@ bool m_rotated = true;
 bool m_autoRotation = true;
 LCDBitmap* m_rotatedBitmap = NULL;
 
-// static bool s_renderQueued = false; // no longer needed?
-
-//static Layer* s_dungeonLayer;
 bool movePlayer();
 
 int getFrameCount() { return s_frameCount; }
@@ -136,13 +134,13 @@ void dungeonUpdateProc() {
     case kSaw: updateProcSaw(pd); break;
     case kDeath: updateProcDeath(pd); break;
     case kFinal: updateProcFinal(pd); break;
-    case kEnd: updateProcEnd(pd); break;
+    case kEnd: updateProcEnd(pd, m_rotated); break;
     default: break;
   }
 
   //Do msg
   if (getGameState() == kDisplayMsg) {
-    renderMessage(pd, s_displayMsg);
+    renderMessage(pd, s_displayMsg, m_rotated);
     setGameState(kDisplayingMsg);
   }
 
@@ -164,7 +162,9 @@ void dungeonUpdateProc() {
     // Offset to align in the center of the rotates screen
     pd->graphics->drawRotatedBitmap(m_rotatedBitmap, -56, getHorizontalOffset(), 90.0f, 0.0f, 0.0f, 1.0f, 1.0f);
     // Need to also fill a gap at the bottom...
+
     pd->graphics->fillRect(0, 0, SIZE, 240, kColorBlack);
+
   } else {
     pd->graphics->setDrawOffset(0, 0);
     renderGameFrame(pd);
@@ -300,7 +300,6 @@ void gameWindowLoad() {
   pd->system->setPeripheralsEnabled(kAccelerometer);
 
   generate(pd);
-
 }
 
 void gameWindowUnload() {

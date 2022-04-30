@@ -1,5 +1,6 @@
 #include "common.h"
 #include "../render.h"
+#include "../sound.h"
 
 void moveToExit(uint16_t* _state) {
   m_player.m_target_x = SIZE*17;
@@ -123,9 +124,10 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
     } else if ((*_state) < 10) {
       setGameState(kAwaitInput);
     }
+    if (*_state <= 10) fireSound();
     ++(*_state); // On 6, draw first fires
     ++(*_fire);
-
+    
   }
 }
 

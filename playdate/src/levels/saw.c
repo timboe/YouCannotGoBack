@@ -22,7 +22,7 @@ void updateProcSaw(PlaydateAPI* _pd) {
      drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 15*SIZE, -s_rotation);
   }
   renderSawWalls(_pd, s_offset);
-  renderArrows(_pd, 0, 5, 2);
+  renderArrows(_pd, 3, 5, 2);
 }
 
 bool tickSaw(bool _doInit) {

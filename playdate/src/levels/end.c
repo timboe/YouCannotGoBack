@@ -1,17 +1,21 @@
 #include "end.h"
 #include "../generate.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 static uint16_t s_wincount = 0;
 static char s_victories[16];
 
-void updateProcEnd(PlaydateAPI* _pd) {
+void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
 
   renderClear(_pd, false);
   if (m_dungeon.m_gameOver == 1) {
-    static const char _end1[] = "OOOOH, NASTY...";
-    PDRect _rect = {.x = 0, .y = 0, .width = 144, .height = 43};
-    renderTextInFrame(_pd, _end1, _rect);
+    static const char _end1[] = "OOOH, NASTY...";
+    static const char _end1_short[] = "OOH, NASTY..";  
+    int _x = (_isRotated ? SIZE*2 : 0);
+    int _w = (_isRotated ? 144-(SIZE*4) : 144);
+    PDRect _rect = {.x = _x, .y = 0, .width = _w, .height = 43};
+    renderTextInFrame(_pd, _isRotated ? _end1_short : _end1, _rect);
     drawBitmapAbs(_pd, m_grave, 50, 50);
     static const char _end2[] = "RESTART";
     PDRect _rect2 = {.x = 28, .y = 125, .width = 88, .height = 43};
@@ -46,6 +50,9 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
 
   if (s_state == 0) {
     setGameState(kAwaitInput);
+    if (m_dungeon.m_gameOver == 1) {
+      looseSound();
+    }
     ++s_state;
   } else if (s_state == 1) { // restart
     generate(_pd);

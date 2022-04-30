@@ -13,6 +13,8 @@ LCDBitmap* m_treasureBanner;
 LCDBitmap* m_grave;
 
 LCDFont* m_fontMain;
+LCDFont* m_fontMsg;
+LCDFont* m_fontIntro;
 
 struct CBitmap m_UOuterWall[3];
 struct CBitmap m_DOuterWall[3];
@@ -60,7 +62,7 @@ struct CBitmap m_halfLowerWall[2];
 
 LCDPattern kColorChekerboard = {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55};
 
-LCDBitmap *loadImageAtPath(PlaydateAPI* _pd, const char* _path) {
+LCDBitmap* loadImageAtPath(PlaydateAPI* _pd, const char* _path) {
   const char* _outErr = NULL;
   LCDBitmap* _img = _pd->graphics->loadBitmap(_path, &_outErr);
   if (_outErr != NULL) {
@@ -69,7 +71,7 @@ LCDBitmap *loadImageAtPath(PlaydateAPI* _pd, const char* _path) {
   return _img;
 }
 
-LCDBitmapTable *loadImageTableAtPath(PlaydateAPI* _pd, const char* _path) {
+LCDBitmapTable* loadImageTableAtPath(PlaydateAPI* _pd, const char* _path) {
   const char* _outErr = NULL;
   LCDBitmapTable* _table = _pd->graphics->loadBitmapTable(_path, &_outErr);
   if (_outErr != NULL) {
@@ -78,6 +80,15 @@ LCDBitmapTable *loadImageTableAtPath(PlaydateAPI* _pd, const char* _path) {
   return _table;
 }
 
+LCDFont* loadFontAtPath(PlaydateAPI* _pd, const char* _path) {
+  const char* _outErr = NULL;
+  LCDFont* _f = _pd->graphics->loadFont(_path, &_outErr);
+  if (_outErr != NULL) {
+    _pd->system->error("Error loading font at path '%s': %s", _path, _outErr);
+  }
+  return _f;
+}
+ 
 struct CBitmap getSprite(PlaydateAPI* _pd, int _x, int _y, int _w, int _h) {
   if (_w > CBITMAP_MAX || _h > CBITMAP_MAX) {
     _pd->system->error("Cannot request such a large sprite %i %i", _w, _h);
@@ -131,12 +142,10 @@ void initSprite(PlaydateAPI* _pd) {
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 
-  const char* _fontPath = "fonts/marblemadness_as";
-  const char* _outErr = NULL;
-  m_fontMain = _pd->graphics->loadFont(_fontPath, &_outErr);
-  if (_outErr != NULL) {
-    _pd->system->error("Error loading font at path '%s': %s", _fontPath, _outErr);
-  }
+  m_fontMain = loadFontAtPath(_pd, "fonts/marblemadness_as");
+  m_fontMsg = loadFontAtPath(_pd, "fonts/Roobert-9-Mono-Condensed");
+  m_fontIntro = loadFontAtPath(_pd, "fonts/font-full-circle");
+
   _pd->graphics->setFont(m_fontMain);
 
   for (int _w = 0; _w < 3; ++_w) { // Walls

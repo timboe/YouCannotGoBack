@@ -9,19 +9,19 @@ void updateProcStart(PlaydateAPI* _pd) {
   static const char* _a = "YOU";
   static const char* _b = "CANNOT";
   static const char* _c = "GO";
-  static const char* _d = "BACK";
+  static const char* _d = "BACK!";
 
-  const static int _yoff = SIZE;
-  PDRect _ra = {.x = 45, .y = 15+_yoff, .width = 80, .height = 100};
-  PDRect _rb = {.x = 45, .y = 45+_yoff, .width = 80, .height = 100};
-  PDRect _rc = {.x = 45, .y = 75+_yoff, .width = 80, .height = 100};
-  PDRect _rd = {.x = 45, .y = 105+_yoff, .width = 80, .height = 100};
+  const static int _yoff = SIZE + (SIZE/2);
+  PDRect _ra = {.x = 34, .y = 15+_yoff, .width = 80, .height = 100};
+  PDRect _rb = {.x = 34, .y = 45+_yoff, .width = 80, .height = 100};
+  PDRect _rc = {.x = 34, .y = 75+_yoff, .width = 80, .height = 100};
+  PDRect _rd = {.x = 34, .y = 105+_yoff, .width = 80, .height = 100};
 
   static const int _offset = 2;
-  renderBorderText(_pd, _ra, m_fontMain, _a, _offset, false);
-  renderBorderText(_pd, _rb, m_fontMain, _b, _offset, true);
-  renderBorderText(_pd, _rc, m_fontMain, _c, _offset, false);
-  renderBorderText(_pd, _rd, m_fontMain, _d, _offset, true);
+  renderBorderText(_pd, _ra, m_fontIntro, _a, _offset, false);
+  renderBorderText(_pd, _rb, m_fontIntro, _b, _offset, true);
+  renderBorderText(_pd, _rc, m_fontIntro, _c, _offset, false);
+  renderBorderText(_pd, _rd, m_fontIntro, _d, _offset, true);
   renderClutter(_pd);
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);

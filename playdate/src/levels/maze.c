@@ -47,7 +47,7 @@ void updateProcMaze(PlaydateAPI* _pd) {
 
   switch (m_dungeon.m_level) {
     case 0: _c = kColorWhite; _w = 4; break;
-    case 1: _c = kColorBlack; _w = 3; break;
+    case 1: _c = kColorBlack; _w = 4; break;
     default: _c = kColorWhite; _w = 1; break;
   }
   for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {

@@ -1,4 +1,5 @@
 #include "chest.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 static int8_t s_bad = 0;
@@ -55,6 +56,7 @@ bool tickChest(bool _doInit) {
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) {
+    chestSound();
     if (getPlayerChoice() == s_bad) {
       setDisplayMsg(_badA);
       if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
