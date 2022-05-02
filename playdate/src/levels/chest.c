@@ -73,9 +73,16 @@ bool tickChest(bool _doInit) {
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 4) {
-    if (getPlayerChoice() == s_bad) setDisplayMsg(_badB);
-    else if (_hint == kSpell || _hint == kNumber) setDisplayMsg(_goodD);
-    else setDisplayMsg(_goodB);
+    if (getPlayerChoice() == s_bad) {
+      setDisplayMsg(_badB);
+      debufSound();
+    } else if (_hint == kSpell || _hint == kNumber) {
+      setDisplayMsg(_goodD);
+      bufSound();
+    } else {
+      setDisplayMsg(_goodB);
+      reminderSound();
+    }
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 5) {

@@ -4,6 +4,7 @@
 LCDBitmapTable* m_spriteMap;
 LCDBitmap* m_sawA;
 LCDBitmap* m_sawB;
+LCDBitmap* m_bomb[4];
 
 LCDBitmap* m_borderL;
 LCDBitmap* m_borderR;
@@ -139,6 +140,11 @@ void initSprite(PlaydateAPI* _pd) {
   m_treasureBanner = loadImageAtPath(_pd, "images/treasure");
   m_borderL = loadImageAtPath(_pd, "images/border_left");
   m_borderR = loadImageAtPath(_pd, "images/border_right");
+
+  m_bomb[0] = loadImageAtPath(_pd, "images/bomb0");
+  m_bomb[1] = loadImageAtPath(_pd, "images/bomb1");
+  m_bomb[2] = loadImageAtPath(_pd, "images/bomb2");
+  m_bomb[3] = loadImageAtPath(_pd, "images/explosion");
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 

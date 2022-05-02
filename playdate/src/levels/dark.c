@@ -1,4 +1,5 @@
 #include "dark.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 static int8_t s_fire = -1;
@@ -11,10 +12,6 @@ void updateProcDark(PlaydateAPI* _pd) {
   //_pd->system->logToConsole("   !!! RS: %i", (int) s_state);
 
   if (s_state < 4) { // Render hint
-    //graphics_context_set_stroke_color(_pd, GColorWhite);
-    //graphics_context_set_stroke_width(_pd, 3);
-    //GPoint _p = GPoint((7 + 4*s_state)*SIZE, (6 + 4*s_correct[s_state])*SIZE);
-    //graphics_draw_circle(_pd, _p, s_ringSize);
     renderClear(_pd, false);
     _pd->graphics->drawEllipse(/*x*/ (7 + 4*s_state)*SIZE - s_ringSize,
       /*y*/ (6 + 4*s_correct[s_state])*SIZE - s_ringSize,
@@ -40,6 +37,7 @@ bool tickDark(bool _doInit) {
     for (int _i = 0; _i < 3; ++_i) {
       s_correct[_i] = rand() % 3;
     }
+    darkSound(s_correct[s_state]);
     setGameState(kLevelSpecific); // Overwrite "fade in"
     return false;
   }
@@ -48,6 +46,7 @@ bool tickDark(bool _doInit) {
     s_ringSize += 1 + m_dungeon.m_level;
     if (s_ringSize > 20) {
       ++s_state;
+      darkSound(s_correct[s_state]);
       s_ringSize = 0;
     }
     return true; // re-render

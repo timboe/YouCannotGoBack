@@ -1,4 +1,5 @@
 #include "death.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 
@@ -21,6 +22,7 @@ bool tickDeath(bool _doInit) {
   } else if (s_state == 1) { // initial move is done
     m_dungeon.m_gameOver = 1;
     m_dungeon.m_fallingDeath = true;
+    debufSound();
     //vibes_long_pulse();
     setGameState(kFadeOut);
     ++s_state;

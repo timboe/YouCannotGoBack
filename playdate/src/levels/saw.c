@@ -1,4 +1,6 @@
+#include <math.h>
 #include "saw.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0; // game state
 static int8_t s_offset = 0; // moving backdrop
@@ -42,12 +44,16 @@ bool tickSaw(bool _doInit) {
      m_player.m_target_x = SIZE*4;
      m_player.m_target_y = SIZE*8;
      setGameState(kMovePlayer);
+     sawSound(true);
      ++s_state;
   } else if (s_state == 1) {
     setGameState(kLevelSpecificWButtons);
     s_rotation += 5.0f;
     if (getFrameCount() % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
     if (++s_offset == 16) s_offset = 0;
+
+    #define SAW_SOUND_DISTANCE 64.0f 
+    sawVolume( 1.0f - (abs(s_position - m_player.m_position_x) / SAW_SOUND_DISTANCE) );
 
     m_player.m_target_x = 4*SIZE;
     m_player.m_target_y = (6 + (2*getPlayerChoice())) * SIZE;
@@ -72,7 +78,10 @@ bool tickSaw(bool _doInit) {
       setGameState(kLevelSpecific);
       s_type = 0;
       m_player.m_position_x += (PLAYER_SPEED * 2);
-      if (m_player.m_position_x > 20*SIZE) setGameState(kFadeOut);
+      if (m_player.m_position_x > 20*SIZE) {
+        setGameState(kFadeOut);
+        sawSound(false);
+      }
     }
   } else if (s_state == 2) {
     m_dungeon.m_gameOver = 1;

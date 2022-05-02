@@ -36,6 +36,8 @@ extern LCDBitmap* m_treasureBanner;
 extern LCDBitmap* m_sawB;
 extern LCDBitmap* m_sawA;
 
+extern LCDBitmap* m_bomb[4];
+
 extern struct CBitmap m_UOuterWall[3];
 extern struct CBitmap m_DOuterWall[3];
 extern struct CBitmap m_LOuterWall[3];

@@ -52,6 +52,8 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
     setGameState(kAwaitInput);
     if (m_dungeon.m_gameOver == 1) {
       looseSound();
+    } else {
+      winSound();
     }
     ++s_state;
   } else if (s_state == 1) { // restart

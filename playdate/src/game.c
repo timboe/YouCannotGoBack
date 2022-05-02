@@ -19,6 +19,7 @@
 #include "levels/chest.h"
 #include "levels/empty.h"
 #include "levels/saw.h"
+#include "levels/bomb.h"
 
 static PlaydateAPI* pd = NULL;
 
@@ -132,6 +133,7 @@ void dungeonUpdateProc() {
     case kDark: updateProcDark(pd); break;
     case kMaze: updateProcMaze(pd); break;
     case kSaw: updateProcSaw(pd); break;
+    case kBomb: updateProcBomb(pd); break;
     case kDeath: updateProcDeath(pd); break;
     case kFinal: updateProcFinal(pd); break;
     case kEnd: updateProcEnd(pd, m_rotated); break;
@@ -236,6 +238,7 @@ int gameLoop(void* data) {
       case kDark: requestRedraw = tickDark(_doInit); break;
       case kMaze: requestRedraw = tickMaze(pd, _doInit); break;
       case kSaw: requestRedraw = tickSaw(_doInit); break;
+      case kBomb: requestRedraw = tickBomb(_doInit); break;
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
       case kEnd: requestRedraw = tickEnd(pd, _doInit); break;

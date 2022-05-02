@@ -1,6 +1,7 @@
 #include "render.h"
-#include "pd_api.h"
+#include "sound.h"
 
+#include "pd_api.h"
 
 void drawBitmap(PlaydateAPI* _pd, LCDBitmap* _bitmap, int _x, int _y) {
   drawBitmapAbs(_pd, _bitmap, _x * SIZE, _y * SIZE);
@@ -62,6 +63,7 @@ void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
     drawCBitmap(_pd, &m_arrow_u, _x, _yStart);
     drawCBitmap(_pd, &m_arrow_r, _x, _yStart + _yAdd);
     drawCBitmap(_pd, &m_arrow_d, _x, _yStart + _yAdd + _yAdd);
+    if (getFrameCount() == 0) beepSound();
   }
 }
 
@@ -380,6 +382,11 @@ void renderPlayer(PlaydateAPI* _pd) {
   uint16_t _pos_y = m_player.m_position_y;
   if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) --_pos_y;
   drawCBitmapAbs(_pd, &m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
+}
+
+void renderBomb(PlaydateAPI* _pd, int16_t _bomb, int8_t _locatioon) {
+  const int16_t _off = _bomb == 3 ? 1 : 0;
+  drawBitmap(_pd, m_bomb[_bomb], 6 - _off, (2 * _locatioon) - _off);
 }
 
 void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _buffer, uint8_t _offset, /*GTextAlignment _al,*/ bool _invert) {

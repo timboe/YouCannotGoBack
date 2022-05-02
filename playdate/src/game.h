@@ -25,6 +25,7 @@ typedef enum {
   kStones,
   kDark,
   kSaw,
+  kBomb,
   kDeath,
   kFinal,
   kEnd,
