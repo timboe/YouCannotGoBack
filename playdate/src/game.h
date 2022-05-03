@@ -114,7 +114,6 @@ typedef struct {
 extern Dungeon_t m_dungeon;
 extern Player_t m_player;
 extern Clutter_t m_clutter;
-
 void setPDPtr(PlaydateAPI* p);
 
 int gameLoop(void* data);

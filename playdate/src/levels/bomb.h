@@ -3,4 +3,5 @@
 #include "../game.h"
 
 void updateProcBomb(PlaydateAPI* _pd);
-bool tickBomb(PlaydateAPI* _pd, bool _doInit);
+bool tickBomb(bool _doInit);
+void bombTimer();

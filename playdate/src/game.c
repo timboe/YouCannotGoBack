@@ -148,7 +148,7 @@ void dungeonUpdateProc() {
 
   if (m_dungeon.m_gameOver == 0 && !m_rotated) renderProgressBar(pd, m_rotated);
 
-  pd->graphics->fillRect(64, 64, 128, 128, kColorChekerboard);
+  pd->graphics->fillRect(64, 64, 128, 128, (uintptr_t)kColorChekerboard);
 
   // Do fade
   if (s_gameState == kFadeIn) renderFade(/*_thisLayer,*/ pd, true);
@@ -245,6 +245,12 @@ int gameLoop(void* data) {
       default: break;
     } break;
     default: break;
+  }
+
+  // Special case (bomb needs to be able to explode at any time)
+  if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kBomb) {
+    bombTimer();
+    requestRedraw = true;
   }
 
 

@@ -46,7 +46,7 @@ void initSound(PlaydateAPI* _pd) {
   m_buf = pd->sound->sample->load("sounds/270342__littlerobotsoundfactory__pickup-03");
   m_reminder = pd->sound->sample->load("sounds/270339__littlerobotsoundfactory__pickup-02");
   m_boom = pd->sound->sample->load("sounds/270311__littlerobotsoundfactory__explosion-03");
-  m_password = pd->sound->sample->load("sounds/");
+  m_password = pd->sound->sample->load("sounds/password");
   m_fuse = pd->sound->sample->load("sounds/");
   m_sawSample = pd->sound->sample->load("sounds/108171__aarongnp__buzzsaw-addiction_modified");
 
@@ -94,17 +94,22 @@ void sawSound(bool _start) {
 void sawVolume(float _v) {
   if (_v > 1.0f) _v = 1.0f;
   if (_v < 0.0f) _v = 0.0f;
-  pd->sound->sampleplayer->setVolume(m_loopPlayer, _v, _v)
+  pd->sound->sampleplayer->setVolume(m_loopPlayer, _v, _v);
 }
 
+// broken?
 void darkSound(int _n) {
+  #ifdef DEV
+  pd->system->logToConsole("dark %i", _n);
+  #endif
+  if (_n > 2) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_dark[_n]);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void beepSound() {
-  pd->sound->sampleplayer->setSample(m_samplePlayer, m_beep);
-  pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
+  //pd->sound->sampleplayer->setSample(m_samplePlayer, m_beep);
+  //pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void stepSound() {
@@ -139,9 +144,9 @@ void passwordSound() {
 
 void fuseSound(bool _start) {
   if (_start) {
-    pd->sound->sampleplayer->setSample(m_loopPlayer, m_fuse);
-    pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
+    //pd->sound->sampleplayer->setSample(m_loopPlayer, m_fuse);
+    //pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
   } else {
-    pd->sound->sampleplayer->stop(m_loopPlayer);
+    //pd->sound->sampleplayer->stop(m_loopPlayer);
   }
 }

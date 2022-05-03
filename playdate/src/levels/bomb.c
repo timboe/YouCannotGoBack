@@ -1,10 +1,11 @@
 #include "bomb.h"
+#include "common.h"
 #include "../sound.h"
 
 static uint16_t s_state = 0;
 static int8_t s_bomb = -1;
 static uint16_t s_tick = 0;
-const static s_ticks[3] = {60, 40, 20};
+const static uint16_t s_ticks[3] = {80, 60, 40};
 
 
 void updateProcBomb(PlaydateAPI* _pd) {
@@ -13,34 +14,40 @@ void updateProcBomb(PlaydateAPI* _pd) {
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
-  rednerBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb);
-  renderArrows(_pd, 15, 4, 4);
+  renderBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb);
+  renderArrows(_pd, 15, 5, 4);
+}
+
+void bombTimer() {
+  if (s_state >= 4) return; 
+
+  // Time out
+  if (++s_tick > s_ticks[ m_dungeon.m_level ] * 3) {
+    s_state = 4;
+    setGameState(kLevelSpecific);
+  }
+
+  // Ran into bomb
+  if (getGameState() == kMovePlayer 
+    && m_player.m_position_x > SIZE*9
+    && getPlayerChoice() == s_bomb) 
+  {
+    s_state = 4;
+    s_tick = s_ticks[ m_dungeon.m_level ] * 3;
+    setGameState(kLevelSpecific);
+  }
 }
 
 bool tickBomb(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
+    s_tick = 0;
     m_player.m_position_x = 0;
     m_player.m_position_y = SIZE*9;
-    addCluter(15, 20, 0);
+    addCluter(5, 20, 0);
     s_bomb = rand() % 3;
     fuseSound(true);
     return false;
-  }
-
-  // TODO - THIS WILL NOT WORK HERE... REFACTOR THIS
-  // Time out
-  if (++s_tick > s_ticks[ m_dungeon.m_level ] * 3) {
-    s_state = 4;
-  }
-
-  // Ran into bomb
-  // TODO - THIS WILL NOT WORK HERE... REFACTOR INTO TWO MOVES
-  if (getGameState() == kMovePlayer 
-    && m_player.m_position_x > SIZE*6
-    && getPlayerChoice() == s_bomb) 
-  {
-    s_state = 4;
   }
 
   if (s_state == 0) { // start initial move
@@ -60,5 +67,5 @@ bool tickBomb(bool _doInit) {
     boomSound();
   }
 
-  return false;
+  return s_tick % s_ticks[ m_dungeon.m_level ] == 0;
 }

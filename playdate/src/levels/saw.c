@@ -52,9 +52,6 @@ bool tickSaw(bool _doInit) {
     if (getFrameCount() % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
     if (++s_offset == 16) s_offset = 0;
 
-    #define SAW_SOUND_DISTANCE 64.0f 
-    sawVolume( 1.0f - (abs(s_position - m_player.m_position_x) / SAW_SOUND_DISTANCE) );
-
     m_player.m_target_x = 4*SIZE;
     m_player.m_target_y = (6 + (2*getPlayerChoice())) * SIZE;
     if      (m_player.m_target_y > m_player.m_position_y) m_player.m_position_y += PLAYER_SPEED;
@@ -83,6 +80,10 @@ bool tickSaw(bool _doInit) {
         sawSound(false);
       }
     }
+
+
+    #define SAW_SOUND_DISTANCE 128.0f 
+    sawVolume( 1.0f - (abs(s_position - m_player.m_position_x) / SAW_SOUND_DISTANCE) );
   } else if (s_state == 2) {
     m_dungeon.m_gameOver = 1;
     //vibes_long_pulse();

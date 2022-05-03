@@ -47,13 +47,13 @@ void renderGameFrame(PlaydateAPI* _pd) {
 
 void renderClear(PlaydateAPI* _pd, bool transparentCentre) {
   if (transparentCentre) {
-    _pd->graphics->clear(kColorChekerboard);
+    _pd->graphics->clear((uintptr_t)kColorChekerboard);
     _pd->graphics->fillRect(0, 0, SIZE*18, SIZE*2, kColorBlack);
     _pd->graphics->fillRect(0, 0, SIZE*2, SIZE*21, kColorBlack);
     _pd->graphics->fillRect(0, SIZE*20, SIZE*18, SIZE*2, kColorBlack);
     _pd->graphics->fillRect(SIZE*17, 0, SIZE*1, SIZE*21, kColorBlack);
   } else {
-    _pd->graphics->clear(kColorChekerboard);
+    _pd->graphics->clear((uintptr_t)kColorChekerboard);
     _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*24, kColorBlack);
   }
 }
@@ -386,7 +386,10 @@ void renderPlayer(PlaydateAPI* _pd) {
 
 void renderBomb(PlaydateAPI* _pd, int16_t _bomb, int8_t _locatioon) {
   const int16_t _off = _bomb == 3 ? 1 : 0;
-  drawBitmap(_pd, m_bomb[_bomb], 6 - _off, (2 * _locatioon) - _off);
+  _pd->graphics->setDrawMode(getFrameCount() < ANIM_FPS/4 || (getFrameCount() < 3*ANIM_FPS/4 && getFrameCount() >= ANIM_FPS/2) ? kDrawModeCopy : kDrawModeInverted);
+  drawBitmap(_pd, m_bomb[_bomb > 3 ? 3 : _bomb], 10 - _off, 4 + (4 * _locatioon) - _off);
+  _pd->graphics->setDrawMode(kDrawModeCopy);
+
 }
 
 void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _buffer, uint8_t _offset, /*GTextAlignment _al,*/ bool _invert) {
@@ -442,7 +445,7 @@ void renderFade(PlaydateAPI* _pd, bool _in) {
   }
 }
 
-LCDColor getShieldColor(int8_t _value) {
+uintptr_t getShieldColor(int8_t _value) {
   switch (_value) {
     case 0: return kColorBlack;
     case 1: return kColorWhite;
