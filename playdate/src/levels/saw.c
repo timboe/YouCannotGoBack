@@ -45,6 +45,7 @@ bool tickSaw(bool _doInit) {
      m_player.m_target_y = SIZE*8;
      setGameState(kMovePlayer);
      sawSound(true);
+     sawVolume(0.0f);
      ++s_state;
   } else if (s_state == 1) {
     setGameState(kLevelSpecificWButtons);

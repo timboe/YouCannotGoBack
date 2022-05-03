@@ -37,11 +37,11 @@ void initSound(PlaydateAPI* _pd) {
   m_chestSample = pd->sound->sample->load("sounds/270338__littlerobotsoundfactory__open-01");
   m_looseSample = pd->sound->sample->load("sounds/270334__littlerobotsoundfactory__jingle-lose-01");
   m_winSample = pd->sound->sample->load("sounds/270319__littlerobotsoundfactory__jingle-win-01");
-  m_dark[0] = pd->sound->sample->load("sounds/270320__littlerobotsoundfactory__jump-00");
-  m_dark[1] = pd->sound->sample->load("sounds/270320__littlerobotsoundfactory__jump-03");
-  m_dark[2] = pd->sound->sample->load("sounds/270320__littlerobotsoundfactory__jump-01");
+  m_dark[2] = pd->sound->sample->load("sounds/270320__littlerobotsoundfactory__jump-00");
+  m_dark[1] = pd->sound->sample->load("sounds/270323__littlerobotsoundfactory__jump-03");
+  m_dark[0] = pd->sound->sample->load("sounds/270317__littlerobotsoundfactory__jump-01");
   m_beep = pd->sound->sample->load("sounds/270324__littlerobotsoundfactory__menu-navigate-00");
-  m_step = pd->sound->sample->load("sounds/270324__littlerobotsoundfactory__menu-navigate-02");
+  m_step = pd->sound->sample->load("sounds/270322__littlerobotsoundfactory__menu-navigate-02");
   m_debuf = pd->sound->sample->load("sounds/270328__littlerobotsoundfactory__hero-death-00");
   m_buf = pd->sound->sample->load("sounds/270342__littlerobotsoundfactory__pickup-03");
   m_reminder = pd->sound->sample->load("sounds/270339__littlerobotsoundfactory__pickup-02");
@@ -97,11 +97,7 @@ void sawVolume(float _v) {
   pd->sound->sampleplayer->setVolume(m_loopPlayer, _v, _v);
 }
 
-// broken?
 void darkSound(int _n) {
-  #ifdef DEV
-  pd->system->logToConsole("dark %i", _n);
-  #endif
   if (_n > 2) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_dark[_n]);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
