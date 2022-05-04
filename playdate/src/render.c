@@ -81,11 +81,13 @@ void renderClutter(PlaydateAPI* _pd) {
       drawCBitmap(_pd, getClutter(true), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
       int _px = (m_clutter.m_position_x[_c] * SIZE) + 4;
       int _py = (m_clutter.m_position_y[_c] * SIZE) + 2;
+      if (getFlash(false)) _pd->graphics->setDrawMode(kDrawModeInverted);
       drawCBitmapAbs(_pd, &m_greek[ _hintValue ], _px, _py);
+      _pd->graphics->setDrawMode(kDrawModeCopy);
     } else if (_c == 0 && _hint == kNumber) {
       drawCBitmap(_pd, getClutter(true), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
       PDRect r = {.x = m_clutter.m_position_x[_c] * SIZE, .y = (m_clutter.m_position_y[_c] * SIZE)+3, .width = 16, .height = 16}; // TODO tune .y
-      renderHintNumber(_pd, r, _hintValue, true);
+      renderHintNumber(_pd, r, _hintValue, /*invert*/getFlash(false));
     } else {
       drawCBitmap(_pd, getClutter(false), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
     }
@@ -156,14 +158,24 @@ void renderStandingStone(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c) {
   _pd->graphics->fillEllipse(_x1*SIZE - SIZE+2, _y1*SIZE - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, _c);
 }
 
+void renderBoxGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _offset) {
+  uint8_t _o = 0;
+  for (int _s = 0; _s < 3; ++_s) {
+    renderBoxGridBox(_pd, 5, 5 + (4 * _s), getShieldColor(_coloursA[_s]), _offset[_o++]); // Top row
+    renderBoxGridBox(_pd, 8, 5 + (4 * _s), getShieldColor(_coloursB[_s]), _offset[_o++]); // Middle row
+    renderBoxGridBox(_pd, 11, 5 + (4 * _s), getShieldColor(_coloursC[_s]), _offset[_o++]); // Bottom row
+  }
+
+}
+
+void renderBoxGridBox(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, int8_t _offset) {
+  drawCBitmapAbs(_pd, &m_clutterSprite[2], _x1*SIZE + _offset, _y1*SIZE + _offset);
+  _pd->graphics->fillRect(_x1*SIZE + 4 + _offset, _y1*SIZE + 2 + _offset, SIZE, SIZE, _c);
+}
+
 void renderFrame(PlaydateAPI* _pd, PDRect _b) {
   _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorBlack);
   _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorWhite);
-  //graphics_context_set_fill_color(_pd, GColorDarkGray);
-  //graphics_context_set_stroke_color(_pd, GColorWhite);
-  //graphics_context_set_stroke_width(_pd, 2);
-  //graphics_fill_rect(_pd, _b, 0, 0);
-  //graphics_draw_rect(_pd, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
 }
 
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
@@ -246,7 +258,9 @@ void renderWallClutter(PlaydateAPI* _pd) {
       int _px = (_r + 1) * SIZE;
       int _py = SIZE;
       int _w = 8;
+      if (getFlash(false)) _pd->graphics->setDrawMode(kDrawModeInverted);
       drawCBitmap(_pd, &m_shieldSprite, _r, 0);
+      _pd->graphics->setDrawMode(kDrawModeCopy);
       //graphics_context_set_fill_color(_pd, getShieldColor(getShieldA(_hintValue)));
       //graphics_fill_circle(_pd, _p, 3);
       _pd->graphics->fillEllipse(_px - _w/2, _py - _w/2, /*sizeH*/_w, /*sizeV*/_w, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldA(_hintValue)));
@@ -266,9 +280,11 @@ void renderWallClutter(PlaydateAPI* _pd) {
       for (int _i=1; _i<5; ++_i) drawCBitmap(_pd, &m_tapestrySprite[1], _r+_i, 0);
       drawCBitmap(_pd, &m_tapestrySprite[2], _r+5, 0);
       PDRect rect =  {.x = _r * SIZE, .y = 4, .width = 48, .height = 16};
-      renderBorderText(_pd, rect, m_fontMain, m_spellNames[_hintValue], 1, false);
+      renderBorderText(_pd, rect, m_fontMain, m_spellNames[_hintValue], 1, /*invert*/getFlash(false));
     } else if (_hint == kSymbol) { // Check symbol
+      if (getFlash(false)) _pd->graphics->setDrawMode(kDrawModeInverted);
       drawCBitmap(_pd, &m_symbol[_hintValue], _r, 18);
+      _pd->graphics->setDrawMode(kDrawModeCopy);
     }
 }
 
@@ -386,7 +402,7 @@ void renderPlayer(PlaydateAPI* _pd) {
 
 void renderBomb(PlaydateAPI* _pd, int16_t _bomb, int8_t _locatioon) {
   const int16_t _off = _bomb == 3 ? 1 : 0;
-  _pd->graphics->setDrawMode(getFrameCount() < ANIM_FPS/4 || (getFrameCount() < 3*ANIM_FPS/4 && getFrameCount() >= ANIM_FPS/2) ? kDrawModeCopy : kDrawModeInverted);
+  if (getFlash(true)) _pd->graphics->setDrawMode(kDrawModeInverted);
   drawBitmap(_pd, m_bomb[_bomb > 3 ? 3 : _bomb], 10 - _off, 4 + (4 * _locatioon) - _off);
   _pd->graphics->setDrawMode(kDrawModeCopy);
 

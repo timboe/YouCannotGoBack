@@ -9,11 +9,11 @@ static char s_victories[16];
 void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
 
   renderClear(_pd, false);
+  int _x = (_isRotated ? SIZE*2 : 0);
+  int _w = (_isRotated ? 144-(SIZE*4) : 144);
   if (m_dungeon.m_gameOver == 1) {
     static const char _end1[] = "OOOH, NASTY...";
     static const char _end1_short[] = "OOH, NASTY..";  
-    int _x = (_isRotated ? SIZE*2 : 0);
-    int _w = (_isRotated ? 144-(SIZE*4) : 144);
     PDRect _rect = {.x = _x, .y = 0, .width = _w, .height = 43};
     renderTextInFrame(_pd, _isRotated ? _end1_short : _end1, _rect);
     drawBitmapAbs(_pd, m_grave, 50, 50);
@@ -25,8 +25,8 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
       drawCBitmap(_pd, &m_arrow_d, 13, 13);
     }
   } else {
-    static const char _end1[] = "NICELY DONE! DUNGEONEER";
-    PDRect _rect = {.x = 0, .y = 0, .width = 144, .height = 63};
+    static const char _end1[] = "NICELY DONE!\nDUNGEONEER";
+    PDRect _rect = {.x = _x, .y = 0, .width = _w, .height = 63};
     renderTextInFrame(_pd, _end1, _rect);
     drawBitmapAbs(_pd, m_treasureBanner, 19, 68);
     PDRect _rect2 = {.x = 0, .y = 145, .width = 144, .height = 20};
@@ -43,7 +43,8 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
     if (m_dungeon.m_gameOver == 2) {
       //if (persist_exists(PERSIST_KEY_VICTORY)) s_wincount = persist_read_int(PERSIST_KEY_VICTORY);
       //persist_write_int(PERSIST_KEY_VICTORY, ++s_wincount);
-      snprintf(s_victories, 16, "VICTORIES: %i", s_wincount);
+      ++s_wincount;
+      snprintf(s_victories, 16, "VICTORIES %i", s_wincount);
     }
     return false;
   }

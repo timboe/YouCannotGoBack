@@ -26,6 +26,7 @@ typedef enum {
   kDark,
   kSaw,
   kBomb,
+  kBoxes,
   kDeath,
   kFinal,
   kEnd,
@@ -37,7 +38,7 @@ typedef enum {
 #define MAX_GREEK 8
 #define MAX_SYMBOL 4
 #define MAX_NUMBER 43
-#define MAX_SHIELD_COLOUR 4
+#define MAX_SHIELD_COLOUR 3
 typedef enum {
   kNoHint,
   kSpell,
@@ -92,6 +93,7 @@ typedef struct {
   int8_t m_gameOver;
   bool m_fallingDeath;
   uint32_t m_seed;
+  uint16_t m_ticksInLevel;
 } Dungeon_t;
 
 #define MAX_FRAMES 6
@@ -119,6 +121,7 @@ void setPDPtr(PlaydateAPI* p);
 int gameLoop(void* data);
 
 int getFrameCount();
+bool getFlash(bool _constant);
 int getPlayerChoice();
 GameState_t getGameState();
 void setGameState(GameState_t _state);

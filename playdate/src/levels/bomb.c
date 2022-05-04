@@ -42,10 +42,10 @@ bool tickBomb(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     s_tick = 0;
+    s_bomb = rand() % 3;
     m_player.m_position_x = 0;
     m_player.m_position_y = SIZE*9;
-    addCluter(5, 20, 0);
-    s_bomb = rand() % 3;
+    addCluter(8, 0, 20); // Only left half
     fuseSound(true);
     return false;
   }

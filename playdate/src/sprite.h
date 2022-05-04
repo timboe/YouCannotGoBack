@@ -59,6 +59,8 @@ extern struct CBitmap m_arrow_d;
 
 extern struct CBitmap m_playerSprite[MAX_FRAMES];
 
+extern struct CBitmap m_clutterSprite[MAX_CLUTTER];
+
 extern struct CBitmap m_LOpenDoor;
 extern struct CBitmap m_ROpenDoor;
 extern struct CBitmap m_RShutDoor;

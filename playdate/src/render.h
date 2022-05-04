@@ -27,6 +27,8 @@ void renderFrame(PlaydateAPI* _pd, PDRect _b);
 void renderStandingStoneGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC);
 void renderLinePath(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2);
 void renderStandingStone(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c);
+void renderBoxGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _offset);
+void renderBoxGridBox(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, int8_t _offset);
 void renderProgressBar(PlaydateAPI* _pd, bool isRotated);
 void renderSawFloor(PlaydateAPI* _pd, int8_t _offset);
 void renderSawWalls(PlaydateAPI* _pd, int8_t _offset);

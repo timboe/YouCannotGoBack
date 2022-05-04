@@ -20,6 +20,7 @@
 #include "levels/empty.h"
 #include "levels/saw.h"
 #include "levels/bomb.h"
+#include "levels/boxes.h"
 
 static PlaydateAPI* pd = NULL;
 
@@ -42,6 +43,11 @@ GameState_t getGameState() { return s_gameState; }
 void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; pd->system->resetElapsedTime(); }
 void setGameState(GameState_t _state) { s_gameState = _state; }
 int getPlayerChoice() { return s_playerChoice; }
+
+bool getFlash(bool _constant) {
+  return (s_frameCount % (ANIM_FPS/2) < ANIM_FPS/4
+    && (m_dungeon.m_ticksInLevel < ANIM_FPS*2 || _constant));
+}
 
 void setPDPtr(PlaydateAPI* p) { pd = p; }
 
@@ -70,6 +76,8 @@ bool newRoom() {
     m_dungeon.m_room = 0;
   };
   ++m_dungeon.m_roomsVisited;
+  m_dungeon.m_ticksInLevel = 0;
+  s_frameCount = 0;
   m_clutter.m_nClutter = 0;
   for (int _i = 0; _i < MAX_PLACE_CLUTTER; ++_i) {
     m_clutter.m_position_x[_i] = 0;
@@ -134,6 +142,7 @@ void dungeonUpdateProc() {
     case kMaze: updateProcMaze(pd); break;
     case kSaw: updateProcSaw(pd); break;
     case kBomb: updateProcBomb(pd); break;
+    case kBoxes: updateProcBoxes(pd); break;
     case kDeath: updateProcDeath(pd); break;
     case kFinal: updateProcFinal(pd); break;
     case kEnd: updateProcEnd(pd, m_rotated); break;
@@ -148,11 +157,9 @@ void dungeonUpdateProc() {
 
   if (m_dungeon.m_gameOver == 0 && !m_rotated) renderProgressBar(pd, m_rotated);
 
-  pd->graphics->fillRect(64, 64, 128, 128, (uintptr_t)kColorChekerboard);
-
   // Do fade
-  if (s_gameState == kFadeIn) renderFade(/*_thisLayer,*/ pd, true);
-  else if (s_gameState == kFadeOut) renderFade(/*_thisLayer,*/ pd, false);
+  if (s_gameState == kFadeIn) renderFade(pd, true);
+  else if (s_gameState == kFadeOut) renderFade(pd, false);
 
 
   if (m_rotated) {
@@ -213,13 +220,14 @@ int gameLoop(void* data) {
 
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
   bool requestRedraw = false;
+  ++m_dungeon.m_ticksInLevel;
 
   bool _doInit = false;
   switch (s_gameState) {
     case kIdle: break;
     case kNewRoom: requestRedraw = newRoom(); break;
     case kMovePlayer: requestRedraw = movePlayer(); break;
-    case kAwaitInput: requestRedraw = (s_frameCount == 0 || s_frameCount == ANIM_FPS/2 ? true : false); break;
+    case kAwaitInput: requestRedraw = (s_frameCount % (ANIM_FPS/4) == 0); break;
     case kFadeIn: case kFadeOut: requestRedraw = true; break;
     case kDisplayMsg: requestRedraw = true; break;
     case kDisplayingMsg: requestRedraw = false; break; // Wait for timer to expire or button click
@@ -239,6 +247,7 @@ int gameLoop(void* data) {
       case kMaze: requestRedraw = tickMaze(pd, _doInit); break;
       case kSaw: requestRedraw = tickSaw(_doInit); break;
       case kBomb: requestRedraw = tickBomb(_doInit); break;
+      case kBoxes: requestRedraw = tickBoxes(pd, _doInit); break;
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
       case kEnd: requestRedraw = tickEnd(pd, _doInit); break;
