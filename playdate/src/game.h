@@ -27,6 +27,7 @@ typedef enum {
   kSaw,
   kBomb,
   kBoxes,
+  kSpikes,
   kDeath,
   kFinal,
   kEnd,
@@ -123,6 +124,7 @@ int gameLoop(void* data);
 int getFrameCount();
 bool getFlash(bool _constant);
 int getPlayerChoice();
+void resetPlayerChoice();
 GameState_t getGameState();
 void setGameState(GameState_t _state);
 void setDisplayMsg(const char* _msg);

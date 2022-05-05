@@ -21,6 +21,7 @@
 #include "levels/saw.h"
 #include "levels/bomb.h"
 #include "levels/boxes.h"
+#include "levels/spikes.h"
 
 static PlaydateAPI* pd = NULL;
 
@@ -43,6 +44,7 @@ GameState_t getGameState() { return s_gameState; }
 void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; pd->system->resetElapsedTime(); }
 void setGameState(GameState_t _state) { s_gameState = _state; }
 int getPlayerChoice() { return s_playerChoice; }
+void resetPlayerChoice() { s_playerChoice = -1; }
 
 bool getFlash(bool _constant) {
   return (s_frameCount % (ANIM_FPS/2) < ANIM_FPS/4
@@ -143,6 +145,7 @@ void dungeonUpdateProc() {
     case kSaw: updateProcSaw(pd); break;
     case kBomb: updateProcBomb(pd); break;
     case kBoxes: updateProcBoxes(pd); break;
+    case kSpikes: updateProcSpikes(pd); break;
     case kDeath: updateProcDeath(pd); break;
     case kFinal: updateProcFinal(pd); break;
     case kEnd: updateProcEnd(pd, m_rotated); break;
@@ -248,6 +251,7 @@ int gameLoop(void* data) {
       case kSaw: requestRedraw = tickSaw(_doInit); break;
       case kBomb: requestRedraw = tickBomb(_doInit); break;
       case kBoxes: requestRedraw = tickBoxes(pd, _doInit); break;
+      case kSpikes: requestRedraw = tickSpikes(_doInit); break;
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
       case kEnd: requestRedraw = tickEnd(pd, _doInit); break;
@@ -288,23 +292,20 @@ bool movePlayer() {
   return true;
 }
 
-// TODO figure out how to get the callback data...
-void menuOptionsCallback(void* callback) {
-  if ((char*)callback == "Landscape") {
-    m_rotated = false;
+void menuOptionsCallback(void* userdata) {
+  int _value = pd->system->getMenuItemValue((PDMenuItem*)userdata);
+  if (_value == 2) {
+    m_rotated = true;
     m_autoRotation = false;
     pd->system->setPeripheralsEnabled(kNone);
-    pd->system->logToConsole("Set portrait");
-  } else if ((char*)callback == "Portrait") {
-    m_rotated = true; 
+  } else if (_value == 1) {
+    m_rotated = false; 
     m_autoRotation = false;
     pd->system->setPeripheralsEnabled(kNone);
-    pd->system->logToConsole("Set landscape");
   } else {
     m_autoRotation = true;
     pd->system->setPeripheralsEnabled(kAccelerometer);
   }
-  pd->system->logToConsole("CALLBACK %i", callback);
 }
 
 void gameWindowLoad() {
@@ -312,8 +313,9 @@ void gameWindowLoad() {
 
   m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
 
-  const char* options[] = {"Auto", "Landscape", "Portrait"};
-  pd->system->addOptionsMenuItem("Rotate", options, 3, menuOptionsCallback, NULL);
+  static const char* options[] = {"Auto", "Landscape", "Portrait"};
+  PDMenuItem* _menu = pd->system->addOptionsMenuItem("Rotate", options, 3, menuOptionsCallback, NULL);
+  pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
 
   pd->system->setPeripheralsEnabled(kAccelerometer);
 

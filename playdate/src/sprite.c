@@ -124,10 +124,10 @@ struct CBitmap* getOuterWall(int _d) {
   }
 }
 
-struct CBitmap* getFloor(bool _random) {
+struct CBitmap* getFloor(bool _random, int8_t _level) {
   int _r = rand() % MAX_FLOOR;
   if (_random == false) _r = 0;
-  switch (m_dungeon.m_level) {
+  switch (_level) {
     case 0:  return &m_floorA[_r];
     case 1:  return &m_floorB[_r];
     default: return &m_floorC[_r];

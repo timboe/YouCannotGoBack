@@ -17,6 +17,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kStones].m_minL = 1, [kStones].m_giveHint = 0, [kStones].m_reqHint = {0, 0, 0, 1, 0, 0},
  [kDark].m_minL   = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kSaw].m_minL    = 0, [kSaw].m_giveHint    = 0, [kSaw].m_reqHint    = {0, 0, 0, 0, 0, 0},
+ [kSpikes].m_minL = 0, [kSpikes].m_giveHint = 1, [kSpikes].m_reqHint = {0, 0, 0, 0, 0, 0},
  [kBomb].m_minL   = 0, [kBomb].m_giveHint   = 1, [kSaw].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kBoxes].m_minL  = 0, [kBoxes].m_giveHint  = 0, [kBoxes].m_reqHint  = {0, 0, 0, 1, 0, 0},
  [kMaze].m_minL   = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint   = {0, 0, 0, 0, 0, 0},
@@ -52,7 +53,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      //_newRoom = kBomb; // TESTING
+      _newRoom = kSpikes; // TESTING
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor

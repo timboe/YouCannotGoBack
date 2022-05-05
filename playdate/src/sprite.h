@@ -22,7 +22,7 @@ struct CBitmap {
 };
 
 struct CBitmap* getOuterWall(int _d);
-struct CBitmap* getFloor(bool _random);
+struct CBitmap* getFloor(bool _random, int8_t m_level);
 struct CBitmap* getClutter(bool _broken);
 
 

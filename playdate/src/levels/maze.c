@@ -39,6 +39,14 @@ void drawLine(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2, int _w, LCDC
   _pd->graphics->drawLine(_x1*SIZE, _y1*SIZE, _x2*SIZE, _y2*SIZE, _w, _c);
 }
 
+void lines(PlaydateAPI* _pd, LCDColor _c, int _w) {
+  for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
+    drawLine(_pd, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3], _w, _c);
+    drawLine(_pd, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3], _w, _c);
+    drawLine(_pd, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3], _w, _c);
+  }
+}
+
 void updateProcMaze(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
 
@@ -47,14 +55,15 @@ void updateProcMaze(PlaydateAPI* _pd) {
 
   switch (m_dungeon.m_level) {
     case 0: _c = kColorWhite; _w = 4; break;
-    case 1: _c = kColorBlack; _w = 4; break;
+    case 1: _c = kColorBlack; _w = 3; break;
     default: _c = kColorWhite; _w = 1; break;
   }
-  for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
-    drawLine(_pd, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3], _w, _c);
-    drawLine(_pd, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3], _w, _c);
-    drawLine(_pd, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3], _w, _c);
-  }
+  lines(_pd, _c, _w);
+
+  if (m_dungeon.m_level == 1) { // Hard to see on level 2
+    lines(_pd, kColorWhite, _w-1);
+  } 
+
 
   renderClutter(_pd);
   renderPlayer(_pd);

@@ -289,9 +289,10 @@ void renderWallClutter(PlaydateAPI* _pd) {
 }
 
 void renderSawFloor(PlaydateAPI* _pd, int8_t _offset) {
+  const int8_t _level = m_dungeon.m_level;
   for (int _x = 0; _x < 20; _x += 2) {
     for (int _y = 6; _y < 12; _y += 2) {
-      drawCBitmapAbs(_pd, getFloor(false), (_x*SIZE) - _offset, _y*SIZE);
+      drawCBitmapAbs(_pd, getFloor(false, _level), (_x*SIZE) - _offset, _y*SIZE);
     }
     drawCBitmapAbs(_pd, &m_halfUpperWall[0], (_x*SIZE) - _offset, 5*SIZE);
     drawCBitmapAbs(_pd, &m_halfLowerWall[0], (_x*SIZE) - _offset, 12*SIZE);
@@ -311,10 +312,12 @@ void renderSawWalls(PlaydateAPI* _pd, int8_t _offset) {
 }
 
 void renderFloor(PlaydateAPI* _pd, int _mode) {
+  const int8_t _level = m_dungeon.m_level;
   for (int _x = 3; _x < 15; _x += 2) {
     if (_mode == 1 && !(_x == 3 || _x == 13)) continue; // Pit
+    const int8_t _l = (_mode == 2 && (_x == 5 || _x == 9 || _x == 13)) ? (_level + 1) % 3 : _level; // spikes
     for (int _y = 2; _y < 18; _y += 2) {
-      drawCBitmap(_pd, getFloor(true), _x, _y);
+      drawCBitmap(_pd, getFloor(true, _l), _x, _y);
     }
   }
   if (_mode == 1) { // Pit with one space on either side

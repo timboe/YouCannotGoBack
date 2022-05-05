@@ -11,9 +11,10 @@ void updateProcStairs(PlaydateAPI* _pd) {
   renderPlayer(_pd);
   renderWalls(_pd, true, false, false, false);
   renderWallClutter(_pd);
-  drawCBitmap(_pd, getFloor(true), 11, 10); //Draw some more floor to cover the player
-  drawCBitmap(_pd, getFloor(true), 11, 12);
-  drawCBitmap(_pd, getFloor(true), 9, 12);
+  const int8_t _level = m_dungeon.m_level;
+  drawCBitmap(_pd, getFloor(true, _level), 11, 10); //Draw some more floor to cover the player
+  drawCBitmap(_pd, getFloor(true, _level), 11, 12);
+  drawCBitmap(_pd, getFloor(true, _level), 9, 12);
 
   if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
     drawCBitmap(_pd, &m_arrow_d, 9, 9);

@@ -15,14 +15,15 @@ void updateProcFinal(PlaydateAPI* _pd) {
   renderFinalPit(_pd);
 
   if (s_state > 5) {
+    int8_t _level = m_dungeon.m_level;
     drawCBitmap(_pd, &m_innerCorner[3], 7, 6);
     drawCBitmap(_pd, &m_innerCorner[0], 7, 12);
     drawCBitmap(_pd, &m_innerWall[3], 9, 6);
     drawCBitmap(_pd, &m_innerWall[2], 9, 12);
-    drawCBitmap(_pd, getFloor(true), 7, 8);
-    drawCBitmap(_pd, getFloor(true), 7, 10);
-    drawCBitmap(_pd, getFloor(true), 9, 8);
-    drawCBitmap(_pd, getFloor(true), 9, 10);
+    drawCBitmap(_pd, getFloor(true, _level), 7, 8);
+    drawCBitmap(_pd, getFloor(true, _level), 7, 10);
+    drawCBitmap(_pd, getFloor(true, _level), 9, 8);
+    drawCBitmap(_pd, getFloor(true, _level), 9, 10);
   } else {
     for (int _i = 0; _i < 4; ++_i) rand(); // keep the wall the same
   }
