@@ -261,18 +261,12 @@ void renderWallClutter(PlaydateAPI* _pd) {
       if (getFlash(false)) _pd->graphics->setDrawMode(kDrawModeInverted);
       drawCBitmap(_pd, &m_shieldSprite, _r, 0);
       _pd->graphics->setDrawMode(kDrawModeCopy);
-      //graphics_context_set_fill_color(_pd, getShieldColor(getShieldA(_hintValue)));
-      //graphics_fill_circle(_pd, _p, 3);
       _pd->graphics->fillEllipse(_px - _w/2, _py - _w/2, /*sizeH*/_w, /*sizeV*/_w, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldA(_hintValue)));
       _pd->graphics->drawEllipse(_px - _w/2, _py - _w/2, _w, _w, /*lineWidth*/1, 0, 0, kColorBlack);      
-      //graphics_context_set_fill_color(_pd, getShieldColor(getShieldC(_hintValue)));
       _px += SIZE*2;
-      //graphics_fill_circle(_pd, _p, 3);
       _pd->graphics->fillEllipse(_px - _w/2, _py - _w/2, /*sizeH*/_w, /*sizeV*/_w, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldC(_hintValue)));
       _pd->graphics->drawEllipse(_px - _w/2, _py - _w/2, _w, _w, /*lineWidth*/1, 0, 0, kColorBlack); 
-      //graphics_context_set_fill_color(_pd, getShieldColor(getShieldB(_hintValue)));
       _px -= SIZE;
-      //graphics_fill_circle(_pd, _p, 3);
       _pd->graphics->fillEllipse(_px - _w/2, _py - _w/2, /*sizeH*/_w, /*sizeV*/_w, /*aStart*/0, /*aEnd*/0, getShieldColor(getShieldB(_hintValue)));
       _pd->graphics->drawEllipse(_px - _w/2, _py - _w/2, _w, _w, /*lineWidth*/1, 0, 0, kColorBlack); 
     } else if (_hint == kSpell) { // Check spell
@@ -468,7 +462,7 @@ uintptr_t getShieldColor(int8_t _value) {
   switch (_value) {
     case 0: return kColorBlack;
     case 1: return kColorWhite;
-    case 2: return kColorChekerboard;
+    case 2: return (uintptr_t)kColorChekerboard;
     default: return kColorBlack;
   }
 }

@@ -25,7 +25,7 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
       drawCBitmap(_pd, &m_arrow_d, 13, 13);
     }
   } else {
-    static const char _end1[] = "NICELY DONE!\nDUNGEONEER";
+    static const char _end1[] = "NICELY DONE!\n DUNGEONEER";
     PDRect _rect = {.x = _x, .y = 0, .width = _w, .height = 63};
     renderTextInFrame(_pd, _end1, _rect);
     drawBitmapAbs(_pd, m_treasureBanner, 19, 68);

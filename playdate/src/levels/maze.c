@@ -50,18 +50,18 @@ void lines(PlaydateAPI* _pd, LCDColor _c, int _w) {
 void updateProcMaze(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
 
-  LCDColor _c;
+  LCDColor _c1, _c2;
   int _w = 4;
 
   switch (m_dungeon.m_level) {
-    case 0: _c = kColorWhite; _w = 4; break;
-    case 1: _c = kColorBlack; _w = 3; break;
-    default: _c = kColorWhite; _w = 1; break;
+    case 0: _c1 = kColorWhite; _c2 = kColorBlack; _w = 4; break;
+    case 1: _c1 = kColorBlack; _c2 = kColorWhite; _w = 4; break;
+    default: _c1 = kColorWhite; _w = 1; break;
   }
-  lines(_pd, _c, _w);
+  lines(_pd, _c1, _w);
 
-  if (m_dungeon.m_level == 1) { // Hard to see on level 2
-    lines(_pd, kColorWhite, _w-1);
+  if (m_dungeon.m_level < 3) {
+    lines(_pd, _c2, _w/2);
   } 
 
 

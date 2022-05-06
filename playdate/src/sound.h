@@ -20,3 +20,7 @@ void reminderSound();
 void boomSound();
 void passwordSound();
 void fuseSound(bool _start);
+
+//TODO
+void correctSound();
+void stabSound();
