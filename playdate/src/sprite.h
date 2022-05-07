@@ -1,5 +1,6 @@
 #pragma once
 #include "game.h"
+#include "patterns.h"
 
 #define SIZE 8
 #define MAX_FLOOR 4
@@ -37,6 +38,10 @@ extern LCDBitmap* m_sawB;
 extern LCDBitmap* m_sawA;
 
 extern LCDBitmap* m_bomb[4];
+
+extern LCDBitmap* m_spear;
+
+extern LCDBitmap* m_fade;
 
 extern struct CBitmap m_UOuterWall[3];
 extern struct CBitmap m_DOuterWall[3];
@@ -89,4 +94,3 @@ extern LCDFont* m_fontMsg;
 extern LCDFont* m_fontIntro;
 
 
-extern LCDPattern kColorChekerboard;

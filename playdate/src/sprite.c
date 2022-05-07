@@ -13,6 +13,10 @@ LCDBitmap* m_treasureBanner;
 
 LCDBitmap* m_grave;
 
+LCDBitmap* m_spear;
+
+LCDBitmap* m_fade;
+
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
 LCDFont* m_fontIntro;
@@ -60,9 +64,6 @@ struct CBitmap m_treasure[3];
 struct CBitmap m_symbol[MAX_SYMBOL];
 struct CBitmap m_halfUpperWall[2];
 struct CBitmap m_halfLowerWall[2];
-
-LCDPattern kColorChekerboard = {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-
 
 LCDBitmap* loadImageAtPath(PlaydateAPI* _pd, const char* _path) {
   const char* _outErr = NULL;
@@ -146,6 +147,10 @@ void initSprite(PlaydateAPI* _pd) {
   m_bomb[1] = loadImageAtPath(_pd, "images/bomb1");
   m_bomb[2] = loadImageAtPath(_pd, "images/bomb2");
   m_bomb[3] = loadImageAtPath(_pd, "images/explosion");
+
+  m_spear = loadImageAtPath(_pd, "images/spear");
+
+  m_fade = loadImageAtPath(_pd, "images/fadePatterns");
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 

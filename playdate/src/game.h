@@ -95,6 +95,7 @@ typedef struct {
   bool m_fallingDeath;
   uint32_t m_seed;
   uint16_t m_ticksInLevel;
+  uint16_t m_ticksTotal;
 } Dungeon_t;
 
 #define MAX_FRAMES 6

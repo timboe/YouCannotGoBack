@@ -11,12 +11,13 @@ void drawCBitmapAbs(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y);
 
 void renderGameFrame(PlaydateAPI* _pd);
 void renderClear(PlaydateAPI* _pd, bool transparentCentre);
+void renderBlack(PlaydateAPI* _pd);
 void renderHintNumber(PlaydateAPI* _pd, PDRect _r, int _value, bool _invert);
 void renderWalls(PlaydateAPI* _pd, bool _l, bool _rA, bool _rB, bool _rC);
 void renderWallClutter(PlaydateAPI* _pd);
 void renderFloor(PlaydateAPI* _pd, int mode);
 void renderPlayer(PlaydateAPI* _pd);
-void renderFade(PlaydateAPI* _pd, bool _in);
+void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated);
 void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _buffer, uint8_t _offset, bool _invert);
 void renderClutter(PlaydateAPI* _pd);
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b);

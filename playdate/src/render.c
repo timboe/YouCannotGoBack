@@ -1,5 +1,6 @@
 #include "render.h"
 #include "sound.h"
+#include "patterns.h"
 
 #include "pd_api.h"
 
@@ -50,13 +51,18 @@ void renderClear(PlaydateAPI* _pd, bool transparentCentre) {
     _pd->graphics->clear((uintptr_t)kColorChekerboard);
     _pd->graphics->fillRect(0, 0, SIZE*18, SIZE*2, kColorBlack);
     _pd->graphics->fillRect(0, 0, SIZE*2, SIZE*21, kColorBlack);
-    _pd->graphics->fillRect(0, SIZE*20, SIZE*18, SIZE*2, kColorBlack);
-    _pd->graphics->fillRect(SIZE*17, 0, SIZE*1, SIZE*21, kColorBlack);
+    _pd->graphics->fillRect(0, SIZE*20, SIZE*18, SIZE*(2+1), kColorBlack); // Extend the bottom
+    _pd->graphics->fillRect(SIZE*17, 0, SIZE*1, SIZE*21, kColorBlack); 
   } else {
     _pd->graphics->clear((uintptr_t)kColorChekerboard);
     _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*24, kColorBlack);
   }
 }
+
+void renderBlack(PlaydateAPI* _pd) {
+  _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*24, kColorBlack);
+}
+
 
 void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
   if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
@@ -295,7 +301,7 @@ void renderSawFloor(PlaydateAPI* _pd, int8_t _offset) {
 
 void renderSawWalls(PlaydateAPI* _pd, int8_t _offset) {
   _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*2, kColorBlack);
-  _pd->graphics->fillRect(0, SIZE*15, SIZE*19, SIZE*5, kColorBlack);
+  _pd->graphics->fillRect(0, SIZE*15, SIZE*19, SIZE*6, kColorBlack);
   for (int _x = 0; _x < 20; _x += 2) {
     drawCBitmapAbs(_pd, &m_halfUpperWall[1], (_x*SIZE) - _offset, 4*SIZE);
     drawCBitmapAbs(_pd, &m_halfLowerWall[1], (_x*SIZE) - _offset, 13*SIZE);
@@ -435,24 +441,26 @@ void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _b
   _pd->graphics->setDrawMode(kDrawModeCopy);
 }
 
-#define FADE_LEVELS 8
-void renderFade(PlaydateAPI* _pd, bool _in) {
-  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y++;
-  static int s_progress = 1;
-  //GRect _b = layer_get_bounds(_thisLayer);
-  //LCDBitmap* _fBuffer = graphics_capture_frame_buffer(_ctx);
-  //int _flag = (_in == true ? s_progress : FADE_LEVELS - s_progress );
-  // // Have to do a funny iterating for round screens
-  //for (int _y = 0; _y < _b.size.h; ++_y) {
-  //  LCDBitmapDataRowInfo _rowInfo = LCDBitmap_get_data_row_info(_fBuffer, _y);
-  //  for (int _x = _rowInfo.min_x; _x < _rowInfo.max_x; ++_x) {
-  //    uint8_t* _pixelAddr = _rowInfo.data + _x;
-  //    if (rand() % _flag == 0) (*_pixelAddr) = GColorBlack.argb;
-  //   }
-  //}
-  //graphics_release_frame_buffer(_pd, _fBuffer);
+
+void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
+  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y -= 2;
+  static int s_progress = 0;
+  static int s_pattern = 0;
+ 
+
+  static const PDRect s_r0 =  {.x = 128, .y = 0, .width = 144, .height = 240};
+  static const PDRect s_r1 =  {.x = 0, .y = 0, .width = 400, .height = 240};
+
+  const int _flag = (_in == false ? s_progress : FADE_LEVELS - s_progress );
+  if (_isRotated) {
+    _pd->graphics->fillRect(s_r1.x, s_r1.y, s_r1.width, s_r1.height, (uintptr_t) (s_pattern ? kPattern0[_flag] : kPattern1[_flag]));
+  } else {
+    _pd->graphics->fillRect(s_r0.x, s_r0.y, s_r0.width, s_r0.height, (uintptr_t) (s_pattern ? kPattern0[_flag] : kPattern1[_flag]));
+  }
+
   if (++s_progress == FADE_LEVELS) {
-    s_progress = 1;
+    s_progress = 0;
+    s_pattern = rand() % 2;
     if (_in == true) setGameState(kLevelSpecific); // Done fade in, let level choose what next
     else setGameState(kNewRoom);
   }

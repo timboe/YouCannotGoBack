@@ -3,8 +3,7 @@
 #include "../sound.h"
 
 static uint16_t s_state = 0;
-static uint16_t s_wincount = 0;
-static char s_victories[16];
+static char s_timeDisplay[16];
 
 void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
 
@@ -30,7 +29,7 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
     renderTextInFrame(_pd, _end1, _rect);
     drawBitmapAbs(_pd, m_treasureBanner, 19, 68);
     PDRect _rect2 = {.x = 0, .y = 145, .width = 144, .height = 20};
-    renderBorderText(_pd, _rect2, m_fontMain, s_victories, 2, false);
+    renderBorderText(_pd, _rect2, m_fontMain, s_timeDisplay, 2, false);
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawCBitmap(_pd, &m_arrow_d, 8, 12);
     }
@@ -41,10 +40,7 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     if (m_dungeon.m_gameOver == 2) {
-      //if (persist_exists(PERSIST_KEY_VICTORY)) s_wincount = persist_read_int(PERSIST_KEY_VICTORY);
-      //persist_write_int(PERSIST_KEY_VICTORY, ++s_wincount);
-      ++s_wincount;
-      snprintf(s_victories, 16, "VICTORIES %i", s_wincount);
+      snprintf(s_timeDisplay, 16, "TIME %is", m_dungeon.m_ticksTotal / ANIM_FPS);
     }
     return false;
   }

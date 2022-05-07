@@ -47,8 +47,9 @@ int getPlayerChoice() { return s_playerChoice; }
 void resetPlayerChoice() { s_playerChoice = -1; }
 
 bool getFlash(bool _constant) {
-  return (s_frameCount % (ANIM_FPS/2) < ANIM_FPS/4
-    && (m_dungeon.m_ticksInLevel < ANIM_FPS*2 || _constant));
+  return (s_gameState != kFadeIn && s_gameState != kFadeOut
+    && s_frameCount % (ANIM_FPS/2) < ANIM_FPS/4
+    && (m_dungeon.m_ticksInLevel < ANIM_FPS*3 || _constant));
 }
 
 void setPDPtr(PlaydateAPI* p) { pd = p; }
@@ -78,6 +79,7 @@ bool newRoom() {
     m_dungeon.m_room = 0;
   };
   ++m_dungeon.m_roomsVisited;
+  m_dungeon.m_ticksTotal += m_dungeon.m_ticksInLevel;
   m_dungeon.m_ticksInLevel = 0;
   s_frameCount = 0;
   m_clutter.m_nClutter = 0;
@@ -114,7 +116,9 @@ int getHorizontalOffset() {
 void dungeonUpdateProc() {
 
   //s_renderQueued = false;
-  if (getGameState() == kIdle || getGameState() == kDoInit) return;
+  if (getGameState() == kIdle || getGameState() == kDoInit) {
+    return;
+  };
   srand(m_dungeon.m_seed);
   //graphics_context_set_compositing_mode(_ctx, GCompOpSet);
 
@@ -160,11 +164,6 @@ void dungeonUpdateProc() {
 
   if (m_dungeon.m_gameOver == 0 && !m_rotated) renderProgressBar(pd, m_rotated);
 
-  // Do fade
-  if (s_gameState == kFadeIn) renderFade(pd, true);
-  else if (s_gameState == kFadeOut) renderFade(pd, false);
-
-
   if (m_rotated) {
     pd->graphics->popContext();
 
@@ -173,9 +172,6 @@ void dungeonUpdateProc() {
     pd->graphics->setDrawOffset(0, 0);
     // Offset to align in the center of the rotates screen
     pd->graphics->drawRotatedBitmap(m_rotatedBitmap, -56, getHorizontalOffset(), 90.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-    // Need to also fill a gap at the bottom...
-
-    pd->graphics->fillRect(0, 0, SIZE, 240, kColorBlack);
 
   } else {
     pd->graphics->setDrawOffset(0, 0);
@@ -183,6 +179,10 @@ void dungeonUpdateProc() {
   }
 
   if (m_dungeon.m_gameOver == 0 && m_rotated) renderProgressBar(pd, m_rotated);
+
+  // Do fade
+  if (s_gameState == kFadeIn) renderFade(pd, true, m_rotated);
+  else if (s_gameState == kFadeOut) renderFade(pd, false, m_rotated);
 
   // Draw FPS indicator (dbg only)
   #ifdef DEBUG_MODE
@@ -267,7 +267,7 @@ int gameLoop(void* data) {
   }
 
 
-  if (requestRedraw == true) {
+  if (requestRedraw) {
     dungeonUpdateProc();
   }
 

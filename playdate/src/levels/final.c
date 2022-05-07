@@ -58,7 +58,7 @@ bool tickFinal(bool _doInit) {
     return false;
   }
 
-  static const char _msgA[] = "*CLICK* *CLICK*";
+  static const char _msgA[] = "*CLICK CLICK*";
   static const char _msgB[] = "TREASURE!";
 
   if (s_state == 0) { // start initial move
@@ -100,7 +100,6 @@ bool tickFinal(bool _doInit) {
       }
       if (_move == false) {
         m_dungeon.m_gameOver = 1;
-        //vibes_long_pulse();
         setGameState(kFadeOut);
       }
     }
@@ -113,7 +112,6 @@ bool tickFinal(bool _doInit) {
   } else if (s_state == 7) {
     setDisplayMsg(_msgB);
     setGameState(kDisplayMsg);
-    //vibes_long_pulse();
     ++s_state;
   } else if (s_state == 8) {
     m_player.m_target_x = SIZE*15;
