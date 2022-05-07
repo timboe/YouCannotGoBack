@@ -444,23 +444,19 @@ void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _b
 
 #define SPIKES 4
 #define SIZE_FINE SIZE/2
-void renderSpikes(PlaydateAPI* _pd, int8_t* _fuzz, float* _off) {
+void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top) {
 
-
-  const static uint8_t s_x1[SPIKES] = {SIZE_FINE*10, SIZE_FINE*10, SIZE_FINE*10, SIZE_FINE*10};
   const static int8_t s_y1[SPIKES] = {0, SIZE_FINE*7, SIZE_FINE*14, SIZE_FINE*21};
 
   for (int _x = 0; _x < 3; ++_x) {
-    for (int _i = 0; _i < SPIKES; ++_i) {
-      int8_t _fx = _fuzz[_i*2];
-      int8_t _fy = _fuzz[_i*2 + 1];
-      _fx += (SIZE*4*_x);
+    for (int _i = (_top ? 0 : 2); _i < (_top ? 2 : SPIKES); ++_i) {
+      int8_t _fx = (SIZE*5) + (SIZE*4*_x);
       int _ioff = round(_off[_x]);
-      _pd->graphics->fillEllipse(s_x1[_i] + 0 + _fx, s_y1[_i] + S_OFF - SIZE_FINE + 0 + _fy, SIZE_FINE*4 - 0, SIZE_FINE*2 - 0, 0.0f, 0.0f, kColorBlack);
-      _pd->graphics->fillEllipse(s_x1[_i] + 1 + _fx, s_y1[_i] + S_OFF - SIZE_FINE + 1 + _fy, SIZE_FINE*4 - 2, SIZE_FINE*2 - 2, 0.0f, 0.0f, kColorWhite);
-      _pd->graphics->fillEllipse(s_x1[_i] + 2 + _fx, s_y1[_i] + S_OFF - SIZE_FINE + 2 + _fy, SIZE_FINE*4 - 4, SIZE_FINE*2 - 4, 0.0f, 0.0f, kColorBlack);
+      _pd->graphics->fillEllipse(0 + _fx, s_y1[_i] + S_OFF - SIZE_FINE + 0, SIZE_FINE*4 - 0, SIZE_FINE*2 - 0, 0.0f, 0.0f, kColorBlack);
+      _pd->graphics->fillEllipse(1 + _fx, s_y1[_i] + S_OFF - SIZE_FINE + 1, SIZE_FINE*4 - 2, SIZE_FINE*2 - 2, 0.0f, 0.0f, kColorWhite);
+      _pd->graphics->fillEllipse(2 + _fx, s_y1[_i] + S_OFF - SIZE_FINE + 2, SIZE_FINE*4 - 4, SIZE_FINE*2 - 4, 0.0f, 0.0f, kColorBlack);
       _pd->graphics->setBitmapMask(m_spear, _pd->graphics->getTableBitmap(m_smask, _ioff));
-      drawBitmapAbs(_pd, m_spear, s_x1[_i] + _fx, s_y1[_i] + S_OFF - _ioff + _fy);
+      drawBitmapAbs(_pd, m_spear, _fx, s_y1[_i] + S_OFF - _ioff);
     }
   }
 }

@@ -1,9 +1,9 @@
 #include "spikes.h"
 
 static uint16_t s_state = 0;
-static int8_t s_fuzz[2 * 4] = {0};
+
 static float s_off[3] = {0};
-static int8_t s_sign[3] = {1};
+static float s_scale[3] = {0};
 
 static uint8_t s_countdown[3] = {0};
 static uint8_t s_ctotal = 0;
@@ -16,12 +16,9 @@ void updateProcSpikes(PlaydateAPI* _pd) {
   renderWalls(_pd, true, false, true, false);
   renderWallClutter(_pd);
 
-
-
-  if (s_state >= 2) {
-    renderPlayer(_pd);
-    renderSpikes(_pd, s_fuzz, s_off);
-  }
+  renderSpikes(_pd, s_off, true);
+  renderPlayer(_pd);
+  renderSpikes(_pd, s_off, false);
 
   if (getFrameCount() < ANIM_FPS/2) {
     switch (s_state) {
@@ -38,13 +35,37 @@ bool tickSpikes(bool _doInit) {
     m_player.m_position_x = 0;
     m_player.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
-    for (int _i = 0; _i < (2*4); ++_i) {
-      s_fuzz[_i] = -(SIZE/2) + rand() % (SIZE/2);
-    }
+    s_off[0] = 0;
+    s_off[1] = 0;
+    s_off[2] = 0;
+    s_scale[0] = 0;
+    s_scale[1] = 0;
+    s_scale[2] = 0;
     switch (m_dungeon.m_level) {
-      case 0: case 1: case 2: s_ctotal = 50; s_countdown[0] = 1; s_countdown[1] = 25; s_countdown[2] = 50; 
+      case 0: s_ctotal = 32; s_countdown[0] = 22; s_countdown[1] = 11; s_countdown[2] = 1; break;
+      case 1: s_ctotal = 16; s_countdown[0] = 1; s_countdown[1] = 1; s_countdown[2] = 1; break;
+      case 2: s_ctotal = 1; s_countdown[0] = rand()%16 + 1; s_countdown[1] = rand()%16 + 1; s_countdown[2] = rand()%16 + 1; break;
     }
     return false;
+  }
+
+  // Spears
+  for (int _i = 0; _i < 3; ++_i) {
+    if (s_scale[_i] < 0.01f && (--s_countdown[_i] == 0)) {
+      s_countdown[_i] = s_ctotal;
+      s_off[_i] = 1.0f;
+      s_scale[_i] = 1.2f;
+    }
+
+    s_off[_i] *= s_scale[_i];
+
+    if (s_off[_i] > S_OFF) {
+      s_scale[_i] = 0.5f;
+      s_off[_i] = 32.0f;
+    } else if (s_off[_i] < 1.0f && s_scale[_i] < 1.0f) {
+      s_scale[_i] = 0.0f;
+      s_off[_i] = 0.0f;
+    }
   }
 
   if (s_state == 0) { // start initial move
@@ -63,18 +84,13 @@ bool tickSpikes(bool _doInit) {
       resetPlayerChoice();
     }
 
+    // Check for death, up to 48 pixels in each spear
+    #define DEATH_PIXELS 16
     for (int _i = 0; _i < 3; ++_i) {
-      if (--s_countdown[_i] == 0) {
-        s_countdown[_i] = s_ctotal;
-        s_off[_i] = 1.0f;
-      }
-      s_off[_i] *= 1.1f * s_sign[_i];
-      if (s_off[_i] >= S_OFF) {
-        s_sign[_i] *= -1;
-        s_off[_i] = S_OFF;
-      } else if (s_off[_i] < 1.0f && s_sign[_i] < 0) {
-        s_sign[_i] *= -1;
-        s_off[_i] = 0.0f;
+      int _x = abs((SIZE*5) + (SIZE*4*_i) - m_player.m_position_x);
+      if (_x < SIZE && s_off[_i] > DEATH_PIXELS) {
+        m_dungeon.m_gameOver = 1;
+        setGameState(kFadeOut);
       }
     }
 

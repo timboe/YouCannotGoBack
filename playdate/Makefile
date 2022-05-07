@@ -38,3 +38,6 @@ ULIBDIR =
 ULIBS =
 
 include $(SDK)/C_API/buildsupport/common.mk
+
+# For sprintf
+LDFLAGS += -specs=nano.specs -specs=nosys.specs

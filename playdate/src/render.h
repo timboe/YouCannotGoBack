@@ -35,7 +35,7 @@ void renderSawFloor(PlaydateAPI* _pd, int8_t _offset);
 void renderSawWalls(PlaydateAPI* _pd, int8_t _offset);
 void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd);
 void renderBomb(PlaydateAPI* _pd, int16_t _bomb, int8_t _location);
-void renderSpikes(PlaydateAPI* _pd, int8_t* _fuzz, float* _off);
+void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top);
 
 LCDColor getShieldColor(int8_t _value);
 

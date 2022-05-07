@@ -64,7 +64,6 @@ void updateProcMaze(PlaydateAPI* _pd) {
     lines(_pd, _c2, _w/2);
   } 
 
-
   renderClutter(_pd);
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);

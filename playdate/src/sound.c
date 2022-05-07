@@ -2,7 +2,7 @@
 
 static PlaydateAPI* pd = NULL;
 
-bool m_sounds = true;
+bool m_sounds = false;
 
 FilePlayer* m_music;
 
