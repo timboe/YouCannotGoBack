@@ -53,11 +53,7 @@ bool getFlash(bool _constant) {
 void setPDPtr(PlaydateAPI* p) { pd = p; }
 
 void gameClickConfigHandler(uint32_t buttonPressed) {
-  pd->system->logToConsole("PRESSED: %i", buttonPressed);
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
-  if (kButtonA == buttonPressed) {
-    m_rotated = !m_rotated;
-  }
   if (getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) {
     if (kButtonUp == buttonPressed) s_playerChoice = 0;
     else if (kButtonRight == buttonPressed) s_playerChoice = 1;
@@ -113,13 +109,10 @@ int getHorizontalOffset() {
 
 void dungeonUpdateProc() {
 
-  //s_renderQueued = false;
   if (getGameState() == kIdle || getGameState() == kDoInit) {
     return;
   };
   srand(m_dungeon.m_seed);
-  //graphics_context_set_compositing_mode(_ctx, GCompOpSet);
-
 
   if (m_rotated) {
     pd->graphics->pushContext(m_rotatedBitmap);
@@ -195,6 +188,7 @@ void clickHandlerReplacement() {
   if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
   if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
   if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
+  if (pushed & kButtonLeft) gameClickConfigHandler(kButtonLeft);
   if (pushed & kButtonA) gameClickConfigHandler(kButtonA);
   if (pushed & kButtonB) gameClickConfigHandler(kButtonB);
 
@@ -209,7 +203,6 @@ void clickHandlerReplacement() {
 void callbackReplacement() {
   if (getGameState() != kDisplayingMsg) { return; }
   if (pd->system->getElapsedTime() >= 1.5f) {
-    pd->system->logToConsole("message elapsed");
     setGameState(kLevelSpecific);
   }
 }
@@ -232,7 +225,7 @@ int gameLoop(void* data) {
     case kFadeIn: case kFadeOut: requestRedraw = true; break;
     case kDisplayMsg: requestRedraw = true; break;
     case kDisplayingMsg: requestRedraw = false; break; // Wait for timer to expire or button click
-    // For the init level case, we call the tick fn with a boolean flag, but we then need to wait until we fade in before we tick propper
+    // For the init level case, we call the tick fn with a boolean flag, but we then need to wait until we fade in before we tick proper
     case kDoInit: _doInit = true; s_gameState = kFadeIn; // FALL THROUGH
     case kLevelSpecific: case kLevelSpecificWButtons:
     switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
@@ -263,7 +256,6 @@ int gameLoop(void* data) {
     bombTimer();
     requestRedraw = true;
   }
-
 
   if (requestRedraw) {
     dungeonUpdateProc();
@@ -314,7 +306,6 @@ void gameWindowLoad() {
   static const char* options[] = {"Auto", "Landscape", "Portrait"};
   PDMenuItem* _menu = pd->system->addOptionsMenuItem("Rotate", options, 3, menuOptionsCallback, NULL);
   pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
-
   pd->system->setPeripheralsEnabled(kAccelerometer);
 
   generate(pd);

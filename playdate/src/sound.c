@@ -29,7 +29,7 @@ void initSound(PlaydateAPI* _pd) {
 
   m_music = pd->sound->fileplayer->newPlayer();
   int result = pd->sound->fileplayer->loadIntoPlayer(m_music, "sounds/Echoes_of_Time_v2");
-  pd->sound->fileplayer->play(m_music, 0);
+  if (m_sounds) pd->sound->fileplayer->play(m_music, 0);
   pd->system->logToConsole("Loaded audio %i", result);
 
   m_samplePlayer = pd->sound->sampleplayer->newPlayer(); // TODO: Report, docs say newSamplePlayer

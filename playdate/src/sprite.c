@@ -113,7 +113,8 @@ struct CBitmap getSprite(PlaydateAPI* _pd, int _x, int _y, int _w, int _h) {
 }
 
 struct CBitmap* getClutter(bool _broken) {
-  return &m_clutterSprite[ rand() % (_broken == true ? 3 : MAX_CLUTTER) ];
+  if (_broken) return &m_clutterSprite[ 2 ];
+  return &m_clutterSprite[ rand() % MAX_CLUTTER ];
 }
 
 struct CBitmap* getOuterWall(int _d) {

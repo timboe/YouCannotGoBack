@@ -77,7 +77,6 @@ bool tickFinal(bool _doInit) {
     ++s_state;
   } else if (s_state == 3) {
     setDisplayMsg(_msgA);
-    //vibes_double_pulse();
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 4) {
