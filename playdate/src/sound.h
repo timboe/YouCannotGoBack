@@ -3,24 +3,24 @@
 
 void initSound(PlaydateAPI* _pd);
 
-void deinitSound();
+void deinitSound(void);
 
-void fireSound();
-void chestSound();
-void looseSound();
-void winSound();
+void fireSound(void);
+void chestSound(void);
+void looseSound(void);
+void winSound(void);
 void sawSound(bool _start);
 void sawVolume(float _v);
 void darkSound(int _n);
-void beepSound();
-void stepSound();
-void debufSound();
-void bufSound();
-void reminderSound();
-void boomSound();
-void passwordSound();
+void beepSound(void);
+void stepSound(void);
+void debufSound(void);
+void bufSound(void);
+void reminderSound(void);
+void boomSound(void);
+void passwordSound(void);
 void fuseSound(bool _start);
 
 //TODO
-void correctSound();
-void stabSound();
+void correctSound(void);
+void stabSound(void);

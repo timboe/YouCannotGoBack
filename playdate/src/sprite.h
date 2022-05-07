@@ -13,7 +13,7 @@
 #define SSHEET_Y 32
 
 void initSprite(PlaydateAPI* _pd);
-void deinitSprite();
+void deinitSprite(void);
 
 #define CBITMAP_MAX 6
 struct CBitmap {

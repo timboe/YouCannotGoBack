@@ -4,4 +4,4 @@
 
 void updateProcBomb(PlaydateAPI* _pd);
 bool tickBomb(bool _doInit);
-void bombTimer();
+void bombTimer(void);

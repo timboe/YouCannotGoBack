@@ -122,11 +122,11 @@ void setPDPtr(PlaydateAPI* p);
 
 int gameLoop(void* data);
 
-int getFrameCount();
+int getFrameCount(void);
 bool getFlash(bool _constant);
-int getPlayerChoice();
-void resetPlayerChoice();
-GameState_t getGameState();
+int getPlayerChoice(void);
+void resetPlayerChoice(void);
+GameState_t getGameState(void);
 void setGameState(GameState_t _state);
 void setDisplayMsg(const char* _msg);
 
@@ -137,7 +137,12 @@ int getShieldA(int _value);
 int getShieldB(int _value);
 int getShieldC(int _value);
 
-void gameWindowLoad();
-void gameWindowUnload();
+void callbackReplacement(void);
+void gameWindowLoad(void);
+void gameWindowUnload(void);
 void gameClickConfigHandler(uint32_t buttonPressed);
-
+void clickHandlerReplacement(void);
+bool movePlayer(void);
+bool newRoom(void);
+int getHorizontalOffset(void);
+void dungeonUpdateProc(void);

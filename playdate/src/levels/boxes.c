@@ -28,7 +28,7 @@ bool tickBoxes(PlaydateAPI* _pd, bool _doInit) {
     while (_wrong1 == _answer) _wrong1 = rand() % kNShieldTypes;
     while (_wrong2 == _answer || _wrong2 == _wrong1) _wrong2 = rand() % kNShieldTypes;
 
-    int8_t _a, _b, _c;
+    int8_t _a = 0, _b = 0, _c = 0;
     switch (s_correct) {
       case 0: _a = _answer; _b = _wrong1; _c = _wrong2; break;
       case 1: _a = _wrong1; _b = _answer; _c = _wrong2; break;

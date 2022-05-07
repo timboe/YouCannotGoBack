@@ -50,7 +50,7 @@ void lines(PlaydateAPI* _pd, LCDColor _c, int _w) {
 void updateProcMaze(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
 
-  LCDColor _c1, _c2;
+  LCDColor _c1 = kColorWhite, _c2 = kColorWhite;
   int _w = 4;
 
   switch (m_dungeon.m_level) {

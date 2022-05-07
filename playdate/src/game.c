@@ -36,7 +36,6 @@ bool m_rotated = true;
 bool m_autoRotation = true;
 LCDBitmap* m_rotatedBitmap = NULL;
 
-bool movePlayer();
 
 int getFrameCount() { return s_frameCount; }
 GameState_t getGameState() { return s_gameState; }
@@ -191,7 +190,7 @@ void dungeonUpdateProc() {
 
 // Temporary until the playdate eventHandler is functional for inputs
 void clickHandlerReplacement() {
-  uint32_t current, pushed, released = 0;
+  PDButtons current, pushed, released = 0;
   pd->system->getButtonState(&current, &pushed, &released);
   if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
   if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
