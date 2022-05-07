@@ -1,6 +1,12 @@
 #include "spikes.h"
 
 static uint16_t s_state = 0;
+static int8_t s_fuzz[2 * 4] = {0};
+static float s_off[3] = {0};
+static int8_t s_sign[3] = {1};
+
+static uint8_t s_countdown[3] = {0};
+static uint8_t s_ctotal = 0;
 
 
 void updateProcSpikes(PlaydateAPI* _pd) {
@@ -9,6 +15,14 @@ void updateProcSpikes(PlaydateAPI* _pd) {
   renderPlayer(_pd);
   renderWalls(_pd, true, false, true, false);
   renderWallClutter(_pd);
+
+
+
+  if (s_state >= 2) {
+    renderPlayer(_pd);
+    renderSpikes(_pd, s_fuzz, s_off);
+  }
+
   if (getFrameCount() < ANIM_FPS/2) {
     switch (s_state) {
       case 2: drawCBitmap(_pd, &m_arrow_r,  7, 9); break;
@@ -24,7 +38,12 @@ bool tickSpikes(bool _doInit) {
     m_player.m_position_x = 0;
     m_player.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
-
+    for (int _i = 0; _i < (2*4); ++_i) {
+      s_fuzz[_i] = -(SIZE/2) + rand() % (SIZE/2);
+    }
+    switch (m_dungeon.m_level) {
+      case 0: case 1: case 2: s_ctotal = 50; s_countdown[0] = 1; s_countdown[1] = 25; s_countdown[2] = 50; 
+    }
     return false;
   }
 
@@ -42,6 +61,21 @@ bool tickSpikes(bool _doInit) {
     if (s_state % 2 == 0 && getPlayerChoice() == 1) {
       ++s_state;
       resetPlayerChoice();
+    }
+
+    for (int _i = 0; _i < 3; ++_i) {
+      if (--s_countdown[_i] == 0) {
+        s_countdown[_i] = s_ctotal;
+        s_off[_i] = 1.0f;
+      }
+      s_off[_i] *= 1.1f * s_sign[_i];
+      if (s_off[_i] >= S_OFF) {
+        s_sign[_i] *= -1;
+        s_off[_i] = S_OFF;
+      } else if (s_off[_i] < 1.0f && s_sign[_i] < 0) {
+        s_sign[_i] *= -1;
+        s_off[_i] = 0.0f;
+      }
     }
 
     if (s_state % 2 == 1) {

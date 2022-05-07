@@ -26,8 +26,6 @@ struct CBitmap* getOuterWall(int _d);
 struct CBitmap* getFloor(bool _random, int8_t m_level);
 struct CBitmap* getClutter(bool _broken);
 
-
-// https://deepglowing.itch.io/dead-forest-pixel-art-asset
 extern LCDBitmap* m_borderL;
 extern LCDBitmap* m_borderR;
 
@@ -40,6 +38,7 @@ extern LCDBitmap* m_sawA;
 extern LCDBitmap* m_bomb[4];
 
 extern LCDBitmap* m_spear;
+extern LCDBitmapTable* m_smask;
 
 extern LCDBitmap* m_fade;
 

@@ -10,26 +10,6 @@
 __declspec(dllexport)
 #endif
 
-
-/*
-static Window* s_gameWindow;
-
-void tapHandle(AccelAxisType _axis, int32_t _direction) {
-  static bool _backlight = false;
-  _backlight = !_backlight;
-  light_enable(_backlight);
-  vibes_long_pulse();
-}
-
-
-int main(void) {
-  init();
-  window_stack_push(s_gameWindow, true);
-  app_event_loop();
-  deinit();
-}
-*/
-
 static void init(PlaydateAPI* _pd) {
   initSprite(_pd);
   initSound(_pd);
@@ -37,11 +17,8 @@ static void init(PlaydateAPI* _pd) {
 }
 
 static void deinit(void) {
-  //window_destroy(s_gameWindow);
   deinitSprite();
   deinitSound();
-
-  //accel_tap_service_unsubscribe();
   gameWindowUnload();
 }
 

@@ -62,7 +62,7 @@ bool tickSaw(bool _doInit) {
       ++s_count;
       srand( m_dungeon.m_seed + s_count );
       s_type = 1 + (rand()%3);
-      s_position = 144; //TODO round offset
+      s_position = 144;
     } else if (s_count < 5 + m_dungeon.m_level) {
       s_position -= 3 + m_dungeon.m_level;
       if (s_position < -80) s_type = 0;
@@ -87,8 +87,8 @@ bool tickSaw(bool _doInit) {
     sawVolume( 1.0f - (abs(s_position - m_player.m_position_x) / SAW_SOUND_DISTANCE) );
   } else if (s_state == 2) {
     m_dungeon.m_gameOver = 1;
-    //vibes_long_pulse();
     setGameState(kFadeOut);
+    sawSound(false);
   }
 
   return true;

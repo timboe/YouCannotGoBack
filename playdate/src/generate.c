@@ -1,5 +1,3 @@
-#include <time.h>
-
 #include "game.h"
 #include "generate.h"
 
@@ -89,7 +87,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
 void generate(PlaydateAPI* _pd) {
 
   memset(&m_dungeon, 0, sizeof(Dungeon_t));
-  m_dungeon.m_seed = time(NULL);
+  m_dungeon.m_seed = _pd->system->getCurrentTimeMilliseconds();
   srand(m_dungeon.m_seed);
   m_dungeon.m_finalPuzzle = rand() % 3;
   m_hintsInPlay = 0;

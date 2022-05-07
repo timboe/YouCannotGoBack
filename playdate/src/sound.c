@@ -2,6 +2,8 @@
 
 static PlaydateAPI* pd = NULL;
 
+bool m_sounds = true;
+
 FilePlayer* m_music;
 
 SamplePlayer* m_samplePlayer;
@@ -62,27 +64,32 @@ void deinitSound() {
 }
 
 void fireSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_fireSample);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void chestSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_chestSample);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void looseSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_looseSample);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void winSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_winSample);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 
 void sawSound(bool _start) {
+  if (!m_sounds) return;
   if (_start) {
     pd->sound->sampleplayer->setSample(m_loopPlayer, m_sawSample);
     pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
@@ -98,47 +105,56 @@ void sawVolume(float _v) {
 }
 
 void darkSound(int _n) {
+  if (!m_sounds) return;
   if (_n > 2) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_dark[_n]);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void beepSound() {
+  if (!m_sounds) return;
   //pd->sound->sampleplayer->setSample(m_samplePlayer, m_beep);
   //pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void stepSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_step);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void debufSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_debuf);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void bufSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_buf);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void reminderSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_reminder);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void boomSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_boom);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void passwordSound() {
+  if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_password);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void fuseSound(bool _start) {
+  if (!m_sounds) return;
   if (_start) {
     //pd->sound->sampleplayer->setSample(m_loopPlayer, m_fuse);
     //pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
