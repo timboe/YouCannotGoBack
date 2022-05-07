@@ -62,10 +62,12 @@ bool tickChest(bool _doInit) {
       if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
     } else if ( _hint == kSpell) {
       setDisplayMsg(_goodC);
-      snprintf(_goodD, 16, "REMEMBER %s", m_spellNames[ m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room] ]);
+      // TODO: doesn't build for target device with snprintf
+      //snprintf(_goodD, 16, "REMEMBER %s", m_spellNames[ m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room] ]);
     } else if (_hint == kNumber) {
       setDisplayMsg(_goodC);
-      snprintf(_goodD, 16, "REMEMBER %i", m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room]);
+      // TODO: doesn't build for target device with snprintf
+      //snprintf(_goodD, 16, "REMEMBER %i", m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room]);
     } else {
       setDisplayMsg(_goodA);
       ++m_dungeon.m_lives;

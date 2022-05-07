@@ -40,7 +40,8 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     if (m_dungeon.m_gameOver == 2) {
-      snprintf(s_timeDisplay, 16, "TIME %is", m_dungeon.m_ticksTotal / ANIM_FPS);
+      // TODO: doesn't build for target device with snprintf
+      //snprintf(s_timeDisplay, 16, "TIME %is", m_dungeon.m_ticksTotal / ANIM_FPS);
     }
     return false;
   }

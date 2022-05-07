@@ -76,7 +76,8 @@ void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
 
 void renderHintNumber(PlaydateAPI* _pd, PDRect _r, int _value, bool _invert) {
   static char _hintText[3];
-  snprintf(_hintText, 3, "%i", _value);
+  // TODO: doesn't build for target device with snprintf
+  //snprintf(_hintText, 3, "%i", _value);
   renderBorderText(_pd, _r, m_fontMain, _hintText, 1, /*GTextAlignmentCenter,*/ _invert);
 }
 
