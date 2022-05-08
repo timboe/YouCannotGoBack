@@ -148,7 +148,9 @@ void generate(PlaydateAPI* _pd) {
       }
 
       // Special for CHEST room, REMINDER
-      if (_roomType == kChest && (m_hintIsActive[kSpell] == true || m_hintIsActive[kNumber] == true) && rand() % 2 == 0) {
+      // By increasing the numbe on the right, we make it less likley that the player
+      // will get an extra life once they have been given a hint
+      if (_roomType == kChest && (m_hintIsActive[kSpell] == true || m_hintIsActive[kNumber] == true) && rand() % 6 != 0) {
         if (m_hintIsActive[kSpell] == true) {
           m_dungeon.m_roomNeedHint[_level][_room] = kSpell;
           m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[kSpell];

@@ -7,6 +7,7 @@ Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon expl
 ## Features:
 
  * Randomly generated three-level dungeon.
+ * Three-button control scheme
  * Fifteen types of puzzle room.
    * Maths and spatial puzzle solving.
    * Memory and recall.
@@ -35,3 +36,5 @@ Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon expl
   * [8bit Dungeon Level](https://incompetech.com/) by Kevin MacLeod
   * [Buzzsaw Addiction](https://freesound.org/people/AaronGNP/sounds/108171/) by AaronGNP
   * [8-Bit Sound Effects Library](https://freesound.org/people/LittleRobotSoundFactory/packs/16681/) by LittleRobotSoundFactory
+  * [Fuse](https://freesound.org/people/soundslikewillem/sounds/184519/) by soundslikewillem
+  * [Walk down stairs](https://freesound.org/people/qubodup/sounds/442770/) by qubodup

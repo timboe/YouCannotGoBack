@@ -194,10 +194,17 @@ void dungeonUpdateProc() {
 void clickHandlerReplacement() {
   PDButtons current, pushed, released = 0;
   pd->system->getButtonState(&current, &pushed, &released);
-  if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
-  if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
-  if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
-  if (pushed & kButtonLeft) gameClickConfigHandler(kButtonLeft);
+  if (m_rotated) {
+    if (pushed & kButtonUp) gameClickConfigHandler(kButtonLeft);
+    if (pushed & kButtonRight) gameClickConfigHandler(kButtonUp);
+    if (pushed & kButtonDown) gameClickConfigHandler(kButtonRight);
+    if (pushed & kButtonLeft) gameClickConfigHandler(kButtonDown);
+  } else {
+    if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
+    if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
+    if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
+    if (pushed & kButtonLeft) gameClickConfigHandler(kButtonLeft);
+  }
   if (pushed & kButtonA) gameClickConfigHandler(kButtonA);
   if (pushed & kButtonB) gameClickConfigHandler(kButtonB);
 
@@ -299,6 +306,11 @@ bool movePlayer() {
 }
 
 void menuOptionsCallback(void* userdata) {
+  if (userdata == NULL) {
+    // chose reset
+    return generate(pd);
+  }
+
   int _value = pd->system->getMenuItemValue((PDMenuItem*)userdata);
   if (_value == 2) {
     m_rotated = true;
@@ -319,8 +331,10 @@ void gameWindowLoad() {
 
   m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
 
+  pd->system->addMenuItem("restart", menuOptionsCallback, NULL);
+
   static const char* options[] = {"Auto", "Landscape", "Portrait"};
-  PDMenuItem* _menu = pd->system->addOptionsMenuItem("Rotate", options, 3, menuOptionsCallback, NULL);
+  PDMenuItem* _menu = pd->system->addOptionsMenuItem("rotate", options, 3, menuOptionsCallback, NULL);
   pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
   pd->system->setPeripheralsEnabled(kAccelerometer);
   

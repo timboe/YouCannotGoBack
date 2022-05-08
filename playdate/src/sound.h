@@ -24,6 +24,7 @@ void boomSound(void);
 void fallSound(void);
 void passwordSound(void);
 void hitSound(void);
+void stairsSound(void);
 void fuseSound(bool _start);
 
 //TODO

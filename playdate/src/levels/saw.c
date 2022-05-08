@@ -50,7 +50,12 @@ bool tickSaw(bool _doInit) {
   } else if (s_state == 1) {
     setGameState(kLevelSpecificWButtons);
     s_rotation += 5.0f + (m_dungeon.m_level * 2.0f);
-    if (getFrameCount() % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
+    if (getFrameCount() % 3 == 0) {
+      if (++m_player.m_playerFrame == MAX_FRAMES) {
+        m_player.m_playerFrame = 0;
+      }
+      if (m_player.m_playerFrame % 2 == 0) footSound();
+    }
     if (++s_offset == 16) s_offset = 0;
 
     m_player.m_target_x = 4*SIZE;

@@ -1,4 +1,5 @@
-#include "start.h"
+#include "stairs.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 
@@ -44,6 +45,7 @@ bool tickStairs(bool _doInit) {
   } else if (s_state == 3) { // move down stairs
     m_player.m_target_x = SIZE*11;
     m_player.m_target_y = SIZE*11;
+    stairsSound();
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 4) {
