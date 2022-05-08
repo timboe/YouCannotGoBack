@@ -23,7 +23,9 @@ Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon expl
 
 ## Playdate Screenshots:
 
+![Playdate](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/playdate.png?raw=true)
 
+![Playdate](https://github.com/timboe/YouCannotGoBack/blob/master/playdate/source/titles/card.png?raw=true)
 
 ## Asset credits:
   * [Top down dungeon tileset](https://opengameart.org/content/top-down-dungeon-tileset) by Buch
