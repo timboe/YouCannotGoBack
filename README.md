@@ -19,6 +19,8 @@ Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon expl
 
 ## Pebble Screenshots:
 
+![Pebble](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/banner.png?raw=true)
+
 ![Basalt](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/pebble_screenshot_b1.png?raw=true)![Basalt](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/pebble_screenshot_b2.png?raw=true)![Basalt](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/pebble_screenshot_b3.png?raw=true)![Basalt](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/pebble_screenshot_b4.png?raw=true)![Basalt](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/pebble_screenshot_b5.png?raw=true)
 
 ## Playdate Screenshots (cropped):
