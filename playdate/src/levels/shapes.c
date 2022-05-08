@@ -26,7 +26,7 @@ void updateProcShapes(PlaydateAPI* _pd) {
     drawCBitmap(_pd, &m_arrow_u, 10, 5);
     drawCBitmap(_pd, &m_arrow_r, 12, 9);
     drawCBitmap(_pd, &m_arrow_d, 10, 13);
-    if (getFrameCount() == 0) beepSound();
+    //if (getFrameCount() == 0) beepSound();
   }
 
 }
@@ -79,7 +79,7 @@ bool tickShapes(PlaydateAPI* _pd, bool _doInit) {
     }
 
     _pd->graphics->pushContext(s_shapes_rot[3]);
-    _pd->graphics->drawRotatedBitmap(s_shapes_rot[s_win], 22, 22, 90.0f*_rot, 0.5f, 0.5f, 1.0f, 1.0f);
+    _pd->graphics->drawRotatedBitmap(s_shapes_rot[s_win], 22, 22, (float)(90.0f*_rot), 0.5f, 0.5f, 1.0f, 1.0f);
     _pd->graphics->popContext();
 
     _pd->graphics->pushContext(s_shapes_rot[4]);
@@ -87,7 +87,7 @@ bool tickShapes(PlaydateAPI* _pd, bool _doInit) {
     _pd->graphics->popContext();
 
     #ifdef DEV
-    _pd->system->logToConsole("Shapes win:%i, rot:%f, flip:%i",s_win,90.0f*_rot,_f);
+    _pd->system->logToConsole("Shapes win:%i, rot:%i, flip:%i",s_win,_rot,_f);
     #endif
   }
 
