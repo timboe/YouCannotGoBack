@@ -17,11 +17,19 @@ void updateProcMaths(PlaydateAPI* _pd) {
 
   renderFloor(_pd, 0);
 
-  drawCBitmap(_pd, &m_block, 5, 9);
-  drawCBitmap(_pd, &m_block, 13, 9);
+  _pd->graphics->fillRect(SIZE*7, SIZE*8, 47, 31, kColorBlack);
+
+  drawCBitmap(_pd, &m_block, 6, 11);
+  drawCBitmap(_pd, &m_block, 6, 7);
+  drawCBitmap(_pd, &m_block, 8, 11);
+  drawCBitmap(_pd, &m_block, 8, 7);
+  drawCBitmap(_pd, &m_block, 10, 11);
+  drawCBitmap(_pd, &m_block, 10, 7);
+  drawCBitmap(_pd, &m_block, 12, 11);
+  drawCBitmap(_pd, &m_block, 12, 7);
 
   for (int _s = 0; _s < 3; ++_s) {
-    PDRect _b = {.x = (5 + _s*3)*SIZE, .y = 9*SIZE + 4, .width = 16, .height = 16};
+    PDRect _b = {.x = (7 + _s*2)*SIZE, .y = 9*SIZE + 4, .width = 16, .height = 16};
     renderHintNumber(_pd, _b, s_sequence[_s], false);   // sequence
   }
 
@@ -31,9 +39,9 @@ void updateProcMaths(PlaydateAPI* _pd) {
   renderWallClutter(_pd);
 
   for (int _s = 0; _s < 3; ++_s) {
-    PDRect _b = {.x = 16*SIZE - 2, .y = (5 + (_s*4))*SIZE - 2, .width = 2*SIZE + 4, .height = 2*SIZE + 4};   // Choices
+    PDRect _b = {.x = 16*SIZE - 3, .y = (5 + (_s*4))*SIZE - 2, .width = 2*SIZE + 5, .height = 2*SIZE + 4};   // Choices
     renderFrame(_pd, _b);
-    PDRect _b2 = {.x = 16*SIZE - 1, .y = (6 + (_s*4))*SIZE - 4, .width = 16, .height = 16};
+    PDRect _b2 = {.x = 16*SIZE - 2, .y = (6 + (_s*4))*SIZE - 4, .width = 19, .height = 16};
     renderHintNumber(_pd, _b2, s_choices[_s], false);
   }
   renderArrows(_pd, 14, 5, 4);
@@ -67,6 +75,10 @@ bool tickMaths(PlaydateAPI* _pd, bool _doInit) {
     s_choices[ s_correct ] = s_sequence[3];
 
     shuffler(_pd, s_choices, s_sequence[3] - 10, 20);
+
+    for (int _i = 0; _i < 3; ++_i) {
+      if (s_choices[_i] < 0) s_choices[_i] *= -1;
+    }
 
     return false;
   }

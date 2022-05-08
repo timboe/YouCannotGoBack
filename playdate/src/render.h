@@ -21,6 +21,7 @@ void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated);
 void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _buffer, uint8_t _offset, bool _invert);
 void renderClutter(PlaydateAPI* _pd);
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b);
+void renderText(PlaydateAPI* _pd, const char* _msg, PDRect _b);
 void renderMessage(PlaydateAPI* _pd, const char* _msg, bool _isRotated);
 void renderPit(PlaydateAPI* _pd);
 void renderFinalPit(PlaydateAPI* _pd);

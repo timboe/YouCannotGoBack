@@ -44,7 +44,21 @@ void renderGameFrame(PlaydateAPI* _pd) {
   drawBitmapAbs(_pd, m_borderR, 144+128, 0);
   _pd->graphics->fillRect(128, 0, 144, 36, kColorBlack);
   _pd->graphics->fillRect(128, 52+168, 144, 20, kColorBlack);
-
+  static const char _portraitA[] = "Best";
+  static const char _portraitB[] = "Played In";
+  static const char _portraitC[] = "Portrait";
+  static const char _portraitD[] = "Mode!";
+  if (m_dungeon.m_room == 0 && m_dungeon.m_level == 0) {
+    PDRect _b = {.x = 16, .y = 32, .width = 96, .height = 128+8};
+    renderTextInFrame(_pd, _portraitA, _b);
+    _b.y += 16;
+    renderText(_pd, _portraitB, _b);
+    _b.y += 16;
+    renderText(_pd, _portraitC, _b);
+    _b.y += 16;
+    renderText(_pd, _portraitD, _b);
+    drawBitmapAbsRot(_pd, m_rotate, 64, 128+5, -m_dungeon.m_ticksInLevel * 10.0f);
+  }
 }
 
 void renderClear(PlaydateAPI* _pd, bool transparentCentre) {
@@ -186,11 +200,14 @@ void renderFrame(PlaydateAPI* _pd, PDRect _b) {
 }
 
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
-
   const static int _text_y_offset = SIZE*2;
   _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorWhite);
   _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorBlack);
-  
+  renderText(_pd, _msg, _b);
+}
+
+void renderText(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
+  const static int _text_y_offset = SIZE*2;
   _pd->graphics->setDrawMode(kDrawModeFillBlack);
   _pd->graphics->setFont(m_fontMsg);
   int _len = _pd->graphics->getTextWidth(m_fontMsg, _msg, strlen(_msg), kASCIIEncoding, /*tracking*/ 0);
@@ -474,15 +491,22 @@ void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
   static const PDRect s_r1 =  {.x = 0, .y = 0, .width = 400, .height = 240};
 
   const int _flag = (_in == false ? s_progress : FADE_LEVELS - s_progress - 1 );
+
+  LCDPattern* _p = (LCDPattern*) kPattern0[_flag];
+  switch (s_pattern) {
+    case 1: _p = (LCDPattern*) kPattern1[_flag]; break;
+    case 2: _p = (LCDPattern*) kPattern2[_flag]; break;
+  }
+
   if (_isRotated) {
-    _pd->graphics->fillRect(s_r1.x, s_r1.y, s_r1.width, s_r1.height, (uintptr_t) (s_pattern ? kPattern0[_flag] : kPattern1[_flag]));
+    _pd->graphics->fillRect(s_r1.x, s_r1.y, s_r1.width, s_r1.height, (uintptr_t) _p);
   } else {
-    _pd->graphics->fillRect(s_r0.x, s_r0.y, s_r0.width, s_r0.height, (uintptr_t) (s_pattern ? kPattern0[_flag] : kPattern1[_flag]));
+    _pd->graphics->fillRect(s_r0.x, s_r0.y, s_r0.width, s_r0.height, (uintptr_t) _p);
   }
 
   if (++s_progress == FADE_LEVELS) {
     s_progress = 0;
-    s_pattern = rand() % 2;
+    s_pattern = rand() % PATTERNS;
     if (_in == true) setGameState(kLevelSpecific); // Done fade in, let level choose what next
     else setGameState(kNewRoom);
   }

@@ -274,6 +274,9 @@ int gameLoop(void* data) {
     requestRedraw = true;
   }
 
+  // Rotation prompt
+  if (!m_rotated && m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kStart) requestRedraw = true;
+
 
   if (requestRedraw) {
     dungeonUpdateProc();

@@ -35,6 +35,8 @@ extern LCDBitmap* m_treasureBanner;
 extern LCDBitmap* m_sawB;
 extern LCDBitmap* m_sawA;
 
+extern LCDBitmap* m_rotate;
+
 extern LCDBitmap* m_bomb[4];
 
 extern LCDBitmap* m_spear;

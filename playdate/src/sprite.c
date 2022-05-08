@@ -13,6 +13,8 @@ LCDBitmap* m_treasureBanner;
 
 LCDBitmap* m_grave;
 
+LCDBitmap* m_rotate;
+
 LCDBitmap* m_spear;
 LCDBitmapTable* m_smask;
 
@@ -155,9 +157,11 @@ void initSprite(PlaydateAPI* _pd) {
 
   m_fade = loadImageAtPath(_pd, "images/fadePatterns");
 
+  m_rotate = loadImageAtPath(_pd, "images/rotate");
+
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 
-  m_fontMain = loadFontAtPath(_pd, "fonts/marblemadness_as");
+  m_fontMain = loadFontAtPath(_pd, "fonts/font-Bitmore-Medieval-Bold");
   m_fontMsg = loadFontAtPath(_pd, "fonts/Roobert-9-Mono-Condensed");
   m_fontIntro = loadFontAtPath(_pd, "fonts/font-full-circle");
 
