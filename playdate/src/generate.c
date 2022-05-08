@@ -1,5 +1,6 @@
 #include "game.h"
 #include "generate.h"
+#include "sound.h"
 
 //Hints Format   kNoHint, kSpell, kSymbol, kShield, kNumber, kGreek, kNHintTypes
 // kNoHint is currently unused, any other bit true will indicate that reqHint is true
@@ -16,6 +17,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kDark].m_minL   = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kSaw].m_minL    = 0, [kSaw].m_giveHint    = 0, [kSaw].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kSpikes].m_minL = 0, [kSpikes].m_giveHint = 1, [kSpikes].m_reqHint = {0, 0, 0, 0, 0, 0},
+ [kShapes].m_minL = 0, [kShapes].m_giveHint = 1, [kShapes].m_reqHint = {0, 0, 0, 0, 0, 0},
  [kBomb].m_minL   = 0, [kBomb].m_giveHint   = 1, [kSaw].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kBoxes].m_minL  = 0, [kBoxes].m_giveHint  = 0, [kBoxes].m_reqHint  = {0, 0, 0, 1, 0, 0},
  [kMaze].m_minL   = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint   = {0, 0, 0, 0, 0, 0},
@@ -51,7 +53,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      //_newRoom = kSpikes; // TESTING
+      //_newRoom = kShapes; // TESTING
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor
@@ -87,7 +89,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
 void generate(PlaydateAPI* _pd) {
 
   memset(&m_dungeon, 0, sizeof(Dungeon_t));
-  m_dungeon.m_seed = _pd->system->getCurrentTimeMilliseconds();
+  m_dungeon.m_seed = _pd->system->getSecondsSinceEpoch(NULL);
   srand(m_dungeon.m_seed);
   m_dungeon.m_finalPuzzle = rand() % 3;
   m_hintsInPlay = 0;
@@ -96,6 +98,7 @@ void generate(PlaydateAPI* _pd) {
   }
   m_dungeon.m_room = -1; // Will be incremented on kNewLevel
   m_dungeon.m_lives = 1;
+  updateMusic(0); // Reset
 
   #ifdef DEV
   _pd->system->logToConsole("win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);

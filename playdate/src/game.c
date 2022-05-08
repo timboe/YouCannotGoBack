@@ -4,6 +4,7 @@
 #include "sprite.h"
 #include "generate.h"
 #include "render.h"
+#include "sound.h"
 #include "levels/start.h"
 #include "levels/stairs.h"
 #include "levels/pword.h"
@@ -21,6 +22,7 @@
 #include "levels/bomb.h"
 #include "levels/boxes.h"
 #include "levels/spikes.h"
+#include "levels/shapes.h"
 
 static PlaydateAPI* pd = NULL;
 
@@ -32,7 +34,7 @@ static int s_playerChoice = 0;
 static const char* s_displayMsg = NULL;
 Clutter_t m_clutter = {0};
 
-bool m_rotated = true;
+bool m_rotated = false;
 bool m_autoRotation = true;
 LCDBitmap* m_rotatedBitmap = NULL;
 
@@ -45,14 +47,17 @@ int getPlayerChoice() { return s_playerChoice; }
 void resetPlayerChoice() { s_playerChoice = -1; }
 
 bool getFlash(bool _constant) {
-  return (s_gameState != kFadeIn && s_gameState != kFadeOut
+  bool _value = (s_gameState != kFadeIn && s_gameState != kFadeOut
     && s_frameCount % (ANIM_FPS/2) < ANIM_FPS/4
     && (m_dungeon.m_ticksInLevel < ANIM_FPS*3 || _constant));
+  if (_value && !_constant && s_frameCount % ANIM_FPS/2 == 0) beepSound();
+  return _value;
 }
 
 void setPDPtr(PlaydateAPI* p) { pd = p; }
 
 void gameClickConfigHandler(uint32_t buttonPressed) {
+  clickSound();
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
   if (getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) {
     if (kButtonUp == buttonPressed) s_playerChoice = 0;
@@ -71,6 +76,9 @@ bool newRoom() {
   } else  if ( ++m_dungeon.m_room == m_dungeon.m_roomsPerLevel[ m_dungeon.m_level ] ) { // New level
     ++m_dungeon.m_level;
     m_dungeon.m_room = 0;
+    if (m_dungeon.m_level == MAX_LEVELS-1) {
+      updateMusic(1); // Moving in to the final level
+    }
   };
   ++m_dungeon.m_roomsVisited;
   m_dungeon.m_ticksTotal += m_dungeon.m_ticksInLevel;
@@ -82,7 +90,7 @@ bool newRoom() {
     m_clutter.m_position_y[_i] = 0;
   }
   ++m_dungeon.m_seed;
-  s_gameState = kDoInit;
+  setGameState(kDoInit);
   s_playerChoice = 1;
   #ifdef DEV
   pd->system->logToConsole("ENTER %i [Give:%i val:%i] [Need:%i val:%i] ",
@@ -141,6 +149,7 @@ void dungeonUpdateProc() {
     case kBomb: updateProcBomb(pd); break;
     case kBoxes: updateProcBoxes(pd); break;
     case kSpikes: updateProcSpikes(pd); break;
+    case kShapes: updateProcShapes(pd); break;
     case kDeath: updateProcDeath(pd); break;
     case kFinal: updateProcFinal(pd); break;
     case kEnd: updateProcEnd(pd, m_rotated); break;
@@ -243,6 +252,7 @@ int gameLoop(void* data) {
       case kBomb: requestRedraw = tickBomb(_doInit); break;
       case kBoxes: requestRedraw = tickBoxes(pd, _doInit); break;
       case kSpikes: requestRedraw = tickSpikes(_doInit); break;
+      case kShapes: requestRedraw = tickShapes(pd,_doInit); break;
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
       case kEnd: requestRedraw = tickEnd(pd, _doInit); break;
@@ -257,6 +267,7 @@ int gameLoop(void* data) {
     requestRedraw = true;
   }
 
+
   if (requestRedraw) {
     dungeonUpdateProc();
   }
@@ -270,7 +281,12 @@ int gameLoop(void* data) {
 
 
 bool movePlayer() {
-  if (s_frameCount % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
+  if (s_frameCount % 3 == 0) {
+    if (++m_player.m_playerFrame == MAX_FRAMES) {
+      m_player.m_playerFrame = 0;
+    }
+    if (m_player.m_playerFrame % 2 == 0) footSound();
+  }
 
   if      (m_player.m_target_x > m_player.m_position_x) m_player.m_position_x += PLAYER_SPEED;
   if      (m_player.m_target_y > m_player.m_position_y) m_player.m_position_y += PLAYER_SPEED;
@@ -307,6 +323,9 @@ void gameWindowLoad() {
   PDMenuItem* _menu = pd->system->addOptionsMenuItem("Rotate", options, 3, menuOptionsCallback, NULL);
   pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
   pd->system->setPeripheralsEnabled(kAccelerometer);
+  
+  pd->graphics->clear(kColorBlack);
+  renderGameFrame(pd);
 
   generate(pd);
 }

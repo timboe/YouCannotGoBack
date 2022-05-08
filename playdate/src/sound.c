@@ -2,12 +2,14 @@
 
 static PlaydateAPI* pd = NULL;
 
-bool m_sounds = false;
+bool m_sounds = true;
 
-FilePlayer* m_music;
+FilePlayer* m_music[2];
+int8_t m_playing = 0;
 
 SamplePlayer* m_samplePlayer;
 SamplePlayer* m_loopPlayer;
+SamplePlayer* m_footPlayer;
 
 AudioSample* m_fireSample;
 AudioSample* m_chestSample;
@@ -15,25 +17,31 @@ AudioSample* m_looseSample;
 AudioSample* m_winSample;
 AudioSample* m_sawSample;
 AudioSample* m_dark[3];
+AudioSample* m_foot[4];
 AudioSample* m_beep;
-AudioSample* m_step;
+AudioSample* m_fall;
+AudioSample* m_click;
 AudioSample* m_debuf;
 AudioSample* m_buf;
 AudioSample* m_reminder;
 AudioSample* m_boom;
 AudioSample* m_password;
 AudioSample* m_fuse;
+AudioSample* m_hit;
 
 void initSound(PlaydateAPI* _pd) {
   pd = _pd;
 
-  m_music = pd->sound->fileplayer->newPlayer();
-  int result = pd->sound->fileplayer->loadIntoPlayer(m_music, "sounds/Echoes_of_Time_v2");
-  if (m_sounds) pd->sound->fileplayer->play(m_music, 0);
+  for (int i=0; i<2; ++i) m_music[i] = pd->sound->fileplayer->newPlayer();
+  int result = pd->sound->fileplayer->loadIntoPlayer(m_music[0], "sounds/8bitDungeonLevel");
+  result &= pd->sound->fileplayer->loadIntoPlayer(m_music[1], "sounds/8bitDungeonBoss");
+  if (m_sounds) pd->sound->fileplayer->play(m_music[0], 0);
+  m_playing = 0;
   pd->system->logToConsole("Loaded audio %i", result);
 
   m_samplePlayer = pd->sound->sampleplayer->newPlayer(); // TODO: Report, docs say newSamplePlayer
   m_loopPlayer = pd->sound->sampleplayer->newPlayer();
+  m_footPlayer = pd->sound->sampleplayer->newPlayer();
 
   m_fireSample = pd->sound->sample->load("sounds/270306__littlerobotsoundfactory__explosion-02");
   m_chestSample = pd->sound->sample->load("sounds/270338__littlerobotsoundfactory__open-01");
@@ -42,23 +50,42 @@ void initSound(PlaydateAPI* _pd) {
   m_dark[2] = pd->sound->sample->load("sounds/270320__littlerobotsoundfactory__jump-00");
   m_dark[1] = pd->sound->sample->load("sounds/270323__littlerobotsoundfactory__jump-03");
   m_dark[0] = pd->sound->sample->load("sounds/270317__littlerobotsoundfactory__jump-01");
+  m_fall = pd->sound->sample->load("sounds/270323__littlerobotsoundfactory__jump-03_modified");
   m_beep = pd->sound->sample->load("sounds/270324__littlerobotsoundfactory__menu-navigate-00");
-  m_step = pd->sound->sample->load("sounds/270322__littlerobotsoundfactory__menu-navigate-02");
+  m_click = pd->sound->sample->load("sounds/270322__littlerobotsoundfactory__menu-navigate-02");
   m_debuf = pd->sound->sample->load("sounds/270328__littlerobotsoundfactory__hero-death-00");
   m_buf = pd->sound->sample->load("sounds/270342__littlerobotsoundfactory__pickup-03");
   m_reminder = pd->sound->sample->load("sounds/270339__littlerobotsoundfactory__pickup-02");
   m_boom = pd->sound->sample->load("sounds/270311__littlerobotsoundfactory__explosion-03");
   m_password = pd->sound->sample->load("sounds/password");
-  m_fuse = pd->sound->sample->load("sounds/");
+  m_hit = pd->sound->sample->load("sounds/270325__littlerobotsoundfactory__hit-02");
+  m_fuse = pd->sound->sample->load("sounds/184519__soundslikewillem__fuse");
   m_sawSample = pd->sound->sample->load("sounds/108171__aarongnp__buzzsaw-addiction_modified");
+
+  m_foot[0] = pd->sound->sample->load("sounds/197778__samulis__footstep-on-stone-1");
+  m_foot[1] = pd->sound->sample->load("sounds/197779__samulis__footstep-on-stone-2");
+  m_foot[2] = pd->sound->sample->load("sounds/197780__samulis__footstep-on-stone-3");
+  m_foot[3] = pd->sound->sample->load("sounds/197781__samulis__footstep-on-stone-4");
 
 }
 
+void updateMusic(uint8_t _status) {
+  if (m_playing != _status) {
+    pd->sound->fileplayer->stop(m_music[m_playing]);
+    m_playing = _status;
+    if (m_sounds) pd->sound->fileplayer->play(m_music[m_playing], 0);
+  }
+}
+
+
 void deinitSound() {
-  pd->sound->fileplayer->freePlayer(m_music);
+  return;
+  pd->sound->fileplayer->freePlayer(m_music[0]);
+  pd->sound->fileplayer->freePlayer(m_music[1]);
   pd->sound->sampleplayer->freePlayer(m_samplePlayer);
   pd->sound->sampleplayer->freePlayer(m_loopPlayer);
-  m_music = NULL;
+  m_music[0] = NULL;
+  m_music[1] = NULL;
   m_samplePlayer = NULL;
   m_loopPlayer = NULL;
 }
@@ -87,6 +114,18 @@ void winSound() {
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
+void footSound() {
+  if (!m_sounds) return;
+  pd->sound->sampleplayer->setSample(m_footPlayer, m_foot[rand() % 4]);
+  pd->sound->sampleplayer->play(m_footPlayer, 1, 1.0f);
+}
+
+
+void hitSound() {
+  if (!m_sounds) return;
+  pd->sound->sampleplayer->setSample(m_samplePlayer, m_hit);
+  pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
+}
 
 void sawSound(bool _start) {
   if (!m_sounds) return;
@@ -113,13 +152,13 @@ void darkSound(int _n) {
 
 void beepSound() {
   if (!m_sounds) return;
-  //pd->sound->sampleplayer->setSample(m_samplePlayer, m_beep);
-  //pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
+  pd->sound->sampleplayer->setSample(m_samplePlayer, m_beep);
+  pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
-void stepSound() {
+void clickSound() {
   if (!m_sounds) return;
-  pd->sound->sampleplayer->setSample(m_samplePlayer, m_step);
+  pd->sound->sampleplayer->setSample(m_samplePlayer, m_click);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
@@ -147,6 +186,12 @@ void boomSound() {
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
+void fallSound() {
+  if (!m_sounds) return;
+  pd->sound->sampleplayer->setSample(m_samplePlayer, m_fall);
+  pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
+}
+
 void passwordSound() {
   if (!m_sounds) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_password);
@@ -156,9 +201,9 @@ void passwordSound() {
 void fuseSound(bool _start) {
   if (!m_sounds) return;
   if (_start) {
-    //pd->sound->sampleplayer->setSample(m_loopPlayer, m_fuse);
-    //pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
+    pd->sound->sampleplayer->setSample(m_loopPlayer, m_fuse);
+    pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
   } else {
-    //pd->sound->sampleplayer->stop(m_loopPlayer);
+    pd->sound->sampleplayer->stop(m_loopPlayer);
   }
 }

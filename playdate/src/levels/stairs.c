@@ -45,7 +45,6 @@ bool tickStairs(bool _doInit) {
     m_player.m_target_x = SIZE*11;
     m_player.m_target_y = SIZE*11;
     setGameState(kMovePlayer);
-    //vibes_double_pulse();
     ++s_state;
   } else if (s_state == 4) {
     setGameState(kFadeOut);

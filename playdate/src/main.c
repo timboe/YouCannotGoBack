@@ -32,7 +32,7 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
 // Does not work in 1.9.3
 //  } else if (event == kEventKeyPressed) {
 //    playdate->system->logToConsole("EH: pressed %i", arg);
-    gameClickConfigHandler(arg);
+//    gameClickConfigHandler(arg);
   } else if (event == kEventTerminate) {
     deinit();
     playdate->system->logToConsole("EH: deinit");

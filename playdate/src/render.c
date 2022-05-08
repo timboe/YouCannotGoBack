@@ -43,7 +43,7 @@ void renderGameFrame(PlaydateAPI* _pd) {
   drawBitmapAbs(_pd, m_borderL, 0, 0);
   drawBitmapAbs(_pd, m_borderR, 144+128, 0);
   _pd->graphics->fillRect(128, 0, 144, 36, kColorBlack);
-  _pd->graphics->fillRect(128, 36+168, 144, 36, kColorBlack);
+  _pd->graphics->fillRect(128, 52+168, 144, 20, kColorBlack);
 
 }
 
@@ -70,7 +70,7 @@ void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
     drawCBitmap(_pd, &m_arrow_u, _x, _yStart);
     drawCBitmap(_pd, &m_arrow_r, _x, _yStart + _yAdd);
     drawCBitmap(_pd, &m_arrow_d, _x, _yStart + _yAdd + _yAdd);
-    if (getFrameCount() == 0) beepSound();
+    //if (getFrameCount() == 0) beepSound();
   }
 }
 
@@ -406,7 +406,9 @@ void renderPlayer(PlaydateAPI* _pd) {
 
 void renderBomb(PlaydateAPI* _pd, int16_t _bomb, int8_t _location) {
   const int16_t _off = _bomb == 3 ? 1 : 0;
-  if (getFlash(true)) _pd->graphics->setDrawMode(kDrawModeInverted);
+  if (getFlash(true)) { 
+    _pd->graphics->setDrawMode(kDrawModeInverted);
+  }
   drawBitmap(_pd, m_bomb[_bomb > 3 ? 3 : _bomb], 10 - _off, 4 + (4 * _location) - _off);
   _pd->graphics->setDrawMode(kDrawModeCopy);
 
@@ -463,7 +465,7 @@ void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top) {
 
 
 void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
-  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y -= 2;
+  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y += 4;
   static int s_progress = 0;
   static int s_pattern = 0;
  
@@ -471,7 +473,7 @@ void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
   static const PDRect s_r0 =  {.x = 128, .y = 0, .width = 144, .height = 240};
   static const PDRect s_r1 =  {.x = 0, .y = 0, .width = 400, .height = 240};
 
-  const int _flag = (_in == false ? s_progress : FADE_LEVELS - s_progress );
+  const int _flag = (_in == false ? s_progress : FADE_LEVELS - s_progress - 1 );
   if (_isRotated) {
     _pd->graphics->fillRect(s_r1.x, s_r1.y, s_r1.width, s_r1.height, (uintptr_t) (s_pattern ? kPattern0[_flag] : kPattern1[_flag]));
   } else {

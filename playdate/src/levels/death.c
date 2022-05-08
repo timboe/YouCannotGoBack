@@ -22,8 +22,7 @@ bool tickDeath(bool _doInit) {
   } else if (s_state == 1) { // initial move is done
     m_dungeon.m_gameOver = 1;
     m_dungeon.m_fallingDeath = true;
-    debufSound();
-    //vibes_long_pulse();
+    fallSound();
     setGameState(kFadeOut);
     ++s_state;
   }

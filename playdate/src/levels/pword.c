@@ -1,4 +1,5 @@
 #include "pword.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 static int8_t s_choices[3] = {0};
@@ -62,7 +63,7 @@ bool tickPword(PlaydateAPI* _pd, bool _doInit) {
   } else if (s_state == 3) { // display msg
     setDisplayMsg(_msg);
     setGameState(kDisplayMsg);
-    //vibes_double_pulse();
+    passwordSound();
     ++s_state;
   } else if (s_state == 4) { // move down stairs
     setGameState(kAwaitInput);
@@ -70,9 +71,10 @@ bool tickPword(PlaydateAPI* _pd, bool _doInit) {
   } else if (s_state == 5) {
     if (getPlayerChoice() == s_correct) {
       s_state = 7; // Yay
+      reminderSound();
     } else {
       s_state = 6; // Oh noes!
-      //vibes_long_pulse();
+      boomSound();
     }
   } else if (s_state == 6) { // DEATH MOVE
     m_player.m_position_y -= 1;

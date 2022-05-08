@@ -16,12 +16,12 @@ void updateProcSaw(PlaydateAPI* _pd) {
   renderSawFloor(_pd, s_offset);
   renderPlayer(_pd);
   if (s_type == 1) {
-     drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 5*SIZE, s_rotation);
+    drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 5*SIZE, s_rotation);
   } else if (s_type == 3) {
-     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 13*SIZE, -s_rotation);
+    drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 13*SIZE, -s_rotation);
   } else if (s_type == 2) {
-     drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 3*SIZE, s_rotation);
-     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 15*SIZE, -s_rotation);
+    drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 3*SIZE, s_rotation);
+    drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 15*SIZE, -s_rotation);
   }
   renderSawWalls(_pd, s_offset);
   renderArrows(_pd, 6, 6, 2);
@@ -75,6 +75,7 @@ bool tickSaw(bool _doInit) {
     } else {
       setGameState(kLevelSpecific);
       s_type = 0;
+      sawSound(false);
       m_player.m_position_x += (PLAYER_SPEED * 2);
       if (m_player.m_position_x > 20*SIZE) {
         setGameState(kFadeOut);
@@ -87,6 +88,7 @@ bool tickSaw(bool _doInit) {
     sawVolume( 1.0f - (abs(s_position - m_player.m_position_x) / SAW_SOUND_DISTANCE) );
   } else if (s_state == 2) {
     m_dungeon.m_gameOver = 1;
+    boomSound();
     setGameState(kFadeOut);
     sawSound(false);
   }

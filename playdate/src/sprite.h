@@ -82,7 +82,7 @@ extern struct CBitmap m_fire[2];
 
 extern struct CBitmap m_bridge[3];
 extern struct CBitmap m_flagstone[3];
-extern struct CBitmap m_chest;
+extern struct CBitmap m_chest[2];
 extern struct CBitmap m_table;
 extern struct CBitmap m_black;
 extern struct CBitmap m_treasure[3];

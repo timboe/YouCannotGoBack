@@ -40,7 +40,7 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     if (m_dungeon.m_gameOver == 2) {
-      snprintf(s_timeDisplay, 16, "TIME %is", m_dungeon.m_ticksTotal / ANIM_FPS);
+      snprintf(s_timeDisplay, 16, "TIME %im%is", (m_dungeon.m_ticksTotal/ANIM_FPS) / 60, (m_dungeon.m_ticksTotal/ANIM_FPS) % 60);
     }
     return false;
   }

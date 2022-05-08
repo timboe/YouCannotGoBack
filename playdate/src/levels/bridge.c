@@ -1,4 +1,5 @@
 #include "bridge.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 static int8_t s_choices[3] = {0};
@@ -70,6 +71,7 @@ bool tickBridge(PlaydateAPI* _pd, bool _doInit) {
   } else if (s_state == 3) { // move to center of bridge
     m_player.m_target_x = SIZE*8;
     s_breakPoint = 11;
+    hitSound();
     if (getPlayerChoice() == s_correct) s_state = 5;
     else { // Wrong choice!
       if (m_dungeon.m_lives > 0) {
@@ -84,7 +86,7 @@ bool tickBridge(PlaydateAPI* _pd, bool _doInit) {
   } else if (s_state == 4) { // LOOSE
    m_dungeon.m_gameOver = 1;
    m_dungeon.m_fallingDeath = true;
-   //vibes_long_pulse();
+   fallSound();
    s_state = 6;
  } else if (s_state == 5) {
    moveToExit(&s_state);

@@ -14,23 +14,24 @@
 #define PERSIST_KEY_VICTORY 0
 
 typedef enum {
-  kStart,
-  kStairs,
-  kChest,
-  kEmpty,
-  kPword,
-  kBridge,
-  kMaze,
-  kMaths,
-  kStones,
-  kDark,
-  kSaw,
-  kBomb,
-  kBoxes,
-  kSpikes,
-  kDeath,
-  kFinal,
-  kEnd,
+  kStart,  // Special
+  kStairs, // Special
+  kChest,  // Misc 0
+  kEmpty,  // Misc 1
+  kPword,  // Recall 0
+  kBridge, // Recall 1
+  kStones, // Recall 2
+  kBoxes,  // Recall 3
+  kMaze,   // Puzzle 0
+  kMaths,  // Puzzle 1
+  kShapes, // Puzzle 2
+  kDark,   // Skill 0
+  kSaw,    // Skill 1
+  kBomb,   // Skill 2
+  kSpikes, // Skill 3
+  kDeath,  // Special
+  kFinal,  // Special
+  kEnd,    // Special
   kNRoomTypes
 } Rooms_t;
 
@@ -75,9 +76,8 @@ typedef enum {
 } ShieldTypes_t;
 
 #define MAX_LEVELS 3
-#define MIN_ROOMS 5
-#define MAX_ROOMS 10
-#define MIN_ROOM_SEP 5
+#define MIN_ROOMS 6
+#define MAX_ROOMS 12
 typedef struct {
   int8_t m_level;
   int8_t m_room;

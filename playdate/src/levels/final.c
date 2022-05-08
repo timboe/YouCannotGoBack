@@ -1,4 +1,5 @@
 #include "final.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 static uint16_t s_fire_x[2];
@@ -30,7 +31,7 @@ void updateProcFinal(PlaydateAPI* _pd) {
 
   drawCBitmap(_pd, &m_treasure[0], 11, 7);
   drawCBitmap(_pd, &m_treasure[2], 14, 8);
-  drawCBitmap(_pd, &m_chest, 12, 9);
+  drawCBitmap(_pd, &m_chest[1], 12, 9);
 
   renderPlayer(_pd);
   renderWalls(_pd, true, false, true, false);
@@ -43,7 +44,7 @@ void updateProcFinal(PlaydateAPI* _pd) {
   drawCBitmapAbs(_pd, &m_fire[0], s_fire_x[1], s_fire_y[1]);
   drawCBitmapAbs(_pd, &m_fire[1], s_fire_x[1] + SIZE, s_fire_y[1] - SIZE);
 
-  renderArrows(_pd, 5, 4, 4);
+  renderArrows(_pd, 5, 5, 4);
 }
 
 bool tickFinal(bool _doInit) {
@@ -78,6 +79,7 @@ bool tickFinal(bool _doInit) {
   } else if (s_state == 3) {
     setDisplayMsg(_msgA);
     setGameState(kDisplayMsg);
+    chestSound();
     ++s_state;
   } else if (s_state == 4) {
     if (getPlayerChoice() != m_dungeon.m_finalPuzzle) s_state = 5; // Doom
@@ -100,6 +102,7 @@ bool tickFinal(bool _doInit) {
       if (_move == false) {
         m_dungeon.m_gameOver = 1;
         setGameState(kFadeOut);
+        fireSound();
       }
     }
     return true; //redraw
@@ -111,6 +114,7 @@ bool tickFinal(bool _doInit) {
   } else if (s_state == 7) {
     setDisplayMsg(_msgB);
     setGameState(kDisplayMsg);
+    bufSound();
     ++s_state;
   } else if (s_state == 8) {
     m_player.m_target_x = SIZE*15;

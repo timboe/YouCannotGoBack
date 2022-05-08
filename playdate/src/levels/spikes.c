@@ -1,4 +1,5 @@
 #include "spikes.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 
@@ -62,6 +63,7 @@ bool tickSpikes(bool _doInit) {
     if (s_off[_i] > S_OFF) {
       s_scale[_i] = 0.5f;
       s_off[_i] = 32.0f;
+      hitSound();
     } else if (s_off[_i] < 1.0f && s_scale[_i] < 1.0f) {
       s_scale[_i] = 0.0f;
       s_off[_i] = 0.0f;
@@ -91,6 +93,7 @@ bool tickSpikes(bool _doInit) {
       if (_x < SIZE && s_off[_i] > DEATH_PIXELS) {
         m_dungeon.m_gameOver = 1;
         setGameState(kFadeOut);
+        boomSound();
       }
     }
 

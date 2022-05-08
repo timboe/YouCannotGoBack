@@ -58,7 +58,7 @@ struct CBitmap m_block;
 struct CBitmap m_bridge[3];
 struct CBitmap m_fire[2];
 struct CBitmap m_flagstone[3];
-struct CBitmap m_chest;
+struct CBitmap m_chest[2];
 struct CBitmap m_table;
 struct CBitmap m_black;
 struct CBitmap m_treasure[3];
@@ -94,10 +94,11 @@ LCDFont* loadFontAtPath(PlaydateAPI* _pd, const char* _path) {
 }
  
 struct CBitmap getSprite(PlaydateAPI* _pd, int _x, int _y, int _w, int _h) {
+  struct CBitmap _cb;
   if (_w > CBITMAP_MAX || _h > CBITMAP_MAX) {
     _pd->system->error("Cannot request such a large sprite %i %i", _w, _h);
+    return _cb;
   }
-  struct CBitmap _cb;
   _cb.w = _w;
   _cb.h = _h;
   for (int _ww = 0; _ww < _w; ++_ww) {
@@ -109,7 +110,6 @@ struct CBitmap getSprite(PlaydateAPI* _pd, int _x, int _y, int _w, int _h) {
     }
   }
   return _cb;
-  //return gbitmap_create_as_sub_bitmap(m_spriteMap, GRect(SIZE * _x, SIZE * _y, SIZE * _w, SIZE * _h));
 }
 
 struct CBitmap* getClutter(bool _broken) {
@@ -270,7 +270,8 @@ void initSprite(PlaydateAPI* _pd) {
   m_bridge[1] = getSprite(_pd, 9, 6, 1, 2);
   m_bridge[2] = getSprite(_pd, 14, 10, 1, 2);
 
-  m_chest = getSprite(_pd, 8, 10, 2, 2);
+  m_chest[0] = getSprite(_pd, 8, 10, 2, 2); // bad
+  m_chest[1] = getSprite(_pd, 4, 14, 2, 2); // good
   m_table = getSprite(_pd, 4, 10, 4, 2);
   m_black = getSprite(_pd, 2, 2, 2, 2);
 

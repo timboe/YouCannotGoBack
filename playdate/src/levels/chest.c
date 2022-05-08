@@ -10,7 +10,7 @@ void updateProcChest(PlaydateAPI* _pd) {
 
   for (int _i = 0; _i < 3; ++_i) {
     drawCBitmap(_pd, &m_table, 7, 5 + (_i * 4));
-    drawCBitmap(_pd, &m_chest, 8, 4 + (_i * 4));
+    drawCBitmap(_pd, &m_chest[ _i == s_bad ? 0 : 1 ], 8, 4 + (_i * 4));
   }
 
   renderClutter(_pd);
