@@ -5,6 +5,9 @@ void initSound(PlaydateAPI* _pd);
 
 void deinitSound(void);
 
+void music(bool _onoff);
+void sfx(bool _onoff);
+
 void updateMusic(uint8_t _status);
 
 void fireSound(void);

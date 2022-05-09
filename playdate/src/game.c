@@ -195,7 +195,7 @@ void clickHandlerReplacement() {
   PDButtons current, pushed, released = 0;
   pd->system->getButtonState(&current, &pushed, &released);
   if (m_rotated) {
-    if (pushed & kButtonUp) gameClickConfigHandler(kButtonLeft);
+    //if (pushed & kButtonUp) gameClickConfigHandler(kButtonLeft); // Button not used
     if (pushed & kButtonRight) gameClickConfigHandler(kButtonUp);
     if (pushed & kButtonDown) gameClickConfigHandler(kButtonRight);
     if (pushed & kButtonLeft) gameClickConfigHandler(kButtonDown);
@@ -203,10 +203,10 @@ void clickHandlerReplacement() {
     if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
     if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
     if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
-    if (pushed & kButtonLeft) gameClickConfigHandler(kButtonLeft);
+    //if (pushed & kButtonLeft) gameClickConfigHandler(kButtonLeft); // Button not used
   }
-  if (pushed & kButtonA) gameClickConfigHandler(kButtonA);
-  if (pushed & kButtonB) gameClickConfigHandler(kButtonB);
+  //if (pushed & kButtonA) gameClickConfigHandler(kButtonA); // Button not used
+  //if (pushed & kButtonB) gameClickConfigHandler(kButtonB); // Button not used
 
   static float fx, fy, fz;
   if (m_autoRotation) {
@@ -329,16 +329,38 @@ void menuOptionsCallback(void* userdata) {
   }
 }
 
+void menuOptionsCallbackAudio(void* userdata) {
+  int _value = pd->system->getMenuItemValue((PDMenuItem*)userdata);
+  if (_value == 0) {
+    music(true);
+    sfx(true);
+  } else if (_value == 1) {
+    music(true);
+    sfx(false);
+  } else if (_value == 2) {
+    music(false);
+    sfx(true);
+  } else {
+    music(false);
+    sfx(false);
+  }
+}
+
 void gameWindowLoad() {
   setGameState(kIdle);
 
   m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
+
+  static const char* options2[] = {"Music+SFX", "Music", "SFX", "None"};
+  PDMenuItem* _menu2 = pd->system->addOptionsMenuItem("audio", options2, 4, menuOptionsCallbackAudio, NULL);
+  pd->system->setMenuItemUserdata(_menu2, (void*) _menu2); // User data is a pointer to the menu itself
 
   pd->system->addMenuItem("restart", menuOptionsCallback, NULL);
 
   static const char* options[] = {"Auto", "Landscape", "Portrait"};
   PDMenuItem* _menu = pd->system->addOptionsMenuItem("rotate", options, 3, menuOptionsCallback, NULL);
   pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
+
   pd->system->setPeripheralsEnabled(kAccelerometer);
   
   pd->graphics->clear(kColorBlack);

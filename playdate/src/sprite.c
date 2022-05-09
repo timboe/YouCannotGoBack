@@ -18,8 +18,6 @@ LCDBitmap* m_rotate;
 LCDBitmap* m_spear;
 LCDBitmapTable* m_smask;
 
-LCDBitmap* m_fade;
-
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
 LCDFont* m_fontIntro;
@@ -154,8 +152,6 @@ void initSprite(PlaydateAPI* _pd) {
 
   m_spear = loadImageAtPath(_pd, "images/spear");
   m_smask = loadImageTableAtPath(_pd, "images/smask/smask");
-
-  m_fade = loadImageAtPath(_pd, "images/fadePatterns");
 
   m_rotate = loadImageAtPath(_pd, "images/rotate");
 

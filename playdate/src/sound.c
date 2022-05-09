@@ -2,7 +2,8 @@
 
 static PlaydateAPI* pd = NULL;
 
-bool m_sounds = true;
+bool m_sfxOn = true;
+bool m_musicOn = true;
 
 FilePlayer* m_music[2];
 int8_t m_playing = 0;
@@ -30,13 +31,31 @@ AudioSample* m_fuse;
 AudioSample* m_hit;
 AudioSample* m_stairs;
 
+void music(bool _onoff) {
+  m_musicOn = _onoff;
+  if (m_musicOn) {
+    updateMusic( m_dungeon.m_level == 2 ? 1 : 0 );
+  } else {
+    if (pd->sound->fileplayer->isPlaying(m_music[0])) pd->sound->fileplayer->stop(m_music[0]);
+    if (pd->sound->fileplayer->isPlaying(m_music[1])) pd->sound->fileplayer->stop(m_music[1]);
+  }
+}
+
+void sfx(bool _onoff) {
+  m_sfxOn = _onoff;
+  if (!m_sfxOn) {
+    sawSound(false);
+    fuseSound(false);
+  }
+}
+
 void initSound(PlaydateAPI* _pd) {
   pd = _pd;
 
   for (int i=0; i<2; ++i) m_music[i] = pd->sound->fileplayer->newPlayer();
   int result = pd->sound->fileplayer->loadIntoPlayer(m_music[0], "sounds/8bitDungeonLevel");
   result &= pd->sound->fileplayer->loadIntoPlayer(m_music[1], "sounds/8bitDungeonBoss");
-  if (m_sounds) pd->sound->fileplayer->play(m_music[0], 0);
+  if (m_sfxOn) pd->sound->fileplayer->play(m_music[0], 0);
   m_playing = 0;
   pd->system->logToConsole("Loaded audio %i", result);
 
@@ -72,10 +91,14 @@ void initSound(PlaydateAPI* _pd) {
 }
 
 void updateMusic(uint8_t _status) {
-  if (m_playing != _status) {
-    pd->sound->fileplayer->stop(m_music[m_playing]);
-    m_playing = _status;
-    if (m_sounds) pd->sound->fileplayer->play(m_music[m_playing], 0);
+  if (!m_musicOn) return;
+
+  if (_status == 0) {
+    if (pd->sound->fileplayer->isPlaying(m_music[1])) pd->sound->fileplayer->stop(m_music[1]);
+    if (!pd->sound->fileplayer->isPlaying(m_music[0])) pd->sound->fileplayer->play(m_music[0], 1);
+  } else if (_status == 1) {
+    if (pd->sound->fileplayer->isPlaying(m_music[0]))  pd->sound->fileplayer->stop(m_music[0]);
+    if (!pd->sound->fileplayer->isPlaying(m_music[1])) pd->sound->fileplayer->play(m_music[1], 1);
   }
 }
 
@@ -93,50 +116,49 @@ void deinitSound() {
 }
 
 void fireSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_fireSample);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void chestSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_chestSample);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void looseSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_looseSample);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void winSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_winSample);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void footSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_footPlayer, m_foot[rand() % 4]);
   pd->sound->sampleplayer->play(m_footPlayer, 1, 1.0f);
 }
 
 void stairsSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_stairs);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void hitSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_hit);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void sawSound(bool _start) {
-  if (!m_sounds) return;
-  if (_start) {
+  if (_start && m_sfxOn) {
     pd->sound->sampleplayer->setSample(m_loopPlayer, m_sawSample);
     pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
   } else {
@@ -151,63 +173,62 @@ void sawVolume(float _v) {
 }
 
 void darkSound(int _n) {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   if (_n > 2) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_dark[_n]);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void beepSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_beep);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void clickSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_click);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void debufSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_debuf);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void bufSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_buf);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void reminderSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_reminder);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void boomSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_boom);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void fallSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_fall);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void passwordSound() {
-  if (!m_sounds) return;
+  if (!m_sfxOn) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer, m_password);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 
 void fuseSound(bool _start) {
-  if (!m_sounds) return;
-  if (_start) {
+  if (_start && m_sfxOn) {
     pd->sound->sampleplayer->setSample(m_loopPlayer, m_fuse);
     pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
   } else {

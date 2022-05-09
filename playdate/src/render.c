@@ -48,7 +48,7 @@ void renderGameFrame(PlaydateAPI* _pd) {
   static const char _portraitB[] = "Played In";
   static const char _portraitC[] = "Portrait";
   static const char _portraitD[] = "Mode!";
-  if (m_dungeon.m_room == 0 && m_dungeon.m_level == 0) {
+  if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _b = {.x = 16, .y = 32, .width = 96, .height = 128+8};
     renderTextInFrame(_pd, _portraitA, _b);
     _b.y += 16;
