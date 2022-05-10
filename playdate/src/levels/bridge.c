@@ -71,7 +71,6 @@ bool tickBridge(PlaydateAPI* _pd, bool _doInit) {
   } else if (s_state == 3) { // move to center of bridge
     m_player.m_target_x = SIZE*8;
     s_breakPoint = 11;
-    hitSound();
     if (getPlayerChoice() == s_correct) s_state = 5;
     else { // Wrong choice!
       if (m_dungeon.m_lives > 0) {
@@ -89,6 +88,7 @@ bool tickBridge(PlaydateAPI* _pd, bool _doInit) {
    fallSound();
    s_state = 6;
  } else if (s_state == 5) {
+   chestSound();
    moveToExit(&s_state);
  } else if (s_state == 6) {
    setGameState(kFadeOut);
