@@ -1,6 +1,6 @@
 name=You Cannot Go Back
 author=Tim Martin
 description=Test your memory, reach the treasure. Keep moving forwards, for you cannot go back!
-bundleID=co.uk.tim-martin.ycgb
+bundleID=uk.co.tim-martin.ycgb
 version=1.0
 imagePath=titles/
