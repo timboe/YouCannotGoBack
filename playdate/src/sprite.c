@@ -151,7 +151,7 @@ void initSprite(PlaydateAPI* _pd) {
   m_bomb[3] = loadImageAtPath(_pd, "images/explosion");
 
   m_spear = loadImageAtPath(_pd, "images/spear");
-  m_smask = loadImageTableAtPath(_pd, "images/smask/smask");
+  m_smask = loadImageTableAtPath(_pd, "images/smask");
 
   m_rotate = loadImageAtPath(_pd, "images/rotate");
 
