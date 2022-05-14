@@ -1,7 +1,6 @@
 name=You Cannot Go Back
 author=Tim Martin
-description=Test your memory, reach the treasure. Keep progressing forwards, for you cannot go back!
+description=Test your memory, reach the treasure. Keep moving forwards, for you cannot go back!
 bundleID=co.uk.tim-martin.ycgb
 version=1.0
 imagePath=titles/
-launchSoundPath=sounds/270331__littlerobotsoundfactory__jingle-achievement-00
