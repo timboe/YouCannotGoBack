@@ -1,6 +1,6 @@
 # You Cannot Go Back!
 
-Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon exploration game written in C [for Pebble Time and Round watches](https://apps.rebble.io/en_US/application/56e4693181ff036ba9000020?section=watchapps) and now also for Playdate by Panic!
+Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon exploration game written in C [for Pebble Time and Round watches](https://apps.rebble.io/en_US/application/56e4693181ff036ba9000020?section=watchapps) and now also on [itch.io for Playdate by Panic!](https://timboe.itch.io/you-cannot-go-back)
 
 ![Marketing](https://github.com/timboe/YouCannotGoBack/blob/master/promotional/you-cannot-go-back-marketing.png?raw=true)
 
