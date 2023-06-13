@@ -29,7 +29,7 @@ AudioSample* m_boom;
 AudioSample* m_password;
 AudioSample* m_fuse;
 AudioSample* m_hit;
-AudioSample* m_stairs;
+AudioSample* m_stairsAudio;
 
 void music(bool _onoff) {
   m_musicOn = _onoff;
@@ -81,7 +81,7 @@ void initSound(PlaydateAPI* _pd) {
   m_hit = pd->sound->sample->load("sounds/270325__littlerobotsoundfactory__hit-02");
   m_fuse = pd->sound->sample->load("sounds/184519__soundslikewillem__fuse");
   m_sawSample = pd->sound->sample->load("sounds/108171__aarongnp__buzzsaw-addiction_modified");
-  m_stairs = pd->sound->sample->load("sounds/442770__qubodup__walk-down-stairs");
+  m_stairsAudio = pd->sound->sample->load("sounds/442770__qubodup__walk-down-stairs");
 
   m_foot[0] = pd->sound->sample->load("sounds/197778__samulis__footstep-on-stone-1");
   m_foot[1] = pd->sound->sample->load("sounds/197779__samulis__footstep-on-stone-2");
@@ -95,10 +95,10 @@ void updateMusic(uint8_t _status) {
 
   if (_status == 0) {
     if (pd->sound->fileplayer->isPlaying(m_music[1])) pd->sound->fileplayer->stop(m_music[1]);
-    if (!pd->sound->fileplayer->isPlaying(m_music[0])) pd->sound->fileplayer->play(m_music[0], 1);
+    if (!pd->sound->fileplayer->isPlaying(m_music[0])) pd->sound->fileplayer->play(m_music[0], 0);
   } else if (_status == 1) {
     if (pd->sound->fileplayer->isPlaying(m_music[0]))  pd->sound->fileplayer->stop(m_music[0]);
-    if (!pd->sound->fileplayer->isPlaying(m_music[1])) pd->sound->fileplayer->play(m_music[1], 1);
+    if (!pd->sound->fileplayer->isPlaying(m_music[1])) pd->sound->fileplayer->play(m_music[1], 0);
   }
 }
 
@@ -147,7 +147,7 @@ void footSound() {
 
 void stairsSound() {
   if (!m_sfxOn) return;
-  pd->sound->sampleplayer->setSample(m_samplePlayer, m_stairs);
+  pd->sound->sampleplayer->setSample(m_samplePlayer, m_stairsAudio);
   pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
 }
 

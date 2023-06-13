@@ -48,7 +48,10 @@ void renderGameFrame(PlaydateAPI* _pd) {
   static const char _portraitB[] = "Played In";
   static const char _portraitC[] = "Portrait";
   static const char _portraitD[] = "Mode!";
+  static const char _portraitVersion[] = "v1.1";
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
+    PDRect _vb = {.x = 32+16, .y = 0, .width = 32, .height = 16};
+    renderText(_pd, _portraitVersion, _vb);
     PDRect _b = {.x = 16, .y = 32, .width = 96, .height = 128+8};
     renderTextInFrame(_pd, _portraitA, _b);
     _b.y += 16;
@@ -57,7 +60,10 @@ void renderGameFrame(PlaydateAPI* _pd) {
     renderText(_pd, _portraitC, _b);
     _b.y += 16;
     renderText(_pd, _portraitD, _b);
-    drawBitmapAbsRot(_pd, m_rotate, 64, 128+5, -m_dungeon.m_ticksInLevel * 10.0f);
+    static float rot = 0;
+    rot -= 4.0f;
+    if (rot < -90.0f) rot = 90.0f;
+    drawBitmapAbsRot(_pd, m_rotate, 64, 128+5, rot > 0.0f ? -90.0f : rot);
   }
 }
 
@@ -89,8 +95,8 @@ void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
 }
 
 void renderHintNumber(PlaydateAPI* _pd, PDRect _r, int _value, bool _invert) {
-  static char _hintText[3];
-  snprintf(_hintText, 3, "%i", _value);
+  static char _hintText[8];
+  snprintf(_hintText, 8, "%i", _value);
   renderBorderText(_pd, _r, m_fontMain, _hintText, 1, /*GTextAlignmentCenter,*/ _invert);
 }
 
