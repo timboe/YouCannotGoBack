@@ -57,9 +57,10 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       _newRoom = kStart;
     } else if (TESTING && _level == 0 && _room == 1) {
 
-      _newRoom = kGreek; // TESTING
-      (*_consumeHint) = kGreekLetter; // TESTING
-      m_dungeon.m_lives = 0; // TESTING
+      _newRoom = kEnd; // TESTING
+      m_dungeon.m_gameOver = 2; // TESTING
+      //(*_consumeHint) = kGreekLetter; // TESTING
+      //m_dungeon.m_lives = 0; // TESTING
 
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
@@ -111,12 +112,19 @@ void generate(PlaydateAPI* _pd) {
   _pd->system->logToConsole("win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
   #endif
 
+  #define TOT_ROOMS 30
+  #define ROOM_MIN 9
+  #define ROOM_VAR 3
+  
+  m_dungeon.m_totalRooms = TOT_ROOMS;
+
+  m_dungeon.m_roomsPerLevel[0] = ROOM_MIN + rand() % ROOM_VAR;
+  m_dungeon.m_roomsPerLevel[1] = ROOM_MIN + rand() % ROOM_VAR;
+  m_dungeon.m_roomsPerLevel[2] = TOT_ROOMS - m_dungeon.m_roomsPerLevel[1] - m_dungeon.m_roomsPerLevel[0];
+
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
-    int8_t _roomsInLevel = MIN_ROOMS + _level + (rand() % (MAX_ROOMS - MIN_ROOMS - _level));
-    m_dungeon.m_totalRooms += _roomsInLevel;
-    m_dungeon.m_roomsPerLevel[_level] = _roomsInLevel;
-    _pd->system->logToConsole(" -- L%i R%i", _level, _roomsInLevel);
-    for (int _room = 0; _room < _roomsInLevel; ++_room) {
+    _pd->system->logToConsole(" -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
+    for (int _room = 0; _room < m_dungeon.m_roomsPerLevel[_level]; ++_room) {
 
       Hints_t _consumeHint = kNoHint;
       bool _consumeItem = false;
@@ -131,7 +139,7 @@ void generate(PlaydateAPI* _pd) {
       Hints_t _addHint = getHint(_level, _roomType);
 
       if (TESTING && _level == 0 && _room == 0) {
-        _addHint = kGreekLetter; // TESTING
+        //_addHint = kGreekLetter; // TESTING
       }
 
       if (_addHint != kNoHint) {

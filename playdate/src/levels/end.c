@@ -3,7 +3,19 @@
 #include "../sound.h"
 
 static uint16_t s_state = 0;
-static char s_timeDisplay[16];
+static char s_timeDisplay[64];
+static char s_scoreDisplay[64];
+static char s_bestDisplay[64];
+static char s_rankDisplay[64];
+static int s_score = 0;
+static int s_pb = 0;
+static int s_rank = 0;
+static PlaydateAPI* s_cachedPtr;
+
+#define SCORE_MAX 10000
+#define LOSS_PER_TICK 2
+
+#define BOARD_NAME "High Scores"
 
 void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
 
@@ -25,22 +37,67 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
     }
   } else {
     static const char _end1[] = "NICELY DONE!\n DUNGEONEER";
-    PDRect _rect = {.x = _x, .y = 0, .width = _w, .height = 63};
+    PDRect _rect = {.x = _x, .y = 0, .width = _w, .height = 50};
     renderTextInFrame(_pd, _end1, _rect);
-    drawBitmapAbs(_pd, m_treasureBanner, 19, 68);
-    PDRect _rect2 = {.x = 0, .y = 145, .width = 144, .height = 20};
+    drawBitmapAbs(_pd, m_treasureBanner, 19, _rect.height + 5);
+    PDRect _rect2 = {.x = 0, .y =  _rect.height + 84, .width = 144, .height = 20};
     renderBorderText(_pd, _rect2, m_fontMain, s_timeDisplay, 2, false);
+    _rect2.y += 14;
+    renderBorderText(_pd, _rect2, m_fontMain, s_scoreDisplay, 2, false);
+    _rect2.y += 14;
+    renderBorderText(_pd, _rect2, m_fontMain, s_rankDisplay, 2, false);
+    _rect2.y += 14;
+    renderBorderText(_pd, _rect2, m_fontMain, s_bestDisplay, 2, false);
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawCBitmap(_pd, &m_arrow_d, 8, 12);
     }
   }
 }
 
+void addScoreCallback(PDScore* score, const char* errorMessage) {
+  #ifdef DEV
+  if (errorMessage) s_cachedPtr->system->logToConsole("addScoreCallback err: %s", errorMessage);
+  #endif
+  if (!score) return;
+  s_rank = score->rank;
+  s_score = score->value;
+  snprintf(s_scoreDisplay, 64, "SCORE %i", s_score);
+  snprintf(s_rankDisplay, 64, "RANK %i", s_rank);
+  s_cachedPtr->scoreboards->freeScore(score);
+}
+
+void personalBestCallback(PDScore* score, const char* errorMessage) {
+  #ifdef DEV
+  if (errorMessage) s_cachedPtr->system->logToConsole("personalBestCallback err: %s", errorMessage);
+  #endif
+  if (!score) return;
+  s_pb = score->value;
+  snprintf(s_scoreDisplay, 64, "BEST SCORE %i", s_pb);
+  s_cachedPtr->scoreboards->freeScore(score);
+}
+
 bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     if (m_dungeon.m_gameOver == 2) {
-      snprintf(s_timeDisplay, 16, "TIME %im%is", (m_dungeon.m_ticksTotal/ANIM_FPS) / 60, (m_dungeon.m_ticksTotal/ANIM_FPS) % 60);
+      s_cachedPtr = _pd;
+      snprintf(s_timeDisplay, 64, "TIME %im%is", (m_dungeon.m_ticksTotal/ANIM_FPS) / 60, (m_dungeon.m_ticksTotal/ANIM_FPS) % 60);
+      s_score = SCORE_MAX - m_dungeon.m_ticksTotal * LOSS_PER_TICK;
+      //TESTING - reduce the score a LOT
+      s_score -= 9000;
+      if (s_score < 0) s_score = 0;
+      snprintf(s_scoreDisplay, 64, "SCORE %i", s_score);
+      snprintf(s_bestDisplay, 64, "BEST SCORE ????");
+      snprintf(s_rankDisplay, 64, "RANK ????");
+
+      const int addScore = _pd->scoreboards->addScore(BOARD_NAME, s_score, addScoreCallback);
+      #ifdef DEV
+      if (addScore) _pd->system->logToConsole("addScore returned %i", addScore);
+      #endif
+      const int getPB = _pd->scoreboards->getPersonalBest(BOARD_NAME, personalBestCallback);
+      #ifdef DEV
+      if (getPB) _pd->system->logToConsole("getPersonalBest returned %i", getPB);
+      #endif
     }
     return false;
   }
