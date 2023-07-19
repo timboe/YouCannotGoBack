@@ -34,7 +34,7 @@ void updateProcBridge(PlaydateAPI* _pd) {
       renderHintNumber(_pd, _bHint, s_choices[_s], true);
     } else if ( _hint == kSymbol ) {
       drawCBitmap(_pd, &m_symbol[ s_choices[_s] ], 16, 5 + (_s*4));
-    } else if ( _hint == kGreek ) {
+    } else if ( _hint == kGreekLetter ) {
       PDRect _b = {.x = 16*SIZE - 2, .y = (5 + (_s*4))*SIZE - 2, .width = 2*SIZE + 4, .height = 2*SIZE + 4};
       renderFrame(_pd, _b);
       drawCBitmapAbs(_pd, &m_greek[ s_choices[_s] ], 16*SIZE + 4, (5 + (_s*4))*SIZE + 4);

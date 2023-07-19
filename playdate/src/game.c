@@ -23,6 +23,7 @@
 #include "levels/boxes.h"
 #include "levels/spikes.h"
 #include "levels/shapes.h"
+#include "levels/greek.h"
 
 static PlaydateAPI* pd = NULL;
 
@@ -145,6 +146,7 @@ void dungeonUpdateProc() {
     case kStones: updateProcStones(pd); break;
     case kDark: updateProcDark(pd); break;
     case kMaze: updateProcMaze(pd); break;
+    case kGreek: updateProcGreek(pd); break;
     case kSaw: updateProcSaw(pd); break;
     case kBomb: updateProcBomb(pd); break;
     case kBoxes: updateProcBoxes(pd); break;
@@ -255,6 +257,7 @@ int gameLoop(void* data) {
       case kStones: requestRedraw = tickStones(pd, _doInit); break;
       case kDark: requestRedraw = tickDark(_doInit); break;
       case kMaze: requestRedraw = tickMaze(pd, _doInit); break;
+      case kGreek: requestRedraw = tickGreek(pd, _doInit); break;
       case kSaw: requestRedraw = tickSaw(_doInit); break;
       case kBomb: requestRedraw = tickBomb(_doInit); break;
       case kBoxes: requestRedraw = tickBoxes(pd, _doInit); break;
@@ -380,7 +383,7 @@ int getHintValueMax(Hints_t _hint) {
     case kSymbol: return MAX_SYMBOL;
     case kSpell: return MAX_SPELLS;
     case kNumber: return MAX_NUMBER;
-    case kGreek: return MAX_GREEK;
+    case kGreekLetter: return MAX_GREEK;
     default: return 0;
   }
 }

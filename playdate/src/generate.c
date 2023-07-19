@@ -12,6 +12,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kEmpty].m_minL  = 0, [kEmpty].m_giveHint  = 1, [kEmpty].m_reqHint  = {0, 0, 0, 0, 0, 0},
  [kPword].m_minL  = 0, [kPword].m_giveHint  = 1, [kPword].m_reqHint  = {0, 1, 0, 0, 1, 0},
  [kBridge].m_minL = 1, [kBridge].m_giveHint = 1, [kBridge].m_reqHint = {0, 0, 1, 0, 0, 1},
+ [kGreek].m_minL  = 0, [kGreek].m_giveHint  = 1, [kGreek].m_reqHint  = {0, 0, 0, 0, 0, 1},
  [kMaths].m_minL  = 0, [kMaths].m_giveHint  = 1, [kMaths].m_reqHint  = {0, 0, 0, 0, 0, 0},
  [kStones].m_minL = 1, [kStones].m_giveHint = 0, [kStones].m_reqHint = {0, 0, 0, 1, 0, 0},
  [kDark].m_minL   = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint   = {0, 0, 0, 0, 0, 0},
@@ -45,6 +46,7 @@ Hints_t getHint(int _level, Rooms_t _roomType) {
   return _hint;
 }
 
+#define TESTING 1
 
 Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem) {
 
@@ -53,7 +55,12 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      //_newRoom = kShapes; // TESTING
+    } else if (TESTING && _level == 0 && _room == 1) {
+
+      _newRoom = kGreek; // TESTING
+      (*_consumeHint) = kGreekLetter; // TESTING
+      m_dungeon.m_lives = 0; // TESTING
+
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor
@@ -122,6 +129,11 @@ void generate(PlaydateAPI* _pd) {
 
       // Can we add a hint to this room?
       Hints_t _addHint = getHint(_level, _roomType);
+
+      if (TESTING && _level == 0 && _room == 0) {
+        _addHint = kGreekLetter; // TESTING
+      }
+
       if (_addHint != kNoHint) {
         ++m_hintsInPlay;
         m_hintIsActive[_addHint] = 1;

@@ -91,5 +91,6 @@ extern struct CBitmap m_symbol[MAX_SYMBOL];
 extern LCDFont* m_fontMain;
 extern LCDFont* m_fontMsg;
 extern LCDFont* m_fontIntro;
+extern LCDFont* m_fontGreek;
 
 

@@ -17,7 +17,7 @@ void addCluter(int _xMax, int _yUp, int _yDn) {
   // Min clutter, if we are leaving a hint then we need at least 1
   int _minClutter = 0;
   Hints_t _hint = m_dungeon.m_roomGiveHint[m_dungeon.m_level][m_dungeon.m_room];
-  if (_hint == kGreek || _hint == kNumber) {
+  if (_hint == kGreekLetter || _hint == kNumber) {
     _minClutter = 1;
   }
 

@@ -21,6 +21,7 @@ LCDBitmapTable* m_smask;
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
 LCDFont* m_fontIntro;
+LCDFont* m_fontGreek;
 
 struct CBitmap m_UOuterWall[3];
 struct CBitmap m_DOuterWall[3];
@@ -160,6 +161,7 @@ void initSprite(PlaydateAPI* _pd) {
   m_fontMain = loadFontAtPath(_pd, "fonts/font-Bitmore-Medieval-Bold");
   m_fontMsg = loadFontAtPath(_pd, "fonts/Roobert-9-Mono-Condensed");
   m_fontIntro = loadFontAtPath(_pd, "fonts/font-full-circle");
+  m_fontGreek = loadFontAtPath(_pd, "fonts/Greek-8");
 
   _pd->graphics->setFont(m_fontMain);
 

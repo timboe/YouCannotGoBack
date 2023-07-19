@@ -104,7 +104,7 @@ void renderClutter(PlaydateAPI* _pd) {
   Hints_t _hint = m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room];
   int _hintValue = m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room];
   for (int _c = 0; _c < m_clutter.m_nClutter; ++_c) {
-    if (_c == 0 && _hint == kGreek) {
+    if (_c == 0 && _hint == kGreekLetter) {
       drawCBitmap(_pd, getClutter(true), m_clutter.m_position_x[_c], m_clutter.m_position_y[_c]);
       int _px = (m_clutter.m_position_x[_c] * SIZE) + 4;
       int _py = (m_clutter.m_position_y[_c] * SIZE) + 2;
@@ -198,6 +198,32 @@ void renderBoxGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, int8_
 void renderBoxGridBox(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, int8_t _offset) {
   drawCBitmapAbs(_pd, &m_clutterSprite[2], _x1*SIZE + _offset, _y1*SIZE + _offset);
   _pd->graphics->fillRect(_x1*SIZE + 4 + _offset, _y1*SIZE + 2 + _offset, SIZE, SIZE, _c);
+}
+
+
+void renderGreekText(PlaydateAPI* _pd, const char* _msg, int _i) {
+  PDRect _b = {.x = 8*SIZE, .y = 5*SIZE, .width = 6*SIZE, .height =2*SIZE};
+  _b.y += 4*_i*SIZE;
+  const static int _text_y_offset = 2;
+  _pd->graphics->setDrawMode(kDrawModeFillBlack);
+  _pd->graphics->setFont(m_fontGreek); /// xxx
+  int _len = _pd->graphics->getTextWidth(m_fontGreek, _msg, strlen(_msg), kUTF8Encoding, /*tracking*/ 0);
+  _b.x += (_b.width - _len)/2;
+  _pd->graphics->drawText(_msg, strlen(_msg), kUTF8Encoding, _b.x, _b.y + _text_y_offset);
+  _pd->graphics->setDrawMode(kDrawModeCopy);
+}
+
+void renderGreekFrames(PlaydateAPI* _pd, const char* _a, const char* _b, const char* _c) {
+  PDRect _rect = {.x = 8*SIZE, .y = 5*SIZE, .width = 6*SIZE, .height =2*SIZE};
+  for (int _i = 0; _i < 3; ++_i) {
+    _pd->graphics->fillRect(_rect.x, _rect.y, _rect.width, _rect.height, kColorWhite);
+    _pd->graphics->drawRect(_rect.x+2, _rect.y+2, _rect.width-4, _rect.height-4, kColorBlack);
+    _rect.y += 4*SIZE;
+  }
+  renderGreekText(_pd, _a, 0);
+  renderGreekText(_pd, _b, 1);
+  renderGreekText(_pd, _c, 2);
+
 }
 
 void renderFrame(PlaydateAPI* _pd, PDRect _b) {

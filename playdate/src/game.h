@@ -1,7 +1,7 @@
 #pragma once
 
-//#define DEBUG_MODE
-//#define DEV
+#define DEBUG_MODE
+#define DEV
 
 #include "pd_api.h"
 
@@ -22,6 +22,7 @@ typedef enum {
   kBridge, // Recall 1
   kStones, // Recall 2
   kBoxes,  // Recall 3
+  kGreek,  // Recall 4
   kMaze,   // Puzzle 0
   kMaths,  // Puzzle 1
   kShapes, // Puzzle 2
@@ -47,7 +48,7 @@ typedef enum {
   kSymbol,
   kShield,
   kNumber,
-  kGreek,
+  kGreekLetter,
   kNHintTypes
 } Hints_t;
 
