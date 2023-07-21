@@ -86,10 +86,14 @@ void renderBlack(PlaydateAPI* _pd) {
 
 
 void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
+  renderArrows2(_pd, _x, _yStart, _yAdd, 1, 1, 1);
+}
+
+void renderArrows2(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2) {
   if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
-    drawCBitmap(_pd, &m_arrow_u, _x, _yStart);
-    drawCBitmap(_pd, &m_arrow_r, _x, _yStart + _yAdd);
-    drawCBitmap(_pd, &m_arrow_d, _x, _yStart + _yAdd + _yAdd);
+    if (_0) drawCBitmap(_pd, &m_arrow_u, _x, _yStart);
+    if (_1) drawCBitmap(_pd, &m_arrow_r, _x, _yStart + _yAdd);
+    if (_2) drawCBitmap(_pd, &m_arrow_d, _x, _yStart + _yAdd + _yAdd);
     //if (getFrameCount() == 0) beepSound();
   }
 }

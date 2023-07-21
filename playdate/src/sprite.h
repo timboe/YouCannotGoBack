@@ -42,6 +42,8 @@ extern LCDBitmap* m_bomb[4];
 extern LCDBitmap* m_spear;
 extern LCDBitmapTable* m_smask;
 
+extern struct LCDBitmap* m_hole;
+
 extern struct CBitmap m_UOuterWall[3];
 extern struct CBitmap m_DOuterWall[3];
 extern struct CBitmap m_LOuterWall[3];

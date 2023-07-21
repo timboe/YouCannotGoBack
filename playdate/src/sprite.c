@@ -18,6 +18,8 @@ LCDBitmap* m_rotate;
 LCDBitmap* m_spear;
 LCDBitmapTable* m_smask;
 
+LCDBitmap* m_hole;
+
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
 LCDFont* m_fontIntro;
@@ -155,6 +157,8 @@ void initSprite(PlaydateAPI* _pd) {
   m_smask = loadImageTableAtPath(_pd, "images/smask");
 
   m_rotate = loadImageAtPath(_pd, "images/rotate");
+
+  m_hole = loadImageAtPath(_pd, "images/hole");
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 

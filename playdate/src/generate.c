@@ -18,6 +18,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kDark].m_minL   = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kSaw].m_minL    = 0, [kSaw].m_giveHint    = 0, [kSaw].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kSpikes].m_minL = 0, [kSpikes].m_giveHint = 1, [kSpikes].m_reqHint = {0, 0, 0, 0, 0, 0},
+ [kSBall].m_minL  = 0, [kSBall].m_giveHint  = 1, [kSBall].m_reqHint  = {0, 0, 0, 0, 0, 0},
  [kShapes].m_minL = 0, [kShapes].m_giveHint = 1, [kShapes].m_reqHint = {0, 0, 0, 0, 0, 0},
  [kBomb].m_minL   = 0, [kBomb].m_giveHint   = 1, [kSaw].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kBoxes].m_minL  = 0, [kBoxes].m_giveHint  = 0, [kBoxes].m_reqHint  = {0, 0, 0, 1, 0, 0},
@@ -57,8 +58,8 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       _newRoom = kStart;
     } else if (TESTING && _level == 0 && _room == 1) {
 
-      _newRoom = kEnd; // TESTING
-      m_dungeon.m_gameOver = 2; // TESTING
+      _newRoom = kSBall; // TESTING
+      //m_dungeon.m_gameOver = 2; // TESTING
       //(*_consumeHint) = kGreekLetter; // TESTING
       //m_dungeon.m_lives = 0; // TESTING
 

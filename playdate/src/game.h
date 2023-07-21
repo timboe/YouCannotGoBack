@@ -26,10 +26,13 @@ typedef enum {
   kMaze,   // Puzzle 0
   kMaths,  // Puzzle 1
   kShapes, // Puzzle 2
+  // Puzzle 3
+  // Puzzle 4
   kDark,   // Skill 0
   kSaw,    // Skill 1
   kBomb,   // Skill 2
   kSpikes, // Skill 3
+  kSBall,  // Skill 4
   kDeath,  // Special
   kFinal,  // Special
   kEnd,    // Special

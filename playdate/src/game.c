@@ -24,6 +24,7 @@
 #include "levels/spikes.h"
 #include "levels/shapes.h"
 #include "levels/greek.h"
+#include "levels/spikeball.h"
 
 static PlaydateAPI* pd = NULL;
 
@@ -151,6 +152,7 @@ void dungeonUpdateProc() {
     case kBomb: updateProcBomb(pd); break;
     case kBoxes: updateProcBoxes(pd); break;
     case kSpikes: updateProcSpikes(pd); break;
+    case kSBall: updateProcSpikeball(pd); break;
     case kShapes: updateProcShapes(pd); break;
     case kDeath: updateProcDeath(pd); break;
     case kFinal: updateProcFinal(pd); break;
@@ -263,6 +265,7 @@ int gameLoop(void* data) {
       case kBoxes: requestRedraw = tickBoxes(pd, _doInit); break;
       case kSpikes: requestRedraw = tickSpikes(_doInit); break;
       case kShapes: requestRedraw = tickShapes(pd,_doInit); break;
+      case kSBall: requestRedraw = tickSpikeball(pd, _doInit); break;
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
       case kEnd: requestRedraw = tickEnd(pd, _doInit); break;
