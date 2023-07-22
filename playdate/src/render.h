@@ -35,7 +35,7 @@ void renderProgressBar(PlaydateAPI* _pd, bool isRotated);
 void renderSawFloor(PlaydateAPI* _pd, int8_t _offset);
 void renderSawWalls(PlaydateAPI* _pd, int8_t _offset);
 void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd);
-void renderArrows2(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2);
+void renderArrows2(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2, bool _force);
 void renderBomb(PlaydateAPI* _pd, int16_t _bomb, int8_t _location);
 void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top);
 void renderGreekFrames(PlaydateAPI* _pd, const char* _a, const char* _b, const char* _c);

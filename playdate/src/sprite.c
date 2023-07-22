@@ -21,6 +21,7 @@ LCDBitmapTable* m_smask;
 LCDBitmap* m_hole;
 LCDBitmap* m_target;
 LCDBitmap* m_ball;
+LCDBitmap* m_danger;
 
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
@@ -163,6 +164,7 @@ void initSprite(PlaydateAPI* _pd) {
   m_hole = loadImageAtPath(_pd, "images/hole");
   m_target = loadImageAtPath(_pd, "images/target");
   m_ball = loadImageAtPath(_pd, "images/ball");
+  m_danger = loadImageAtPath(_pd, "images/danger");
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 

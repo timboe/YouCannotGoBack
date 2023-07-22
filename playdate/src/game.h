@@ -97,6 +97,7 @@ typedef struct {
   int8_t m_finalPuzzle;
   int8_t m_gameOver;
   bool m_fallingDeath;
+  bool m_spinningDeath;
   uint32_t m_seed;
   uint16_t m_ticksInLevel;
   uint16_t m_ticksTotal;
@@ -110,6 +111,7 @@ typedef struct {
   int16_t m_position_y;
   int16_t m_target_x;
   int16_t m_target_y;
+  float m_rotation;
 } Player_t;
 
 #define MAX_PLACE_CLUTTER 5

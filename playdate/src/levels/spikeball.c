@@ -4,24 +4,30 @@
 
 static uint16_t s_state = 0, s_frame = 0;
 
-static uint16_t s_x[] = {7, 12};
+static uint16_t s_x[] = {4, 7, 12};
 static uint16_t s_y[] = {5, 10, 15};
-static float s_r[2][3] = {{0,0,0},{0,0,0}}; // rotation
-static uint16_t s_s[2][3] = {{0,0,0},{0,0,0}}; // state
+static float s_r[3][3] = {{0,0,0},{0,0,0},{0,0,0}}; // rotation
+static uint16_t s_s[3][3] = {{0,0,0},{0,0,0},{0,0,0}}; // state
 
 // activation order
-static uint8_t s_a0[2][3] = {{0,0,0},{0,0,0}};
-static uint8_t s_a1[2][3] = {{0,0,0},{0,0,0}};
-static uint8_t s_a2[2][3] = {{0,0,0},{0,0,0}};
-static uint8_t s_a3[2][3] = {{0,0,0},{0,0,0}};
+static uint8_t s_a0[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+static uint8_t s_a1[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+static uint8_t s_a2[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+static uint8_t s_a3[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 
 
 static uint8_t m_location = 1; // 0=top, 1=middle, 2=bottom
 
-void renderSpikeball(PlaydateAPI* _pd, int8_t _x, int8_t _y) {
+void renderSpikeballLower(PlaydateAPI* _pd, int8_t _x, int8_t _y) {
+  if (_x>0) renderStandingStone(_pd, s_x[_x], s_y[_y], kColorBlack);
 
-  renderStandingStone(_pd, s_x[_x], s_y[_y], kColorBlack);
+  const uint16_t _status = s_s[_x][_y];
+  if (_status > 35) {
+    drawBitmapAbsRot(_pd, m_hole, s_x[_x] * SIZE, s_y[_y] * SIZE, s_r[_x][_y]);
+  }
+}
 
+void renderSpikeballUpper(PlaydateAPI* _pd, int8_t _x, int8_t _y) {
   const uint16_t _status = s_s[_x][_y];
   if (_status == 0) {
     // noop
@@ -48,21 +54,13 @@ void renderSpikeball(PlaydateAPI* _pd, int8_t _x, int8_t _y) {
     _pd->graphics->setDrawMode(kDrawModeInverted);
     drawBitmap(_pd, m_bomb[3], s_x[_x]-4, s_y[_y]-4);
     _pd->graphics->setDrawMode(kDrawModeCopy);
-  } else {
-    drawBitmapAbsRot(_pd, m_hole, s_x[_x] * SIZE, s_y[_y] * SIZE, s_r[_x][_y]);
   }
-
 }
 
 
 void updateProcSpikeball(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
-
-  for (int _x = 0; _x < 2; ++_x) {
-    for (int _y = 0; _y < 3; ++_y) {
-      renderSpikeball(_pd, _x, _y);
-    }
-  }
+  renderClutter(_pd);
 
   drawCBitmap(_pd, &m_block, 13, 7);
   drawCBitmap(_pd, &m_block, 12, 7);
@@ -70,25 +68,60 @@ void updateProcSpikeball(PlaydateAPI* _pd) {
   drawCBitmap(_pd, &m_block, 13, 11);
   drawCBitmap(_pd, &m_block, 12, 11);
 
-  renderClutter(_pd);
+  for (int _x = 0; _x < 3; ++_x) {
+    for (int _y = 0; _y < 3; ++_y) {
+      renderSpikeballLower(_pd, _x, _y);
+    }
+  }
+
   renderPlayer(_pd);
-  renderWalls(_pd, true, true, true, true);
-  renderWallClutter(_pd);
+
+  bool doneWalls = false; 
+  if (!(s_state <= 1 || s_state >= 8)) {
+    doneWalls = true;
+    renderWalls(_pd, true, true, true, true);
+    renderWallClutter(_pd);
+  }
+
+  for (int _x = 0; _x < 3; ++_x) {
+    for (int _y = 0; _y < 3; ++_y) {
+      renderSpikeballUpper(_pd, _x, _y);
+    }
+  }
+
+  if (!doneWalls) {
+    renderWalls(_pd, true, true, true, true);
+    renderWallClutter(_pd);
+  }
 
   drawCBitmap(_pd, &m_block, 14, 7);
   drawCBitmap(_pd, &m_block, 14, 11);
 
-  if (s_state <= 2) {
-    renderArrows(_pd, 6, 4, 5);
-  } else if (s_state <= 4) {
-    renderArrows2(_pd, 11, 4, 5, m_location <= 1, 1, m_location >= 1);
+  if (s_state <= 3) {
+    renderArrows2(_pd, 6, 4, 5, true, true, true, true);
+  } else if (s_state <= 5) {
+    renderArrows2(_pd, 11, 4, 5, m_location <= 1, 1, m_location >= 1, true);
+  }
+
+  #define D_X 25
+  #define D_Y 40
+  if (s_frame < 8) {
+    drawBitmapAbs(_pd, m_danger, D_X, D_Y);
+  } else if (s_frame < 16) {
+    // noop
+  } else if (s_frame < 24) {
+    drawBitmapAbs(_pd, m_danger, D_X, D_Y);
+  } else if (s_frame < 32) {
+    // noop
+  } else if (s_frame < 40) {
+    drawBitmapAbs(_pd, m_danger, D_X, D_Y);
   }
 
 }
 
 bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
-    for (int _x = 0; _x < 2; ++_x) {
+    for (int _x = 0; _x < 3; ++_x) {
       for (int _y = 0; _y < 3; ++_y) {
         s_s[_x][_y] = 0;
         s_r[_x][_y] = rand() % 360;
@@ -107,28 +140,59 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
     addCluter(4, 0, 20); // Only left
 
     uint8_t r;
-    if (m_dungeon.m_level == 0) {
-      // Left
-      s_a0[0][rand() % 3] = 1;
+    const uint8_t _level = m_dungeon.m_level;
+    if (_level == 0) {
+      // Slow Left
+      s_a0[1][rand() % 3] = 1;
 
       r = rand() % 3;
-      while (s_a0[0][r]) r = rand() % 3;
-      s_a1[0][r] = 1;
+      while (s_a0[1][r]) r = rand() % 3;
+      s_a1[1][r] = 1;
 
       r = rand() % 3;
-      while (s_a0[0][r] || s_a1[0][r]) r = rand() % 3;
-      s_a2[0][r] = 1;
-
-      // Right
-      s_a1[1][rand() % 3] = 1;
-
-      r = rand() % 3;
-      while (s_a1[1][r]) r = rand() % 3;
+      while (s_a0[1][r] || s_a1[1][r]) r = rand() % 3;
       s_a2[1][r] = 1;
+    } else {
+      // Fast Left
+      s_a0[1][rand() % 3] = 1;
+      r = rand() % 3;
+      while (s_a0[1][r]) r = rand() % 3;
+      s_a0[1][r] = 1;
 
       r = rand() % 3;
-      while (s_a1[1][r] || s_a2[1][r]) r = rand() % 3;
-      s_a3[1][r] = 1;
+      while (s_a0[1][r] || s_a0[1][r]) r = rand() % 3;
+      s_a1[1][r] = 1;
+    }
+
+    if (_level < 2) {
+      // Slow Right
+      s_a1[2][rand() % 3] = 1;
+
+      r = rand() % 3;
+      while (s_a1[2][r]) r = rand() % 3;
+      s_a2[2][r] = 1;
+
+      r = rand() % 3;
+      while (s_a1[2][r] || s_a2[2][r]) r = rand() % 3;
+      s_a3[2][r] = 1;
+    } else {
+      // Fast Right
+      // If we also are "Fast Left", and the middle is gone, then we must force the middle
+      // to be kept here else we can reach an unwinable situatuon
+      const bool keepMiddleFree = s_a0[1][1];
+      if (keepMiddleFree) {
+        s_a1[2][0] = 1;
+        s_a1[2][2] = 1;
+      } else {
+        s_a1[2][rand() % 3] = 1;
+        r = rand() % 3;
+        while (s_a1[2][r]) r = rand() % 3;
+        s_a1[2][r] = 1;
+      }
+
+      r = rand() % 3;
+      while (s_a1[2][r] || s_a1[2][r]) r = rand() % 3;
+      s_a2[2][r] = 1;
     }
 
     return false;
@@ -137,19 +201,21 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
   // Spike animation control loop
   s_frame++;
 
-  uint8_t (*_activate)[2][3];
+  uint8_t (*_activate)[3][3];
   _activate = NULL;
+  #define F_START 50
   switch (s_frame) {
-    case 16: s_state = 1; _activate = &s_a0; break;
-    case 16+(1*22): _activate = &s_a1; break;
-    case 16+(2*22): _activate = &s_a2; break;
-    case 16+(3*22): _activate = &s_a3; break;
+    case F_START: s_state = 1; _activate = &s_a0; break;
+    case F_START+(1*22): _activate = &s_a1; break;
+    case F_START+(3*22): _activate = &s_a2; break;
+    case F_START+(5*22): _activate = &s_a3; break;
+    case F_START+(7*22): s_s[0][1] = 1; break; // In case the player didn't move
   }
   if (_activate) {
     #ifdef DEV
     _pd->system->logToConsole("Activate");
     #endif
-    for (int _x = 0; _x < 2; ++_x) {
+    for (int _x = 0; _x < 3; ++_x) {
       for (int _y = 0; _y < 3; ++_y) {
         if ((*_activate)[_x][_y]) s_s[_x][_y] = 1;
       }
@@ -157,14 +223,14 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
   }
 
   // Progress
-  for (int _x = 0; _x < 2; ++_x) {
+  for (int _x = 0; _x < 3; ++_x) {
     for (int _y = 0; _y < 3; ++_y) {
       if (s_s[_x][_y]) s_s[_x][_y]++;
     }
   }
 
   // Check death
-  for (int _x = 0; _x < 2; ++_x) {
+  for (int _x = 0; _x < 3; ++_x) {
     for (int _y = 0; _y < 3; ++_y) {
       if (s_s[_x][_y] >= 32) {
         const float _dx = m_player.m_position_x - (s_x[_x]-1)*SIZE;
@@ -174,10 +240,8 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
           m_dungeon.m_gameOver = 1;
           setGameState(kFadeOut);
           s_state == 99;
-          if (s_s[_x][_y] > 34) { // Explosion finished
-            m_dungeon.m_fallingDeath = true;
-            fallSound();
-          }
+          m_dungeon.m_spinningDeath = true;
+          fallSound();
         }
       }
     }
@@ -196,7 +260,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
 
   } else if (s_state == 3 && getPlayerChoice() != -1) {
     // Initial move
-    m_player.m_target_x = (s_x[0]-1)*SIZE;
+    m_player.m_target_x = (s_x[1]-1)*SIZE;
     switch (getPlayerChoice()) {
       case 0: m_player.m_target_y = (s_y[0]-1)*SIZE; m_location = 0; break;
       case 1: m_player.m_target_y = (s_y[1]-1)*SIZE; m_location = 1; break;
@@ -222,7 +286,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
       _pc = 1; // Set to the middle instead
     }
 
-    m_player.m_target_x = (s_x[1]-1)*SIZE;
+    m_player.m_target_x = (s_x[2]-1)*SIZE;
     switch (_pc) {
       case 0: m_player.m_target_y = (s_y[0]-1)*SIZE; m_location = 0; break;
       case 1: m_player.m_target_y = (s_y[1]-1)*SIZE; m_location = 1; break;

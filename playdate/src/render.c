@@ -86,11 +86,11 @@ void renderBlack(PlaydateAPI* _pd) {
 
 
 void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
-  renderArrows2(_pd, _x, _yStart, _yAdd, 1, 1, 1);
+  renderArrows2(_pd, _x, _yStart, _yAdd, 1, 1, 1, false);
 }
 
-void renderArrows2(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2) {
-  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
+void renderArrows2(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2, bool _force) {
+  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && (_force || getFrameCount() < ANIM_FPS/2)) {
     if (_0) drawCBitmap(_pd, &m_arrow_u, _x, _yStart);
     if (_1) drawCBitmap(_pd, &m_arrow_r, _x, _yStart + _yAdd);
     if (_2) drawCBitmap(_pd, &m_arrow_d, _x, _yStart + _yAdd + _yAdd);
@@ -454,7 +454,12 @@ void renderPlayer(PlaydateAPI* _pd) {
   uint16_t _pos_x = m_player.m_position_x;
   uint16_t _pos_y = m_player.m_position_y;
   if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) --_pos_y;
-  drawCBitmapAbs(_pd, &m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
+  if (m_player.m_rotation) {
+    // TODO
+    drawCBitmapAbs(_pd, &m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
+  } else {
+    drawCBitmapAbs(_pd, &m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
+  }
 }
 
 void renderBomb(PlaydateAPI* _pd, int16_t _bomb, int8_t _location) {
@@ -519,6 +524,8 @@ void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top) {
 
 void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
   if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y += 4;
+  if (_in == false && (m_dungeon.m_fallingDeath == true 
+    || m_dungeon.m_spinningDeath == true)) m_player.m_rotation += 12.0f;
   static int s_progress = 0;
   static int s_pattern = 0;
  
