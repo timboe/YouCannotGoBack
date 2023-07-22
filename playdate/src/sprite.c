@@ -23,6 +23,9 @@ LCDBitmap* m_target;
 LCDBitmap* m_ball;
 LCDBitmap* m_danger;
 
+LCDBitmap* m_wheel;
+LCDBitmap* m_spin[2];
+
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
 LCDFont* m_fontIntro;
@@ -165,6 +168,10 @@ void initSprite(PlaydateAPI* _pd) {
   m_target = loadImageAtPath(_pd, "images/target");
   m_ball = loadImageAtPath(_pd, "images/ball");
   m_danger = loadImageAtPath(_pd, "images/danger");
+
+  m_wheel = loadImageAtPath(_pd, "images/wheel_frame");
+  m_spin[0] = loadImageAtPath(_pd, "images/wheel_inner0");
+  m_spin[1] = loadImageAtPath(_pd, "images/wheel_inner1");
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 

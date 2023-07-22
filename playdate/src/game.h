@@ -11,37 +11,35 @@
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
 
-#define PERSIST_KEY_VICTORY 0
-
 typedef enum {
-  kStart,  // Special
-  kStairs, // Special
-  kChest,  // Misc 0
-  kEmpty,  // Misc 1
-  kGamble, // Misc 2
+  kStart,    // Special
+  kStairs,   // Special
+  kChest,    // Misc 0
+  kEmpty,    // Misc 1
+  kGamble,   // Misc 2
   //
-  kPword,  // Recall 0
-  kBridge, // Recall 1
-  kStones, // Recall 2
-  kBoxes,  // Recall 3
-  kGreek,  // Recall 4
+  kPword,    // Recall 0
+  kBridge,   // Recall 1
+  kStones,   // Recall 2
+  kBoxes,    // Recall 3
+  kGreek,    // Recall 4
   //
-  kMaze,   // Puzzle 0
-  kMaths,  // Puzzle 1
-  kShapes, // Puzzle 2
-  kPattern,// Puzzle 3
+  kMaze,     // Puzzle 0
+  kMaths,    // Puzzle 1
+  kShapes,   // Puzzle 2
+  kPattern,  // Puzzle 3
   // Puzzle 4
   //
-  kDark,   // Skill 0
-  kSaw,    // Skill 1
-  kBomb,   // Skill 2
-  kSpikes, // Skill 3
-  kSBall,  // Skill 4
+  kDark,     // Skill 0
+  kSaw,      // Skill 1
+  kBomb,     // Skill 2
+  kSpikes,   // Skill 3
+  kSBall,    // Skill 4
   //
-  kShortcut,// Special
-  kDeath,  // Special
-  kFinal,  // Special
-  kEnd,    // Special
+  kShortcut, // Special
+  kDeath,    // Special
+  kFinal,    // Special
+  kEnd,      // Special
   kNRoomTypes
 } Rooms_t;
 

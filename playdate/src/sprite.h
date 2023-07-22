@@ -47,6 +47,9 @@ extern struct LCDBitmap* m_target;
 extern struct LCDBitmap* m_ball;
 extern struct LCDBitmap* m_danger;
 
+extern struct LCDBitmap* m_wheel;
+extern struct LCDBitmap* m_spin[2];
+
 extern struct CBitmap m_UOuterWall[3];
 extern struct CBitmap m_DOuterWall[3];
 extern struct CBitmap m_LOuterWall[3];
