@@ -55,7 +55,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
   while (true) {
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
-      _newRoom = kStart;
+      _newRoom = kSBall;
     } else if (TESTING && _level == 0 && _room == 1) {
 
       _newRoom = kSBall; // TESTING

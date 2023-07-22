@@ -146,6 +146,7 @@ void gameWindowLoad(void);
 void gameWindowUnload(void);
 void gameClickConfigHandler(uint32_t buttonPressed);
 void clickHandlerReplacement(void);
+bool atDestination(void);
 bool movePlayer(void);
 bool newRoom(void);
 int getHorizontalOffset(void);

@@ -295,6 +295,9 @@ int gameLoop(void* data) {
   return (int)requestRedraw;
 }
 
+bool atDestination() {
+  return (m_player.m_target_x == m_player.m_position_x && m_player.m_target_y == m_player.m_position_y);
+}
 
 bool movePlayer() {
   if (s_frameCount % 3 == 0) {
@@ -307,7 +310,7 @@ bool movePlayer() {
   if      (m_player.m_target_x > m_player.m_position_x) m_player.m_position_x += PLAYER_SPEED;
   if      (m_player.m_target_y > m_player.m_position_y) m_player.m_position_y += PLAYER_SPEED;
   else if (m_player.m_target_y < m_player.m_position_y) m_player.m_position_y -= PLAYER_SPEED;
-  if (m_player.m_target_x == m_player.m_position_x && m_player.m_target_y == m_player.m_position_y) {
+  if (atDestination()) {
     m_player.m_playerFrame = 0;
     s_gameState = kLevelSpecific;
   }
