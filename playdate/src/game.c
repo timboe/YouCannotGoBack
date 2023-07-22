@@ -25,6 +25,9 @@
 #include "levels/shapes.h"
 #include "levels/greek.h"
 #include "levels/spikeball.h"
+#include "levels/pattern.h"
+#include "levels/gamble.h"
+#include "levels/shortcut.h"
 
 static PlaydateAPI* pd = NULL;
 
@@ -140,12 +143,15 @@ void dungeonUpdateProc() {
     case kStart: updateProcStart(pd); break;
     case kStairs: updateProcStairs(pd); break;
     case kChest: updateProcChest(pd); break;
+    case kGamble: updateProcGamble(pd); break;
+    case kShortcut: updateProcShortcut(pd); break;  
     case kEmpty: updateProcEmpty(pd); break;
     case kPword: updateProcPword(pd); break;
     case kBridge: updateProcBridge(pd); break;
     case kMaths: updateProcMaths(pd); break;
     case kStones: updateProcStones(pd); break;
     case kDark: updateProcDark(pd); break;
+    case kPattern: updateProcPattern(pd); break;
     case kMaze: updateProcMaze(pd); break;
     case kGreek: updateProcGreek(pd); break;
     case kSaw: updateProcSaw(pd); break;
@@ -252,12 +258,15 @@ int gameLoop(void* data) {
       case kStart: requestRedraw = tickStart(_doInit); break;
       case kStairs: requestRedraw = tickStairs(_doInit); break;
       case kChest: requestRedraw = tickChest(_doInit); break;
+      case kGamble: requestRedraw = tickGamble(_doInit); break;
+      case kShortcut: requestRedraw = tickShortcut(_doInit); break;
       case kEmpty: requestRedraw = tickEmpty(_doInit); break;
       case kPword: requestRedraw = tickPword(pd, _doInit); break;
       case kBridge: requestRedraw = tickBridge(pd, _doInit); break;
       case kMaths: requestRedraw = tickMaths(pd,_doInit); break;
       case kStones: requestRedraw = tickStones(pd, _doInit); break;
       case kDark: requestRedraw = tickDark(_doInit); break;
+      case kPattern: requestRedraw = tickPattern(_doInit); break;
       case kMaze: requestRedraw = tickMaze(pd, _doInit); break;
       case kGreek: requestRedraw = tickGreek(pd, _doInit); break;
       case kSaw: requestRedraw = tickSaw(_doInit); break;

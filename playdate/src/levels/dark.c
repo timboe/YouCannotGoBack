@@ -24,7 +24,7 @@ void updateProcDark(PlaydateAPI* _pd) {
     return;
   }
 
-  renderStonesCommon(_pd, s_colours, s_colours, s_colours, s_correct, s_fire, s_state);
+  renderStonesCommon(_pd, s_colours, s_colours, s_colours, s_correct, s_fire, s_state, false);
 }
 
 bool tickDark(bool _doInit) {

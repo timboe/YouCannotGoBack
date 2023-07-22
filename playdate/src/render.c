@@ -48,18 +48,18 @@ void renderGameFrame(PlaydateAPI* _pd) {
   static const char _portraitB[] = "Played In";
   static const char _portraitC[] = "Portrait";
   static const char _portraitD[] = "Mode!";
-  static const char _portraitVersion[] = "v1.1";
+  static const char _portraitVersion[] = "v1.2c";
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _vb = {.x = 32+16, .y = 0, .width = 32, .height = 16};
-    renderText(_pd, _portraitVersion, _vb);
+    renderText(_pd, _portraitVersion, _vb, kDrawModeFillBlack);
     PDRect _b = {.x = 16, .y = 32, .width = 96, .height = 128+8};
     renderTextInFrame(_pd, _portraitA, _b);
     _b.y += 16;
-    renderText(_pd, _portraitB, _b);
+    renderText(_pd, _portraitB, _b, kDrawModeFillBlack);
     _b.y += 16;
-    renderText(_pd, _portraitC, _b);
+    renderText(_pd, _portraitC, _b, kDrawModeFillBlack);
     _b.y += 16;
-    renderText(_pd, _portraitD, _b);
+    renderText(_pd, _portraitD, _b, kDrawModeFillBlack);
     static float rot = 0;
     rot -= 4.0f;
     if (rot < -90.0f) rot = 90.0f;
@@ -147,7 +147,14 @@ void renderProgressBar(PlaydateAPI* _pd, bool isRotated) {
 }
 
 
-void renderStandingStoneGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC) {
+void renderStandingStoneGrid(PlaydateAPI* _pd, 
+  int8_t* _coloursA,
+  int8_t* _coloursB,
+  int8_t* _coloursC,
+  int8_t* _correct,
+  int16_t _state,
+  bool _isPattern)
+{
 
   renderLinePath(_pd, 4, 10,   7, 6); // to upper
   renderLinePath(_pd, 4, 10,   15, 10); // straight accross
@@ -166,12 +173,38 @@ void renderStandingStoneGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _colou
   renderLinePath(_pd, 11, 6,   15, 10);
   renderLinePath(_pd, 11, 14,  15, 10);
 
-  renderStandingStone(_pd, 4, 10, kColorWhite);
+  StoneTypes_t _st = kCircle;
 
-  for (int _s = 0; _s < 3; ++_s) {
-    renderStandingStone(_pd, 7, 6 + (4 * _s), getShieldColor(_coloursA[_s])); // Top row
-    renderStandingStone(_pd, 11, 6 + (4 * _s), getShieldColor(_coloursB[_s])); // Middle row
-    renderStandingStone(_pd, 15, 6 + (4 * _s), getShieldColor(_coloursC[_s])); // Bottom row
+  renderStandingStone(_pd, 4, 10, kColorWhite, _st);
+
+  if (_isPattern) {
+
+    //x:7,11,15
+    //y:6,10,14
+    _st = _coloursA[ _correct[0] ];
+
+    renderStandingStone(_pd, 7, 6, kColorWhite, _coloursA[0]); // Left col
+    renderStandingStone(_pd, 7, 10, kColorWhite, _coloursA[1]); // Middle col
+    renderStandingStone(_pd, 7, 14, kColorWhite, _coloursA[2]); // Right col
+
+    if (_state > 6) {
+      renderStandingStone(_pd, 11, 6, kColorWhite, _st);
+      renderStandingStone(_pd, 11, 10, kColorWhite, _st);
+      renderStandingStone(_pd, 11, 14, kColorWhite, _st);
+    }
+    if (_state > 8) {
+      renderStandingStone(_pd, 15, 6, kColorWhite, _st);
+      renderStandingStone(_pd, 15, 10, kColorWhite, _st);
+      renderStandingStone(_pd, 15, 14, kColorWhite, _st);
+    }
+
+  } else {
+
+    for (int _s = 0; _s < 3; ++_s) {
+      renderStandingStone(_pd, 7, 6 + (4 * _s), getShieldColor(_coloursA[_s]), _st); // Top row
+      renderStandingStone(_pd, 11, 6 + (4 * _s), getShieldColor(_coloursB[_s]), _st); // Middle row
+      renderStandingStone(_pd, 15, 6 + (4 * _s), getShieldColor(_coloursC[_s]), _st); // Bottom row
+    }
   }
 
 }
@@ -182,11 +215,44 @@ void renderLinePath(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2) {
   _pd->graphics->drawLine(_x1*SIZE, _y1*SIZE, _x2*SIZE, _y2*SIZE, /*width=*/ 3, kColorWhite);
 }
 
-void renderStandingStone(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c) {
+void renderPatternLine(PlaydateAPI* _pd, int _x1, int _y1, float _a, LCDColor _c1, LCDColor _c2, int _w1, int _w2) {
+  #define L_W ((SIZE*3)/2)
+  _pd->graphics->drawLine(
+    _x1*SIZE + L_W*sin(_a),               _y1*SIZE + L_W*cos(_a),
+    _x1*SIZE + L_W*sin(_a + (float)M_PI), _y1*SIZE + L_W*cos(_a + (float)M_PI),
+    /*width=*/ _w1, _c1);
+  _pd->graphics->drawLine(
+    _x1*SIZE + L_W*sin(_a),               _y1*SIZE + L_W*cos(_a),
+    _x1*SIZE + L_W*sin(_a + (float)M_PI), _y1*SIZE + L_W*cos(_a + (float)M_PI),
+    /*width=*/ _w2, _c2);
+}
+
+void renderStandingStone(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, StoneTypes_t _st) {
   // Fill GColorLightGray, then SIZE-2 with GColorBlack then SIZE-4 with c
-  _pd->graphics->fillEllipse(_x1*SIZE - SIZE+0, _y1*SIZE - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, 0, 0, kColorWhite);
-  _pd->graphics->fillEllipse(_x1*SIZE - SIZE+1, _y1*SIZE - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, 0, 0, kColorBlack);
-  _pd->graphics->fillEllipse(_x1*SIZE - SIZE+2, _y1*SIZE - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, _c);
+  if (_st == kCircle) {
+    _pd->graphics->fillEllipse(_x1*SIZE - SIZE+0, _y1*SIZE - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, 0, 0, kColorWhite);
+    _pd->graphics->fillEllipse(_x1*SIZE - SIZE+1, _y1*SIZE - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, 0, 0, kColorBlack);
+    _pd->graphics->fillEllipse(_x1*SIZE - SIZE+2, _y1*SIZE - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, _c);
+  } else if (_st == kSquare) {
+    _pd->graphics->fillRect(_x1*SIZE - SIZE+0, _y1*SIZE - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, kColorWhite);
+    _pd->graphics->fillRect(_x1*SIZE - SIZE+1, _y1*SIZE - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, kColorBlack);
+    _pd->graphics->fillRect(_x1*SIZE - SIZE+2, _y1*SIZE - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, _c);
+  } else if (_st == kTriangle) {
+    _pd->graphics->fillTriangle(_x1*SIZE, _y1*SIZE - SIZE+0,
+      _x1*SIZE - SIZE+0, _y1*SIZE + SIZE-0,
+      _x1*SIZE + SIZE-0, _y1*SIZE + SIZE-0,
+      kColorWhite);
+
+      _pd->graphics->fillTriangle(_x1*SIZE, _y1*SIZE - SIZE+2,
+      _x1*SIZE - SIZE+1, _y1*SIZE + SIZE-1,
+      _x1*SIZE + SIZE-1, _y1*SIZE + SIZE-1,
+      kColorBlack);
+
+      _pd->graphics->fillTriangle(_x1*SIZE, _y1*SIZE - SIZE+4,
+      _x1*SIZE - SIZE+3, _y1*SIZE + SIZE-2,
+      _x1*SIZE + SIZE-3, _y1*SIZE + SIZE-2,
+      _c);
+  }
 }
 
 void renderBoxGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _offset) {
@@ -239,12 +305,12 @@ void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
   const static int _text_y_offset = SIZE*2;
   _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorWhite);
   _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorBlack);
-  renderText(_pd, _msg, _b);
+  renderText(_pd, _msg, _b, kDrawModeFillBlack);
 }
 
-void renderText(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
+void renderText(PlaydateAPI* _pd, const char* _msg, PDRect _b, LCDBitmapDrawMode _dm) {
   const static int _text_y_offset = SIZE*2;
-  _pd->graphics->setDrawMode(kDrawModeFillBlack);
+  _pd->graphics->setDrawMode(_dm);
   _pd->graphics->setFont(m_fontMsg);
   int _len = _pd->graphics->getTextWidth(m_fontMsg, _msg, strlen(_msg), kASCIIEncoding, /*tracking*/ 0);
   _b.x += (_b.width - _len)/2;
@@ -362,6 +428,26 @@ void renderSawWalls(PlaydateAPI* _pd, int8_t _offset) {
     drawCBitmapAbs(_pd, &m_black, (_x*SIZE) - _offset, 2*SIZE);
     drawCBitmapAbs(_pd, &m_black, (_x*SIZE) - _offset, 14*SIZE);
 
+  }
+}
+
+void renderShortcutFloor(PlaydateAPI* _pd) {
+  const int8_t _level = m_dungeon.m_level;
+  for (int _x = 0; _x < 20; _x += 2) {
+    drawCBitmapAbs(_pd, getFloor(true, _level), (_x*SIZE), 8*SIZE);
+    drawCBitmapAbs(_pd, &m_halfUpperWall[0], (_x*SIZE), 7*SIZE);
+    drawCBitmapAbs(_pd, &m_halfLowerWall[0], (_x*SIZE), 10*SIZE);
+  }
+}
+
+void renderShortcutWalls(PlaydateAPI* _pd) {
+  _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*6, kColorBlack);
+  _pd->graphics->fillRect(0, SIZE*13, SIZE*19, SIZE*8, kColorBlack);
+  for (int _x = 0; _x < 20; _x += 2) {
+    drawCBitmapAbs(_pd, &m_halfUpperWall[1], (_x*SIZE), 6*SIZE);
+    drawCBitmapAbs(_pd, &m_halfLowerWall[1], (_x*SIZE), 11*SIZE);
+    drawCBitmapAbs(_pd, &m_black, (_x*SIZE), 4*SIZE);
+    drawCBitmapAbs(_pd, &m_black, (_x*SIZE), 12*SIZE);
   }
 }
 
@@ -524,8 +610,12 @@ void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top) {
 
 void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
   if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y += 4;
+
   if (_in == false && (m_dungeon.m_fallingDeath == true 
     || m_dungeon.m_spinningDeath == true)) m_player.m_rotation += 12.0f;
+
+  if (m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kShortcut) m_player.m_position_x += PLAYER_SPEED;
+
   static int s_progress = 0;
   static int s_pattern = 0;
  

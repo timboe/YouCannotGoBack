@@ -18,21 +18,27 @@ typedef enum {
   kStairs, // Special
   kChest,  // Misc 0
   kEmpty,  // Misc 1
+  kGamble, // Misc 2
+  //
   kPword,  // Recall 0
   kBridge, // Recall 1
   kStones, // Recall 2
   kBoxes,  // Recall 3
   kGreek,  // Recall 4
+  //
   kMaze,   // Puzzle 0
   kMaths,  // Puzzle 1
   kShapes, // Puzzle 2
-  // Puzzle 3
+  kPattern,// Puzzle 3
   // Puzzle 4
+  //
   kDark,   // Skill 0
   kSaw,    // Skill 1
   kBomb,   // Skill 2
   kSpikes, // Skill 3
   kSBall,  // Skill 4
+  //
+  kShortcut,// Special
   kDeath,  // Special
   kFinal,  // Special
   kEnd,    // Special
@@ -78,6 +84,13 @@ typedef enum {
   kCWB,
   kNShieldTypes
 } ShieldTypes_t;
+
+typedef enum {
+  kCircle,
+  kSquare,
+  kTriangle,
+  kNStoneTypes
+} StoneTypes_t;
 
 #define MAX_LEVELS 3
 #define MIN_ROOMS 6

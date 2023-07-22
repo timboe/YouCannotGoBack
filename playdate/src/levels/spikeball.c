@@ -19,7 +19,7 @@ static uint8_t s_a3[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 static uint8_t m_location = 1; // 0=top, 1=middle, 2=bottom
 
 void renderSpikeballLower(PlaydateAPI* _pd, int8_t _x, int8_t _y) {
-  if (_x>0) renderStandingStone(_pd, s_x[_x], s_y[_y], kColorBlack);
+  if (_x>0) renderStandingStone(_pd, s_x[_x], s_y[_y], kColorBlack, kCircle);
 
   const uint16_t _status = s_s[_x][_y];
   if (_status > 35) {
@@ -62,9 +62,9 @@ void updateProcSpikeball(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
   renderClutter(_pd);
 
+  //Left two blocks, under other things
   drawCBitmap(_pd, &m_block, 13, 7);
   drawCBitmap(_pd, &m_block, 12, 7);
-
   drawCBitmap(_pd, &m_block, 13, 11);
   drawCBitmap(_pd, &m_block, 12, 11);
 
@@ -76,6 +76,8 @@ void updateProcSpikeball(PlaydateAPI* _pd) {
 
   renderPlayer(_pd);
 
+  // Draw the walls on top of the player when exit/enter
+  // but draw the spike balls on top when in the room
   bool doneWalls = false; 
   if (!(s_state <= 1 || s_state >= 8)) {
     doneWalls = true;
@@ -94,15 +96,18 @@ void updateProcSpikeball(PlaydateAPI* _pd) {
     renderWallClutter(_pd);
   }
 
+  // Rightmost block, on top of wall
   drawCBitmap(_pd, &m_block, 14, 7);
   drawCBitmap(_pd, &m_block, 14, 11);
 
+  // Movement arrows - always shown 
   if (s_state <= 3) {
     renderArrows2(_pd, 6, 4, 5, true, true, true, true);
   } else if (s_state <= 5) {
     renderArrows2(_pd, 11, 4, 5, m_location <= 1, 1, m_location >= 1, true);
   }
 
+  // Danger warning
   #define D_X 25
   #define D_Y 40
   if (s_frame < 8) {
