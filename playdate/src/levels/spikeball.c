@@ -108,19 +108,19 @@ void updateProcSpikeball(PlaydateAPI* _pd) {
   }
 
   // Danger warning
-  #define D_X 25
-  #define D_Y 40
-  if (s_frame < 8) {
-    drawBitmapAbs(_pd, m_danger, D_X, D_Y);
-  } else if (s_frame < 16) {
-    // noop
-  } else if (s_frame < 24) {
-    drawBitmapAbs(_pd, m_danger, D_X, D_Y);
-  } else if (s_frame < 32) {
-    // noop
-  } else if (s_frame < 40) {
-    drawBitmapAbs(_pd, m_danger, D_X, D_Y);
-  }
+  // #define D_X 25
+  // #define D_Y 40
+  // if (s_frame < 8) {
+  //   drawBitmapAbs(_pd, m_danger, D_X, D_Y);
+  // } else if (s_frame < 16) {
+  //   // noop
+  // } else if (s_frame < 24) {
+  //   drawBitmapAbs(_pd, m_danger, D_X, D_Y);
+  // } else if (s_frame < 32) {
+  //   // noop
+  // } else if (s_frame < 40) {
+  //   drawBitmapAbs(_pd, m_danger, D_X, D_Y);
+  // }
 
 }
 
@@ -209,7 +209,8 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
 
   uint8_t (*_activate)[3][3];
   _activate = NULL;
-  #define F_START 50
+  // Was 50 when there was a warning too
+  #define F_START 10
   switch (s_frame) {
     case F_START: s_state = 1; _activate = &s_a0; break;
     case F_START+(1*22): _activate = &s_a1; break;

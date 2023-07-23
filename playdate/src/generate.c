@@ -50,7 +50,7 @@ Hints_t getHint(int _level, Rooms_t _roomType) {
   return _hint;
 }
 
-#define TESTING 1
+#define TESTING 0
 
 Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem) {
 
@@ -58,10 +58,10 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
   while (true) {
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
-      _newRoom = kPattern;
+      _newRoom = kStart;
     } else if (TESTING && _level == 0 && _room == 1) {
 
-      //_newRoom = kSBall; // TESTING
+      _newRoom = kSBall; // TESTING
       //m_dungeon.m_gameOver = 2; // TESTING
       //(*_consumeHint) = kGreekLetter; // TESTING
       //m_dungeon.m_lives = 0; // TESTING

@@ -14,12 +14,20 @@ void updateProcSpikes(PlaydateAPI* _pd) {
   renderFloor(_pd, 2 /*mode spikes*/);
   renderClutter(_pd);
   renderPlayer(_pd);
-  renderWalls(_pd, true, false, true, false);
-  renderWallClutter(_pd);
+  if (s_state < 9) {
+    renderWalls(_pd, true, false, true, false);
+    renderWallClutter(_pd);
+  }
 
   renderSpikes(_pd, s_off, true);
   renderPlayer(_pd);
   renderSpikes(_pd, s_off, false);
+
+  // Player should go under
+  if (s_state >= 9) {
+    renderWalls(_pd, true, false, true, false);
+    renderWallClutter(_pd);
+  }
 
   if (getFrameCount() < ANIM_FPS/2) {
     switch (s_state) {
