@@ -24,7 +24,12 @@ void updateProcDark(PlaydateAPI* _pd) {
     return;
   }
 
-  renderStonesCommon(_pd, s_colours, s_colours, s_colours, s_correct, s_fire, s_state, false);
+  renderPit(_pd);
+  renderStandingStoneFloor(_pd);
+  renderStandingStoneGrid(_pd, s_colours, s_colours, s_colours, s_correct, s_state, false);
+  renderPlayer(_pd);
+  renderStonesCommonFire(_pd, s_correct, s_fire, s_state);
+  renderWalls(_pd, true, true, true, true);
 }
 
 bool tickDark(bool _doInit) {

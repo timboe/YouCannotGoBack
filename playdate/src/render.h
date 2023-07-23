@@ -26,6 +26,7 @@ void renderMessage(PlaydateAPI* _pd, const char* _msg, bool _isRotated);
 void renderPit(PlaydateAPI* _pd);
 void renderFinalPit(PlaydateAPI* _pd);
 void renderFrame(PlaydateAPI* _pd, PDRect _b);
+void renderStandingStoneFloor(PlaydateAPI* _pd);
 void renderStandingStoneGrid(PlaydateAPI* _pd, 
 	int8_t* _coloursA, 
 	int8_t* _coloursB, 
@@ -34,8 +35,9 @@ void renderStandingStoneGrid(PlaydateAPI* _pd,
 	int16_t _state,	
 	bool _isPattern);
 void renderLinePath(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2);
-void renderStandingStone(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, StoneTypes_t _st);
-void renderPatternLine(PlaydateAPI* _pd, int _x1, int _y1, float _a, LCDColor _c1, LCDColor _c2, int _w1, int _w2);
+void renderStandingStone(PlaydateAPI* _pd, float _x, float _y, LCDColor _c, StoneTypes_t _st);
+void renderPatternLine(PlaydateAPI* _pd, float _x, float _y, float _a, LCDColor _c1, LCDColor _c2, int _w1, int _w2);
+void renderPatternUnder(PlaydateAPI* _pd, float _x, float _y, int _id1, int _id2);
 void renderBoxGrid(PlaydateAPI* _pd, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _offset);
 void renderBoxGridBox(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, int8_t _offset);
 void renderProgressBar(PlaydateAPI* _pd, bool isRotated);

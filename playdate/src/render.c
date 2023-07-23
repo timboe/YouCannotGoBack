@@ -146,16 +146,7 @@ void renderProgressBar(PlaydateAPI* _pd, bool isRotated) {
   }
 }
 
-
-void renderStandingStoneGrid(PlaydateAPI* _pd, 
-  int8_t* _coloursA,
-  int8_t* _coloursB,
-  int8_t* _coloursC,
-  int8_t* _correct,
-  int16_t _state,
-  bool _isPattern)
-{
-
+void renderStandingStoneFloor(PlaydateAPI* _pd) {
   renderLinePath(_pd, 4, 10,   7, 6); // to upper
   renderLinePath(_pd, 4, 10,   15, 10); // straight accross
   renderLinePath(_pd, 4, 10,   7, 14); // to lower
@@ -172,7 +163,17 @@ void renderStandingStoneGrid(PlaydateAPI* _pd,
   renderLinePath(_pd, 7, 10,   11, 14);
   renderLinePath(_pd, 11, 6,   15, 10);
   renderLinePath(_pd, 11, 14,  15, 10);
+} 
 
+
+void renderStandingStoneGrid(PlaydateAPI* _pd, 
+  int8_t* _coloursA,
+  int8_t* _coloursB,
+  int8_t* _coloursC,
+  int8_t* _correct,
+  int16_t _state,
+  bool _isPattern)
+{
   StoneTypes_t _st = kCircle;
 
   renderStandingStone(_pd, 4, 10, kColorWhite, _st);
@@ -215,42 +216,116 @@ void renderLinePath(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2) {
   _pd->graphics->drawLine(_x1*SIZE, _y1*SIZE, _x2*SIZE, _y2*SIZE, /*width=*/ 3, kColorWhite);
 }
 
-void renderPatternLine(PlaydateAPI* _pd, int _x1, int _y1, float _a, LCDColor _c1, LCDColor _c2, int _w1, int _w2) {
+void renderPatternLine(PlaydateAPI* _pd, float _x, float _y, float _a, LCDColor _c1, LCDColor _c2, int _w1, int _w2) {
   #define L_W ((SIZE*3)/2)
-  _pd->graphics->drawLine(
-    _x1*SIZE + L_W*sin(_a),               _y1*SIZE + L_W*cos(_a),
-    _x1*SIZE + L_W*sin(_a + (float)M_PI), _y1*SIZE + L_W*cos(_a + (float)M_PI),
-    /*width=*/ _w1, _c1);
-  _pd->graphics->drawLine(
-    _x1*SIZE + L_W*sin(_a),               _y1*SIZE + L_W*cos(_a),
-    _x1*SIZE + L_W*sin(_a + (float)M_PI), _y1*SIZE + L_W*cos(_a + (float)M_PI),
-    /*width=*/ _w2, _c2);
+  const int _x1 = _x*SIZE + (float)(L_W*sin(_a));
+  const int _y1 = _y*SIZE + (float)(L_W*cos(_a));
+  const int _x2 = _x*SIZE + (float)(L_W*sin(_a + (float)M_PI));
+  const int _y2 = _y*SIZE + (float)(L_W*cos(_a + (float)M_PI));
+  _pd->graphics->drawLine(_x1, _y1, _x2, _y2, /*width=*/ _w1, _c1);
+  _pd->graphics->drawLine(_x1, _y1, _x2, _y2, /*width=*/ _w2, _c2);
 }
 
-void renderStandingStone(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, StoneTypes_t _st) {
+void renderPatternUnder(PlaydateAPI* _pd, float _x, float _y, int _id1, int _id2) {
+  _x *= SIZE;
+  _y *= SIZE;
+  switch (_id2) {
+    case 0: _y -= SIZE; break;
+    case 1: _y += SIZE; _x -= SIZE; break;
+    case 2: _y += SIZE; _x += SIZE; break;
+  }
+
+  if (_id1 == kTriangle) {
+    //  switch (_id2) {
+    //    case 1: _x += SIZE/2; break;
+    //    case 2: _x -= SIZE/2; break;
+    // }
+    _pd->graphics->fillEllipse(_x - SIZE+0, _y - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, 0, 0, kColorBlack);
+    _pd->graphics->fillEllipse(_x - SIZE+1, _y - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, 0, 0, kColorWhite);
+    _pd->graphics->fillEllipse(_x - SIZE+2, _y - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, kColorBlack);
+  } else if (_id1 == kCircle) {
+    switch (_id2) {
+       case 1: _x += SIZE/2; _y -= SIZE/2; break;
+       case 2: _x -= SIZE/2; _y -= SIZE/2; break;
+    }
+    _pd->graphics->fillRect(_x - SIZE+0, _y - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, kColorBlack);
+    _pd->graphics->fillRect(_x - SIZE+1, _y - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, kColorWhite);
+    _pd->graphics->fillRect(_x - SIZE+2, _y - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, kColorBlack);
+  } else if (_id1 == kSquare) {
+     switch (_id2) {
+       case 0: _y -= 5; break;
+       case 1: _y -= SIZE; _x -= 5; break;
+       case 2: _y -= SIZE; _x += 5; break;
+    }
+    if (_id2 == 0) { // Top
+      _pd->graphics->fillTriangle(_x, _y - SIZE+0,
+        _x - SIZE+0, _y + SIZE-0,
+        _x + SIZE-0, _y + SIZE-0,
+        kColorBlack);
+      _pd->graphics->fillTriangle(_x, _y - SIZE+2,
+        _x - SIZE+1, _y + SIZE-1,
+        _x + SIZE-1, _y + SIZE-1,
+        kColorWhite);
+      _pd->graphics->fillTriangle(_x, _y - SIZE+4,
+        _x - SIZE+3, _y + SIZE-2,
+        _x + SIZE-3, _y + SIZE-2,
+        kColorBlack);
+    } else if (_id2 == 1) { // Bottom left
+      _pd->graphics->fillTriangle(_x - SIZE+0, _y,
+        _x + SIZE-0, _y - SIZE+0,
+        _x + SIZE-0, _y + SIZE-0,
+        kColorBlack);
+      _pd->graphics->fillTriangle(_x - SIZE+2, _y,
+        _x + SIZE-1, _y - SIZE+1,
+        _x + SIZE-1, _y + SIZE-1,
+        kColorWhite);
+      _pd->graphics->fillTriangle(_x - SIZE+4, _y,
+        _x + SIZE-2, _y - SIZE+3,
+        _x + SIZE-2, _y + SIZE-3,
+        kColorBlack);
+    } else if (_id2 == 2) { // Bottom right
+      _pd->graphics->fillTriangle(_x + SIZE-0, _y,
+        _x - SIZE+0, _y - SIZE+0,
+        _x - SIZE+0, _y + SIZE-0,
+        kColorBlack);
+      _pd->graphics->fillTriangle(_x + SIZE-2, _y,
+        _x - SIZE+1, _y - SIZE+1,
+        _x - SIZE+1, _y + SIZE-1,
+        kColorWhite);
+      _pd->graphics->fillTriangle(_x + SIZE-4, _y,
+        _x - SIZE+2, _y - SIZE+3,
+        _x - SIZE+2, _y + SIZE-3,
+        kColorBlack);
+    }
+  }
+}
+
+void renderStandingStone(PlaydateAPI* _pd, float _x, float _y, LCDColor _c, StoneTypes_t _st) {
+  _x *= SIZE;
+  _y *= SIZE;
   // Fill GColorLightGray, then SIZE-2 with GColorBlack then SIZE-4 with c
   if (_st == kCircle) {
-    _pd->graphics->fillEllipse(_x1*SIZE - SIZE+0, _y1*SIZE - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, 0, 0, kColorWhite);
-    _pd->graphics->fillEllipse(_x1*SIZE - SIZE+1, _y1*SIZE - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, 0, 0, kColorBlack);
-    _pd->graphics->fillEllipse(_x1*SIZE - SIZE+2, _y1*SIZE - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, _c);
+    _pd->graphics->fillEllipse(_x - SIZE+0, _y - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, 0, 0, kColorWhite);
+    _pd->graphics->fillEllipse(_x - SIZE+1, _y - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, 0, 0, kColorBlack);
+    _pd->graphics->fillEllipse(_x - SIZE+2, _y - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, 0, 0, _c);
   } else if (_st == kSquare) {
-    _pd->graphics->fillRect(_x1*SIZE - SIZE+0, _y1*SIZE - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, kColorWhite);
-    _pd->graphics->fillRect(_x1*SIZE - SIZE+1, _y1*SIZE - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, kColorBlack);
-    _pd->graphics->fillRect(_x1*SIZE - SIZE+2, _y1*SIZE - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, _c);
+    _pd->graphics->fillRect(_x - SIZE+0, _y - SIZE+0, (SIZE*2)-0, (SIZE*2)-0, kColorWhite);
+    _pd->graphics->fillRect(_x - SIZE+1, _y - SIZE+1, (SIZE*2)-2, (SIZE*2)-2, kColorBlack);
+    _pd->graphics->fillRect(_x - SIZE+2, _y - SIZE+2, (SIZE*2)-4, (SIZE*2)-4, _c);
   } else if (_st == kTriangle) {
-    _pd->graphics->fillTriangle(_x1*SIZE, _y1*SIZE - SIZE+0,
-      _x1*SIZE - SIZE+0, _y1*SIZE + SIZE-0,
-      _x1*SIZE + SIZE-0, _y1*SIZE + SIZE-0,
+    _pd->graphics->fillTriangle(_x, _y - SIZE+0,
+      _x - SIZE+0, _y + SIZE-0,
+      _x + SIZE-0, _y + SIZE-0,
       kColorWhite);
 
-      _pd->graphics->fillTriangle(_x1*SIZE, _y1*SIZE - SIZE+2,
-      _x1*SIZE - SIZE+1, _y1*SIZE + SIZE-1,
-      _x1*SIZE + SIZE-1, _y1*SIZE + SIZE-1,
+    _pd->graphics->fillTriangle(_x, _y - SIZE+2,
+      _x - SIZE+1, _y + SIZE-1,
+      _x + SIZE-1, _y + SIZE-1,
       kColorBlack);
 
-      _pd->graphics->fillTriangle(_x1*SIZE, _y1*SIZE - SIZE+4,
-      _x1*SIZE - SIZE+3, _y1*SIZE + SIZE-2,
-      _x1*SIZE + SIZE-3, _y1*SIZE + SIZE-2,
+    _pd->graphics->fillTriangle(_x, _y - SIZE+4,
+      _x - SIZE+3, _y + SIZE-2,
+      _x + SIZE-3, _y + SIZE-2,
       _c);
   }
 }

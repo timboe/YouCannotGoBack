@@ -61,7 +61,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       _newRoom = kPattern;
     } else if (TESTING && _level == 0 && _room == 1) {
 
-      _newRoom = kSBall; // TESTING
+      //_newRoom = kSBall; // TESTING
       //m_dungeon.m_gameOver = 2; // TESTING
       //(*_consumeHint) = kGreekLetter; // TESTING
       //m_dungeon.m_lives = 0; // TESTING

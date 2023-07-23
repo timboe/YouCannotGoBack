@@ -8,7 +8,12 @@ static int8_t s_coloursB[3] = {0};
 static int8_t s_coloursC[3] = {0};
 
 void updateProcStones(PlaydateAPI* _pd) {
-  renderStonesCommon(_pd, s_coloursA, s_coloursB, s_coloursC, s_correct, s_fire, s_state, false);
+  renderPit(_pd);
+  renderStandingStoneFloor(_pd);
+  renderStandingStoneGrid(_pd, s_coloursA, s_coloursB, s_coloursC, s_correct, s_state, false);
+  renderPlayer(_pd);
+  renderStonesCommonFire(_pd, s_correct, s_fire, s_state);
+  renderWalls(_pd, true, true, true, true);
 }
 
 bool tickStones(PlaydateAPI* _pd, bool _doInit) {

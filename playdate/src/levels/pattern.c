@@ -9,47 +9,50 @@ static int8_t s_id0[3] = {0};
 static int8_t s_id1[3] = {0};
 static int8_t s_id2[3] = {0};
 
-static float s_angles1[3] = {0};
-static float s_angles2[3] = {0};
+static float s_angles[3] = {0};
+
+#define L_1 4
+#define L_2 1
 
 void updateProcPattern(PlaydateAPI* _pd) {
 
-  //_pd->system->logToConsole("   !!! RS: %i", (int) s_state);
+  renderPit(_pd);
+  renderStandingStoneFloor(_pd);
 
-  renderStonesCommon(_pd, s_id0, s_id1, s_id2, s_correct, s_fire, s_state, true);
+  if (s_state < 13) renderWalls(_pd, true, true, true, true);
+
+  // Under: Hints
+  if (s_state > 6) {
+    renderPatternUnder(_pd, 11, 6,  s_id0[s_correct[0]], s_id1[0]);
+    renderPatternUnder(_pd, 11, 10, s_id0[s_correct[0]], s_id1[1]);
+    renderPatternUnder(_pd, 11, 14, s_id0[s_correct[0]], s_id1[2]);
+  } 
+
+  renderStandingStoneGrid(_pd, s_id0, s_id1, s_id2, s_correct, s_state, true);
 
   // Line: Hints
-  if (s_state > 6) {
-    renderPatternLine(_pd, 11, 6, s_angles1[0], kColorWhite, kColorBlack, 3, 1);
-    renderPatternLine(_pd, 11, 10, s_angles1[1], kColorWhite, kColorBlack, 3, 1);
-    renderPatternLine(_pd, 11, 14, s_angles1[2], kColorWhite, kColorBlack, 3, 1);
-  }
-  //
   if (s_state > 8) {
-    renderPatternLine(_pd, 15, 6, s_angles2[0], kColorBlack, kColorWhite, 5, 3);
-    renderPatternLine(_pd, 15, 10, s_angles2[1], kColorBlack, kColorWhite, 5, 3);
-    renderPatternLine(_pd, 15, 14, s_angles2[2], kColorBlack, kColorWhite, 5, 3);
-
-    renderPatternLine(_pd, 15, 6, s_angles1[s_correct[1]], kColorWhite, kColorBlack, 3, 1);
-    renderPatternLine(_pd, 15, 10, s_angles1[s_correct[1]], kColorWhite, kColorBlack, 3, 1);
-    renderPatternLine(_pd, 15, 14, s_angles1[s_correct[1]], kColorWhite, kColorBlack, 3, 1);
+    renderPatternLine(_pd, 15, 6,  s_angles[0], kColorWhite, kColorBlack, L_1, L_2);
+    renderPatternLine(_pd, 15, 10, s_angles[1], kColorWhite, kColorBlack, L_1, L_2);
+    renderPatternLine(_pd, 15, 14, s_angles[2], kColorWhite, kColorBlack, L_1, L_2);
   }
-      //x:7,11,15
-      //y:6,10,14
 
   renderPlayer(_pd);
-  renderWalls(_pd, true, true, true, true);
+
+  renderStonesCommonFire(_pd, s_correct, s_fire, s_state);
+
+  // Only put the wall on tope while we are exiting
+  if (s_state == 13) renderWalls(_pd, true, true, true, true);
 
   // Answer box
-  _pd->graphics->fillEllipse(0, 0, (SIZE*6) - 0, (SIZE*6) - 0, 0, 0, kColorBlack);
-  _pd->graphics->fillEllipse(2, 2, (SIZE*6) - 4, (SIZE*6) - 4, 0, 0, kColorWhite);
-  _pd->graphics->fillEllipse(4, 4, (SIZE*6) - 8, (SIZE*6) - 8, 0, 0, kColorBlack);
+  _pd->graphics->fillEllipse(3*SIZE + 0, 0, (SIZE*5) - 0, (SIZE*5) - 0, 0, 0, kColorBlack);
+  _pd->graphics->fillEllipse(3*SIZE + 1, 1, (SIZE*5) - 2, (SIZE*5) - 2, 0, 0, kColorWhite);
+  _pd->graphics->fillEllipse(3*SIZE + 2, 2, (SIZE*5) - 4, (SIZE*5) - 4, 0, 0, kColorBlack);
 
   // Answer
-  renderStandingStone(_pd, 3, 3, kColorWhite, s_id0[s_correct[0]]);
-  renderPatternLine(_pd, 3, 3, s_angles2[s_correct[2]], kColorBlack, kColorWhite, 5, 3);
-  renderPatternLine(_pd, 3, 3, s_angles1[s_correct[1]], kColorWhite, kColorBlack, 3, 1);
-
+  renderPatternUnder(_pd, 5.5f, 2.5f, s_id0[s_correct[0]], s_id1[s_correct[1]]);
+  renderStandingStone(_pd, 5.5f, 2.5f, kColorWhite, s_id0[s_correct[0]]);
+  renderPatternLine(_pd, 5.5f, 2.5f, s_angles[s_correct[2]], kColorWhite, kColorBlack, L_1, L_2);
 
 }
 
@@ -77,28 +80,14 @@ bool tickPattern(bool _doInit) {
 
     // Choose angles
     {
-      const int8_t _angleCorrect = s_correct[1];
-      s_angles1[_angleCorrect] = (float)M_PI/180.0f * (rand()%180);
+      const int8_t _angleCorrect = s_correct[2];
+      s_angles[_angleCorrect] = (float)M_PI/180.0f * (rand()%180);
       const float _aMod = 60.0f / (float)(m_dungeon.m_level + 1);
       for (int _i = 0; _i < 3; ++_i) {
         if (_i == _angleCorrect) continue;
         int8_t _diff = s_id1[_i] - s_id1[_angleCorrect];
         float _aDiff = ((float)M_PI/180.0f) * _aMod * _diff;
-        s_angles1[_i] = s_angles1[_angleCorrect] + _aDiff; 
-      }
-    }
-
-    {
-      const int8_t _angleCorrect = s_correct[2];
-      do {
-        s_angles2[s_correct[2]] = (float)M_PI/180.0f * (rand()%180);
-      } while ( (float)fabs(s_angles2[s_correct[2]] - s_angles1[s_correct[1]]) < (float)M_PI/180.0f * 20.0f);
-      const float _aMod = 60.0f / (float)(m_dungeon.m_level + 1);
-      for (int _i = 0; _i < 3; ++_i) {
-        if (_i == _angleCorrect) continue;
-        int8_t _diff = s_id2[_i] - s_id2[_angleCorrect];
-        float _aDiff = ((float)M_PI/180.0f) * _aMod * _diff;
-        s_angles2[_i] = s_angles2[_angleCorrect] + _aDiff; 
+        s_angles[_i] = s_angles[_angleCorrect] + _aDiff; 
       }
     }
 

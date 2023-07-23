@@ -131,20 +131,11 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
   }
 }
 
-void renderStonesCommon(PlaydateAPI* _pd,
-  int8_t* _coloursA,
-  int8_t* _coloursB,
-  int8_t* _coloursC,
+void renderStonesCommonFire(PlaydateAPI* _pd,
   int8_t* _correct,
   int8_t _fire,
-  int16_t _state,
-  bool _isPattern)
+  int16_t _state)
 {
-  renderPit(_pd);
-  renderStandingStoneGrid(_pd, _coloursA, _coloursB, _coloursC, _correct, _state, _isPattern);
-  renderPlayer(_pd);
-  renderWalls(_pd, true, true, true, true);
-
   for (int _f = 0; _f < 3; ++_f) {  // Draw fires
     if (_fire < _f) break;
     for (int _i = 0; _i < 3; ++_i) {
