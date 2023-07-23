@@ -144,6 +144,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
     m_player.m_target_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
 
+    // Choose spike drop order
     uint8_t r;
     const uint8_t _level = m_dungeon.m_level;
     if (_level == 0) {

@@ -1,10 +1,20 @@
 #include "gamble.h"
+#include "../sound.h"
 
 static uint16_t s_state = 0;
 static uint16_t s_spin = 0;
 static float s_angle = 0; 
 static float s_v = 0;
 static float s_slowdown = 0;
+
+static const char _badA[] = "AN EVIL WIND!";
+static const char _badB[] = "YOU FEEL BAD";
+
+static const char _goodA[] = "A GOOD OMEN!";
+static const char _goodB[] = "FEELING LUCKY";
+
+static const char _goodC[] = "A FADED NOTE";
+static const char _goodD[] = "SHORTCUT FOUND";
 
 void updateProcGamble(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
@@ -20,6 +30,39 @@ void updateProcGamble(PlaydateAPI* _pd) {
   renderWallClutter(_pd);
   renderArrows2(_pd, 15, 5, 4, 1, 0, 0, false);
   renderArrows2(_pd, 9, 15, 0, 0, 0, 1, false);
+
+  if (m_dungeon.m_gameOver) {
+    drawCBitmap(_pd, &m_fire[0], 5 + 3, 5 + 11);
+    drawCBitmap(_pd, &m_fire[1], 6 + 3, 4 + 11);
+  }
+}
+
+GambleOutcomes_t getGambleOutcome(void) {
+  if (s_angle < 30.0f) return s_spin ? kEvilWind : kInstantDeath;
+  else if (s_angle < 150.0f) return kClover;
+  else if (s_angle < 270.0f) return kUnlockShortcut;
+  else if (s_angle < 330.0f) return kEvilWind;
+  else return s_spin ? kEvilWind : kInstantDeath;
+}
+
+bool checkShortcutRoom(int _l, int _r) {
+  if (m_dungeon.m_roomGiveHint[_l][_r]) return false; // Don't skip clue rooms
+  if (m_dungeon.m_roomNeedHint[_l][_r]) return false; // Don't skip clue rooms
+  if (m_dungeon.m_rooms[_l][_r] == kStairs) return false; // Don't skip level transitions
+  m_dungeon.m_rooms[_l][_r] = kShortcut;
+  return true;
+}
+
+void doShortcut(void) {
+  const int8_t _level = m_dungeon.m_level;
+  for (int _r = m_dungeon.m_room + 1; _r < m_dungeon.m_roomsPerLevel[_level]; ++_r) {
+    if (checkShortcutRoom(_level, _r)) return;
+  }
+  for (int _l = _level + 1; _level < MAX_LEVELS; ++_l) {
+    for (int _r = 0; _r < m_dungeon.m_roomsPerLevel[_l]; ++_r) {
+      if (checkShortcutRoom(_l, _r)) return;
+    }
+  }
 }
 
 bool tickGamble(bool _doInit) {
@@ -29,8 +72,15 @@ bool tickGamble(bool _doInit) {
     m_player.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
     s_v = 50.0f;
-    //s_angle = rand() % 365;
+    // 0.5 - 1.5 is a little over one full revolution,
+    // hence all possible end points are accessible
     s_slowdown = 0.5f + (0.01f * (rand()%100)); 
+    // On top of this, start at a random angle too
+    s_angle = rand() % 365;
+    // Unusually, prefer the easier wheel (w/o instant death) at higher levels
+    s_spin = 0;
+    if (m_dungeon.m_level == 1) s_spin = rand() % 2;
+    else if (m_dungeon.m_level == 2) s_spin = rand() % 3 ? 0 : 1;
     return false; 
   }
 
@@ -57,17 +107,56 @@ bool tickGamble(bool _doInit) {
     s_angle += s_v;
     if (s_angle > 365.0f) s_angle -= 365.0f;
     s_v *= 0.97f;
-    s_v -= s_slowdown; //0.5=ff, 0.6 0.7=c 0.8 0.9=d 1.0 1.1=w 1.2=ff
+    s_v -= s_slowdown;
     if (s_v <= 0) {
       s_state = 5;
     }
+  } else if (s_state == 5) {
+    const GambleOutcomes_t _go = getGambleOutcome();
+    if (_go == kEvilWind) {
+      setDisplayMsg(_badA);
+      if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
+    } else if (_go == kClover) {
+      setDisplayMsg(_goodA);
+      ++m_dungeon.m_lives;
+    } else if (_go == kUnlockShortcut) {
+      setDisplayMsg(_goodC);
+      doShortcut();
+    } else if (_go == kInstantDeath) {
+      m_dungeon.m_gameOver = 1;
+      setGameState(kFadeOut);
+      fireSound();
+      return true;
+    }
+    setGameState(kDisplayMsg);
+    ++s_state;
+  } else if (s_state == 6) {
+    const GambleOutcomes_t _go = getGambleOutcome();
+    if (_go == kEvilWind) {
+      setDisplayMsg(_badB);
+    } else if (_go == kClover) {
+      setDisplayMsg(_goodB);
+    } else if (_go == kUnlockShortcut) {
+      setDisplayMsg(_goodD);
+    }
+    setGameState(kDisplayMsg);
+    ++s_state;
+  } else if (s_state == 7) {
+    m_player.m_target_x = SIZE*12;
+    m_player.m_target_y = SIZE*15;
+    setGameState(kMovePlayer);
+    s_state = 8;
+  } else if (s_state == 8) {
+    m_player.m_target_x = SIZE*17;
+    m_player.m_target_y = SIZE*13;
+    setGameState(kMovePlayer);
+    s_state = 11;
 
   } else if (s_state == 10) {
     moveToExit(&s_state);
   } else if (s_state == 11) {
    setGameState(kFadeOut);
   }
-
 
   return true;
 }

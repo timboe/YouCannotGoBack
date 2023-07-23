@@ -37,17 +37,22 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
     }
   } else {
     static const char _end1[] = "NICELY DONE!\n DUNGEONEER";
-    PDRect _rect = {.x = _x, .y = 0, .width = _w, .height = 50};
+    PDRect _rect = {.x = _x, .y = 0, .width = _w, .height = 60};
     renderTextInFrame(_pd, _end1, _rect);
     drawBitmapAbs(_pd, m_treasureBanner, 19, _rect.height + 5);
     PDRect _rect2 = {.x = 0, .y =  _rect.height + 84, .width = 144, .height = 20};
     renderBorderText(_pd, _rect2, m_fontMain, s_timeDisplay, 2, false);
     _rect2.y += 14;
-    renderBorderText(_pd, _rect2, m_fontMain, s_scoreDisplay, 2, false);
+    static int16_t _basicTimer = 0;
+    ++_basicTimer;
+    if (_basicTimer < 10) {
+      renderBorderText(_pd, _rect2, m_fontMain, s_scoreDisplay, 2, false);
+    } else  {
+      renderBorderText(_pd, _rect2, m_fontMain, s_bestDisplay, 2, false);
+      if (_basicTimer == 20) _basicTimer = 0;
+    }
     _rect2.y += 14;
     renderBorderText(_pd, _rect2, m_fontMain, s_rankDisplay, 2, false);
-    _rect2.y += 14;
-    renderBorderText(_pd, _rect2, m_fontMain, s_bestDisplay, 2, false);
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawCBitmap(_pd, &m_arrow_d, 8, 12);
     }
@@ -72,7 +77,7 @@ void personalBestCallback(PDScore* score, const char* errorMessage) {
   #endif
   if (!score) return;
   s_pb = score->value;
-  snprintf(s_scoreDisplay, 64, "BEST SCORE %i", s_pb);
+  snprintf(s_bestDisplay, 64, "BEST %i", s_pb);
   s_cachedPtr->scoreboards->freeScore(score);
 }
 
@@ -87,17 +92,17 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
       s_score -= 9000;
       if (s_score < 0) s_score = 0;
       snprintf(s_scoreDisplay, 64, "SCORE %i", s_score);
-      snprintf(s_bestDisplay, 64, "BEST SCORE ????");
+      snprintf(s_bestDisplay, 64, "BEST ????");
       snprintf(s_rankDisplay, 64, "RANK ????");
 
       const int addScore = _pd->scoreboards->addScore(BOARD_NAME, s_score, addScoreCallback);
       #ifdef DEV
       if (addScore) _pd->system->logToConsole("addScore returned %i", addScore);
       #endif
-      const int getPB = _pd->scoreboards->getPersonalBest(BOARD_NAME, personalBestCallback);
-      #ifdef DEV
-      if (getPB) _pd->system->logToConsole("getPersonalBest returned %i", getPB);
-      #endif
+      // const int getPB = _pd->scoreboards->getPersonalBest(BOARD_NAME, personalBestCallback);
+      // #ifdef DEV
+      // if (getPB) _pd->system->logToConsole("getPersonalBest returned %i", getPB);
+      // #endif
     }
     return false;
   }
