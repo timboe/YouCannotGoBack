@@ -5,7 +5,7 @@
 static uint16_t s_state = 0; // game state
 static int8_t s_offset = 0; // moving backdrop
 static float s_rotation = 0; // rotate status
-static int8_t s_type = 0; // which blades
+static int8_t s_type[5 + MAX_LEVELS] = {0}; // which blades
 static int16_t s_position = 0; //y axis
 static int8_t s_count = 0; // how many blades dodged
 
@@ -15,11 +15,11 @@ void updateProcSaw(PlaydateAPI* _pd) {
 
   renderSawFloor(_pd, s_offset);
   renderPlayer(_pd);
-  if (s_type == 1) {
+  if (s_type[s_count] == 1) {
     drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 5*SIZE, s_rotation);
-  } else if (s_type == 3) {
+  } else if (s_type[s_count] == 3) {
     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 13*SIZE, -s_rotation);
-  } else if (s_type == 2) {
+  } else if (s_type[s_count] == 2) {
     drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 3*SIZE, s_rotation);
     drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 15*SIZE, -s_rotation);
   }
@@ -34,8 +34,12 @@ bool tickSaw(bool _doInit) {
     m_player.m_position_y = SIZE*8;
     s_offset = 0; // moving backdrop
     s_rotation = 0; // rotate status
-    s_type = 0; // which blades
-    s_position = 0; //y axis
+    for (int _i = 0; _i < (5 + MAX_LEVELS); ++_i) {
+      s_type[_i] = (rand() % 3) + 1;
+      // Non-guarenteed way of trying to vary blades
+      if (_i && s_type[_i] == s_type[_i-1]) s_type[_i] = (rand() % 3) + 1;
+    }
+    s_position = 144;
     s_count = 0;
     return false;
   }
@@ -63,23 +67,20 @@ bool tickSaw(bool _doInit) {
     if      (m_player.m_target_y > m_player.m_position_y) m_player.m_position_y += PLAYER_SPEED;
     else if (m_player.m_target_y < m_player.m_position_y) m_player.m_position_y -= PLAYER_SPEED;
 
-    if (s_type == 0 && s_count < 5 + m_dungeon.m_level) {
-      ++s_count;
-      srand( m_dungeon.m_seed + s_count );
-      s_type = 1 + (rand()%3);
-      s_position = 144;
-    } else if (s_count < 5 + m_dungeon.m_level) {
+    if (s_count < 4 + m_dungeon.m_level) {
       s_position -= 3 + m_dungeon.m_level;
-      if (s_position < -80) s_type = 0;
+      if (s_position < -80) {
+        s_position = 144;
+        ++s_count;
+      }
 
       if (abs( s_position+40 - m_player.m_position_x ) < 30) {
-        if (s_type == 1 && m_player.m_position_y < 9*SIZE) s_state = 2;
-        else if (s_type == 2 && (m_player.m_position_y < 7*SIZE || m_player.m_position_y > 9*SIZE)) s_state = 2;
-        else if (s_type == 3 && m_player.m_position_y > 7*SIZE ) s_state = 2;
+        if (s_type[s_count] == 1 && m_player.m_position_y < 9*SIZE) s_state = 2;
+        else if (s_type[s_count] == 2 && (m_player.m_position_y < 7*SIZE || m_player.m_position_y > 9*SIZE)) s_state = 2;
+        else if (s_type[s_count] == 3 && m_player.m_position_y > 7*SIZE ) s_state = 2;
       }
     } else {
       setGameState(kLevelSpecific);
-      s_type = 0;
       sawSound(false);
       m_player.m_position_x += (PLAYER_SPEED * 2);
       if (m_player.m_position_x > 20*SIZE) {

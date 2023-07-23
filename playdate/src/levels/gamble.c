@@ -134,9 +134,12 @@ bool tickGamble(bool _doInit) {
     const GambleOutcomes_t _go = getGambleOutcome();
     if (_go == kEvilWind) {
       setDisplayMsg(_badB);
+      debufSound();
     } else if (_go == kClover) {
       setDisplayMsg(_goodB);
+      bufSound();
     } else if (_go == kUnlockShortcut) {
+      bufSound();
       setDisplayMsg(_goodD);
     }
     setGameState(kDisplayMsg);
