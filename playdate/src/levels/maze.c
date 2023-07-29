@@ -40,7 +40,7 @@ void drawLine(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2, int _w, LCDC
 }
 
 void lines(PlaydateAPI* _pd, LCDColor _c, int _w) {
-  const bool _l = m_player.m_position_x < SIZE*15; 
+  const bool _l = m_player.m_position_x < SIZE*8 && getFlash(true); 
   const bool _p0 = _l || s_path == 0;
   const bool _p1 = _l || s_path == 1;
   const bool _p2 = _l || s_path == 2;

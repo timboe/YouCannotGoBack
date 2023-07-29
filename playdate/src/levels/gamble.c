@@ -4,6 +4,8 @@
 static uint16_t s_state = 0;
 static uint16_t s_spin = 0;
 static float s_angle = 0; 
+static float s_clack = 0; 
+static bool s_doClack = false;
 static float s_v = 0;
 static float s_slowdown = 0;
 
@@ -23,6 +25,10 @@ void updateProcGamble(PlaydateAPI* _pd) {
 
   drawBitmapAbsRot(_pd, m_spin[s_spin], 79, 73, s_angle);
   drawBitmapAbs(_pd, m_wheel, 38, 29);
+
+  if (s_doClack) {
+    s_doClack = false;
+  }
 
   if (s_state < 10) renderPlayer(_pd); // In front
 
@@ -78,6 +84,7 @@ bool tickGamble(bool _doInit) {
     s_slowdown = 0.5f + (0.01f * (rand()%100)); 
     // On top of this, start at a random angle too
     s_angle = rand() % 365;
+    s_clack = (int)(s_angle + 30) % 60;
     // Unusually, prefer the easier wheel (w/o instant death) at higher levels
     s_spin = 0;
     if (m_dungeon.m_level == 1) s_spin = rand() % 2;
@@ -106,6 +113,11 @@ bool tickGamble(bool _doInit) {
     s_state = 4;
   } else if (s_state == 4) {
     s_angle += s_v;
+    s_clack -= s_v;
+    if (s_clack <= 0.0f) {
+      s_clack = 60.0f;
+      clickSound();
+    }
     if (s_angle > 365.0f) s_angle -= 365.0f;
     s_v *= 0.97f;
     s_v -= s_slowdown;
@@ -116,12 +128,15 @@ bool tickGamble(bool _doInit) {
     const GambleOutcomes_t _go = getGambleOutcome();
     if (_go == kEvilWind) {
       setDisplayMsg(_badA);
+      hitSound();
       if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
     } else if (_go == kClover) {
       setDisplayMsg(_goodA);
+      hitSound();
       ++m_dungeon.m_lives;
     } else if (_go == kUnlockShortcut) {
       setDisplayMsg(_goodC);
+      hitSound();
       doShortcut();
     } else if (_go == kInstantDeath) {
       m_dungeon.m_gameOver = 1;

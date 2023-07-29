@@ -3,7 +3,9 @@
 #include "../sound.h"
 
 static uint16_t s_state = 0;
-static uint16_t s_tick = 0;
+static uint16_t s_tickA = 0;
+static uint16_t s_tickB = 0;
+
 
 static uint8_t s_start = 0;
 static uint8_t s_correct = 0;
@@ -29,7 +31,7 @@ static Options_t s_mazeDisp0[3][3] = {kN};
 static Options_t s_mazeDisp1[5][7] = {kN};
 
 LCDBitmap* bmp(PlaydateAPI* _pd, uint8_t _x) {
- return _pd->graphics->getTableBitmap(m_floorArrow, _x);
+ return _pd->graphics->getTableBitmap(m_floorArrow, (_x + s_tickB) % 8);
 }
 
 void updateProcArrows(PlaydateAPI* _pd) {
@@ -40,12 +42,12 @@ void updateProcArrows(PlaydateAPI* _pd) {
   renderPlayer(_pd);
 
   // render floor arrows
-  const bool _r = m_player.m_position_x > SIZE*1 && getFlash(true);//15; 
-  const int8_t MAX_X = (false && m_dungeon.m_level == 0 ? 3 : 5);
-  const int8_t MAX_Y = (false && m_dungeon.m_level == 0 ? 3 : 7);
+  const bool _r = m_player.m_position_x > SIZE*8 && getFlash(true);
+  const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
   for (int _x = 0; _x < MAX_X; ++_x) {
     for (int _y = 0; _y < MAX_Y; ++_y) {
-      if (false && m_dungeon.m_level == 0) {
+      if (m_dungeon.m_level == 0) {
         _pd->graphics->setDrawMode(_r && s_maze0[_x][_y] == 2 ? kDrawModeInverted : kDrawModeCopy);
         drawBitmap(_pd, bmp(_pd, s_mazeDisp0[_x][_y]), 4 + (4*_x), 5 + (4*_y));
       } else {
@@ -56,6 +58,9 @@ void updateProcArrows(PlaydateAPI* _pd) {
   }
   _pd->graphics->setDrawMode(kDrawModeCopy);
 
+  // Draw on top
+  if (m_player.m_position_x <= SIZE*4 && getFlash(true)) renderPlayer(_pd);
+
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
   renderArrows(_pd, 15, 5, 4);
@@ -64,8 +69,8 @@ void updateProcArrows(PlaydateAPI* _pd) {
 void pushStack(int8_t _x, int8_t _y) {
   s_stack[(s_head * 2) + 0] = _x;
   s_stack[(s_head * 2) + 1] = _y;
-  if (false && m_dungeon.m_level == 0) s_maze0[_x][_y] = 1;
-  else s_maze1[_x][_y] = 1;
+  if (m_dungeon.m_level == 0) s_maze0[_x][_y] = 1;
+  else                        s_maze1[_x][_y] = 1;
   ++s_head;
 }
 
@@ -81,10 +86,10 @@ void getStack(uint16_t _loc, int8_t* _xPtr, int8_t* _yPtr) {
 }
 
 bool getOccupied(int8_t _x, int8_t _y) {
-  const int8_t MAX_X = (false && m_dungeon.m_level == 0 ? 3 : 5);
-  const int8_t MAX_Y = (false && m_dungeon.m_level == 0 ? 3 : 7);
+  const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
   if (_x < 0 || _x >= MAX_X || _y < 0 || _y >= MAX_Y) return true;
-  if (false && m_dungeon.m_level == 0) return s_maze0[_x][_y];
+  if (m_dungeon.m_level == 0) return s_maze0[_x][_y];
   else return s_maze1[_x][_y];
 }
 
@@ -96,7 +101,7 @@ bool tryMove(int8_t* _xPtr, int8_t* _yPtr, bool _backtrack) {
   if (!getOccupied(*_xPtr + 1, *_yPtr + 0)) _options[_nOpt++] = kE;
   if (!getOccupied(*_xPtr + 0, *_yPtr + 1)) _options[_nOpt++] = kS;
   if (!getOccupied(*_xPtr - 1, *_yPtr + 0)) _options[_nOpt++] = kW;
-  if (true) {
+  if (m_dungeon.m_level == 2) {
     if (!getOccupied(*_xPtr + 1, *_yPtr - 1)) _options[_nOpt++] = kNE;
     if (!getOccupied(*_xPtr + 1, *_yPtr + 1)) _options[_nOpt++] = kSE;
     if (!getOccupied(*_xPtr - 1, *_yPtr + 1)) _options[_nOpt++] = kSW;
@@ -129,15 +134,17 @@ void gen(PlaydateAPI* _pd) {
   memset(&s_maze0, 0, sizeof(uint8_t)*3*3);
   memset(&s_maze1, 0, sizeof(uint8_t)*5*7);
   memset(&s_stack, 0, sizeof(uint8_t)*5*7*2);
-  const int8_t MAX_X = (false && m_dungeon.m_level == 0 ? 3 : 5);
-  const int8_t MAX_Y = (false && m_dungeon.m_level == 0 ? 3 : 7);
-  uint8_t _begin = s_start;
-  uint8_t _end = s_correct;
+  const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
+  uint8_t _begin, _end;
   // Modify entry and exit points for the larger maze
-  //if (false && !m_dungeon.m_level == 0) {
+  if (m_dungeon.m_level == 0) {
+    _begin = s_start;
+    _end = s_correct;
+  }  else {
     _begin = (s_start * 2) + 1;
     _end = (s_correct * 2) + 1;
-  //}
+  }
   s_head = 0;
   int8_t _x = 0, _y = _begin;
   bool _backtrack = false;
@@ -148,9 +155,6 @@ void gen(PlaydateAPI* _pd) {
   #endif
   do {
     // Try and move to a new square
-    #ifdef DEV
-    _pd->system->logToConsole(" --- Arrow: Try from %i,%i", _x, _y);
-    #endif
     bool didMove = tryMove(&_x, &_y, _backtrack);
     // Else unwind one square
     if (!didMove) {
@@ -193,7 +197,7 @@ void set(PlaydateAPI* _pd) {
     #ifdef DEV
     _pd->system->logToConsole(" APath: Path %i,%i ->  %i,%i", _curX, _curY, _toX, _toY);
     #endif
-    if (false && m_dungeon.m_level == 0) {
+    if (m_dungeon.m_level == 0) {
       s_mazeDisp0[_curX][_curY] = getDir(_curX, _curY, _toX, _toY);
       s_maze0[_curX][_curY] = 2; // on the path
     } else {
@@ -207,7 +211,7 @@ void set(PlaydateAPI* _pd) {
     #ifdef DEV
     _pd->system->logToConsole(" APath: FIN %i,%i", _x, _y);
     #endif
-  if (false && m_dungeon.m_level == 0) {
+  if (m_dungeon.m_level == 0) {
     s_maze0[_x][_y] = 2;
   } else {
     s_maze1[_x][_y] = 2;
@@ -215,24 +219,27 @@ void set(PlaydateAPI* _pd) {
 }
 
 bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
+  #define TICK 6
   if (_doInit == true) {
-    const int8_t MAX_X = (false && m_dungeon.m_level == 0 ? 3 : 5);
-    const int8_t MAX_Y = (false && m_dungeon.m_level == 0 ? 3 : 7);
+    const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
+    const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
     s_state = 0;
-    s_tick = 0;
+    s_tickA = TICK/3;
+    s_tickB = TICK;
     m_player.m_position_x = 0;
     m_player.m_position_y = SIZE*9;
     s_start = rand() % 3; // entry point
     s_correct = rand() % 3; // exit point
     // Randomize
+    const uint8_t maxR = m_dungeon.m_level == 2 ? 8 : 4;
     for (int _x = 0; _x < MAX_X; ++_x) {
       for (int _y = 0; _y < MAX_Y; ++_y) {
-        if (false && m_dungeon.m_level == 0) s_mazeDisp0[_x][_y] = (Options_t) rand() % 4;
-        else                        s_mazeDisp1[_x][_y] = (Options_t) rand() % 4;
+        if (m_dungeon.m_level == 0) s_mazeDisp0[_x][_y] = (Options_t) rand() % maxR;
+        else                        s_mazeDisp1[_x][_y] = (Options_t) rand() % maxR;
       }
     }
     // But the three exits always point right
-    if (false && m_dungeon.m_level == 0) {
+    if (m_dungeon.m_level == 0) {
       s_mazeDisp0[2][0] = kE;
       s_mazeDisp0[2][1] = kE;
       s_mazeDisp0[2][2] = kE;
@@ -251,20 +258,33 @@ bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
-   m_player.m_target_x = SIZE*4;
-   switch (s_start) {
-     case 0: m_player.m_target_y = SIZE*5; break;
-     case 1: m_player.m_target_y = SIZE*9; break;
-     case 2: m_player.m_target_y = SIZE*13; break;
-   }
-   setGameState(kMovePlayer);
-   ++s_state;
-  } else if (s_state == 2) {
-     setGameState(kAwaitInput);
-     ++s_state;
-  } else if (s_state == 2) {
-     moveToExit(&s_state);
+    m_player.m_target_x = SIZE*4;
+    switch (s_start) {
+      case 0: m_player.m_target_y = SIZE*5; break;
+      case 1: m_player.m_target_y = SIZE*9; break;
+      case 2: m_player.m_target_y = SIZE*13; break;
+    }
+    setGameState(kMovePlayer);
+    ++s_state;
+  } else if (s_state == 2) { // Anim
+    setGameState(kLevelSpecific);
+    if (--s_tickA == 0) {
+      s_tickA = TICK/3;
+      if (--s_tickB == 0) ++s_state; 
+    }
   } else if (s_state == 3) {
+    setGameState(kAwaitInput);
+    ++s_state;
+  } else if (s_state == 4) {
+   if (getPlayerChoice() != s_correct) { //Wrong solution!
+     if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
+     else m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room + 1 ] = kDeath;
+     #ifdef DEV
+     _pd->system->logToConsole("WRONG");
+     #endif
+   }
+   moveToExit(&s_state);
+  } else if (s_state == 5) {
     setGameState(kFadeOut);
   }
   return true;
