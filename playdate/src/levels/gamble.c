@@ -5,7 +5,7 @@ static uint16_t s_state = 0;
 static uint16_t s_spin = 0;
 static float s_angle = 0; 
 static float s_clack = 0; 
-static bool s_doClack = false;
+static uint8_t s_doClack = 0;
 static float s_v = 0;
 static float s_slowdown = 0;
 
@@ -26,9 +26,12 @@ void updateProcGamble(PlaydateAPI* _pd) {
   drawBitmapAbsRot(_pd, m_spin[s_spin], 79, 73, s_angle);
   drawBitmapAbs(_pd, m_wheel, 38, 29);
 
+  uint8_t _cID = 0;
   if (s_doClack) {
-    s_doClack = false;
+    --s_doClack;
+    _cID = 1;
   }
+  drawBitmapAbs(_pd, _pd->graphics->getTableBitmap(m_clack, _cID), 70, 29);
 
   if (s_state < 10) renderPlayer(_pd); // In front
 
@@ -116,6 +119,7 @@ bool tickGamble(bool _doInit) {
     s_clack -= s_v;
     if (s_clack <= 0.0f) {
       s_clack = 60.0f;
+      s_doClack = 1;
       clickSound();
     }
     if (s_angle > 365.0f) s_angle -= 365.0f;

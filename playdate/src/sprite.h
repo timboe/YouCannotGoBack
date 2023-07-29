@@ -52,6 +52,8 @@ extern LCDBitmap* m_spin[2];
 
 extern LCDBitmapTable* m_floorArrow;
 
+extern LCDBitmapTable* m_clack;
+
 extern struct CBitmap m_UOuterWall[3];
 extern struct CBitmap m_DOuterWall[3];
 extern struct CBitmap m_LOuterWall[3];
