@@ -21,7 +21,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kPattern].m_minL  = 0, [kPattern].m_giveHint  = 0, [kPattern].m_reqHint  = {0, 0, 0, 0, 0, 0},
  [kSaw].m_minL      = 0, [kSaw].m_giveHint      = 0, [kSaw].m_reqHint      = {0, 0, 0, 0, 0, 0},
  [kSpikes].m_minL   = 0, [kSpikes].m_giveHint   = 1, [kSpikes].m_reqHint   = {0, 0, 0, 0, 0, 0},
- [kSBall].m_minL    = 0, [kSBall].m_giveHint    = 1, [kSBall].m_reqHint    = {0, 0, 0, 0, 0, 0},
+ [kSBall].m_minL    = 0, [kSBall].m_giveHint    = 0, [kSBall].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kShapes].m_minL   = 0, [kShapes].m_giveHint   = 1, [kShapes].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kBomb].m_minL     = 0, [kBomb].m_giveHint     = 1, [kSaw].m_reqHint      = {0, 0, 0, 0, 0, 0},
  [kBoxes].m_minL    = 0, [kBoxes].m_giveHint    = 0, [kBoxes].m_reqHint    = {0, 0, 0, 1, 0, 0},
@@ -31,7 +31,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kFinal].m_minL    = 9, [kFinal].m_giveHint    = 0, [kFinal].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kEnd].m_minL      = 9, [kEnd].m_giveHint      = 0, [kEnd].m_reqHint      = {0, 0, 0, 0, 0, 0}
 };
-
+ 
 int m_hintsInPlay = 0;
 uint8_t m_hintIsActive[kNHintTypes] = {0};
 uint8_t m_hintValue[kNHintTypes] = {0};
@@ -51,7 +51,7 @@ Hints_t getHint(int _level, Rooms_t _roomType) {
   return _hint;
 }
 
-#define TESTING 1
+#define TESTING 0
 
 Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem) {
 
@@ -60,8 +60,8 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
 
-      _newRoom = kGamble;
-      
+      _newRoom = kStart;
+
     } else if (TESTING && _level == 0 && _room == 1) {
 
       //_newRoom = kSBall; // TESTING

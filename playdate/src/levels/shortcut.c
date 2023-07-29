@@ -28,6 +28,7 @@ bool tickShortcut(bool _doInit) {
      setGameState(kMovePlayer);
      ++s_state;
   } else if (s_state == 1) {
+    reminderSound();
     setGameState(kFadeOut);
   }
 

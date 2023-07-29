@@ -120,7 +120,7 @@ bool tickGamble(bool _doInit) {
     if (s_clack <= 0.0f) {
       s_clack = 60.0f;
       s_doClack = 1;
-      clickSound();
+      clackSound();
     }
     if (s_angle > 365.0f) s_angle -= 365.0f;
     s_v *= 0.97f;
