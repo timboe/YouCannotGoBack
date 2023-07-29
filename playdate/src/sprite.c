@@ -26,6 +26,8 @@ LCDBitmap* m_danger;
 LCDBitmap* m_wheel;
 LCDBitmap* m_spin[2];
 
+LCDBitmapTable* m_floorArrow;
+
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
 LCDFont* m_fontIntro;
@@ -172,6 +174,8 @@ void initSprite(PlaydateAPI* _pd) {
   m_wheel = loadImageAtPath(_pd, "images/wheel_frame");
   m_spin[0] = loadImageAtPath(_pd, "images/wheel_inner0");
   m_spin[1] = loadImageAtPath(_pd, "images/wheel_inner1");
+
+  m_floorArrow = loadImageTableAtPath(_pd, "images/floorArrow");
 
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 

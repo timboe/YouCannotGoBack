@@ -42,13 +42,15 @@ extern LCDBitmap* m_bomb[4];
 extern LCDBitmap* m_spear;
 extern LCDBitmapTable* m_smask;
 
-extern struct LCDBitmap* m_hole;
-extern struct LCDBitmap* m_target;
-extern struct LCDBitmap* m_ball;
-extern struct LCDBitmap* m_danger;
+extern LCDBitmap* m_hole;
+extern LCDBitmap* m_target;
+extern LCDBitmap* m_ball;
+extern LCDBitmap* m_danger;
 
-extern struct LCDBitmap* m_wheel;
-extern struct LCDBitmap* m_spin[2];
+extern LCDBitmap* m_wheel;
+extern LCDBitmap* m_spin[2];
+
+extern LCDBitmapTable* m_floorArrow;
 
 extern struct CBitmap m_UOuterWall[3];
 extern struct CBitmap m_DOuterWall[3];
@@ -100,5 +102,3 @@ extern LCDFont* m_fontMain;
 extern LCDFont* m_fontMsg;
 extern LCDFont* m_fontIntro;
 extern LCDFont* m_fontGreek;
-
-
