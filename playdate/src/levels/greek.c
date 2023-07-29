@@ -15,10 +15,10 @@ static char s_strC[BUF_SIZE] = {0};
 
 //Full: ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεηθικλμνξοπρςστυφχψω
 //Clue: πδζΛφηΩψ
-//Excluded:ΦΨ
+//Excluded:ΦΨΠ
 
 // Note: First character, Α, never gets used 
-static const char s_letters[] = "ΑΒΓΔΕΖΗΘΙΚΜΝΞΟΠΡΣΤΥΧαβγεθικλμνξορςστυχω";
+static const char s_letters[] = "ΑΒΓΔΕΖΗΘΙΚΜΝΞΟΡΣΤΥΧαβγεθικλμνξορςστυχω";
 static const size_t s_size = ((sizeof(s_letters) / sizeof(s_letters[0])) - 1) / 2; // Sub \0, two char characters
 
 // These need to be in the same order as in the sprite sheet

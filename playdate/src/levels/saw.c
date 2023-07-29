@@ -15,13 +15,15 @@ void updateProcSaw(PlaydateAPI* _pd) {
 
   renderSawFloor(_pd, s_offset);
   renderPlayer(_pd);
-  if (s_type[s_count] == 1) {
-    drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 5*SIZE, s_rotation);
-  } else if (s_type[s_count] == 3) {
-    drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 13*SIZE, -s_rotation);
-  } else if (s_type[s_count] == 2) {
-    drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 3*SIZE, s_rotation);
-    drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 15*SIZE, -s_rotation);
+  if (s_count < 4 + m_dungeon.m_level) {
+    if (s_type[s_count] == 1) {
+      drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 5*SIZE, s_rotation);
+    } else if (s_type[s_count] == 3) {
+      drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 13*SIZE, -s_rotation);
+    } else if (s_type[s_count] == 2) {
+      drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 3*SIZE, s_rotation);
+      drawBitmapAbsRot(_pd, m_sawB, s_position + PD_OFFSET, 15*SIZE, -s_rotation);
+    }
   }
   renderSawWalls(_pd, s_offset);
   renderArrows(_pd, 6, 6, 2);

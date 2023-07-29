@@ -15,7 +15,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kPword].m_minL    = 0, [kPword].m_giveHint    = 1, [kPword].m_reqHint    = {0, 1, 0, 0, 1, 0},
  [kBridge].m_minL   = 1, [kBridge].m_giveHint   = 1, [kBridge].m_reqHint   = {0, 0, 1, 0, 0, 1},
  [kGreek].m_minL    = 0, [kGreek].m_giveHint    = 1, [kGreek].m_reqHint    = {0, 0, 0, 0, 0, 1},
- [kMaths].m_minL    = 0, [kMaths].m_giveHint    = 1, [kMaths].m_reqHint    = {0, 0, 0, 0, 0, 0},
+ [kMaths].m_minL    = 0, [kMaths].m_giveHint    = 0, [kMaths].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kStones].m_minL   = 1, [kStones].m_giveHint   = 0, [kStones].m_reqHint   = {0, 0, 0, 1, 0, 0},
  [kDark].m_minL     = 0, [kDark].m_giveHint     = 0, [kDark].m_reqHint     = {0, 0, 0, 0, 0, 0},
  [kPattern].m_minL  = 0, [kPattern].m_giveHint  = 0, [kPattern].m_reqHint  = {0, 0, 0, 0, 0, 0},
@@ -25,7 +25,8 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kShapes].m_minL   = 0, [kShapes].m_giveHint   = 1, [kShapes].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kBomb].m_minL     = 0, [kBomb].m_giveHint     = 1, [kSaw].m_reqHint      = {0, 0, 0, 0, 0, 0},
  [kBoxes].m_minL    = 0, [kBoxes].m_giveHint    = 0, [kBoxes].m_reqHint    = {0, 0, 0, 1, 0, 0},
- [kMaze].m_minL     = 0, [kMaze].m_giveHint     = 1, [kMaze].m_reqHint     = {0, 0, 0, 0, 0, 0},
+ [kMaze].m_minL     = 0, [kMaze].m_giveHint     = 0, [kMaze].m_reqHint     = {0, 0, 0, 0, 0, 0},
+ [kArrows].m_minL   = 0, [kArrows].m_giveHint   = 0, [kArrows].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kDeath].m_minL    = 9, [kDeath].m_giveHint    = 0, [kDeath].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kFinal].m_minL    = 9, [kFinal].m_giveHint    = 0, [kFinal].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kEnd].m_minL      = 9, [kEnd].m_giveHint      = 0, [kEnd].m_reqHint      = {0, 0, 0, 0, 0, 0}
@@ -50,7 +51,7 @@ Hints_t getHint(int _level, Rooms_t _roomType) {
   return _hint;
 }
 
-#define TESTING 0
+#define TESTING 1
 
 Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem) {
 
@@ -58,7 +59,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
   while (true) {
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
-      _newRoom = kStart;
+      _newRoom = kArrows;
     } else if (TESTING && _level == 0 && _room == 1) {
 
       //_newRoom = kSBall; // TESTING
@@ -128,7 +129,9 @@ void generate(PlaydateAPI* _pd) {
   m_dungeon.m_roomsPerLevel[2] = TOT_ROOMS - m_dungeon.m_roomsPerLevel[1] - m_dungeon.m_roomsPerLevel[0];
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
+    #ifdef DEV
     _pd->system->logToConsole(" -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
+    #endif
     for (int _room = 0; _room < m_dungeon.m_roomsPerLevel[_level]; ++_room) {
 
       Hints_t _consumeHint = kNoHint;

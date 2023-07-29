@@ -49,6 +49,7 @@ bool checkShortcutRoom(int _l, int _r) {
   if (m_dungeon.m_roomGiveHint[_l][_r]) return false; // Don't skip clue rooms
   if (m_dungeon.m_roomNeedHint[_l][_r]) return false; // Don't skip clue rooms
   if (m_dungeon.m_rooms[_l][_r] == kStairs) return false; // Don't skip level transitions
+  if (m_dungeon.m_rooms[_l][_r] == kShortcut) return false; // Don't skip other shortcuts
   m_dungeon.m_rooms[_l][_r] = kShortcut;
   return true;
 }

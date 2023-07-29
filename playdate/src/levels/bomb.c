@@ -4,6 +4,7 @@
 
 static uint16_t s_state = 0;
 static int8_t s_bomb = -1;
+static int8_t s_bomb2 = -1;
 static uint16_t s_tick = 0;
 const static uint16_t s_ticks[3] = {80, 60, 40};
 
@@ -15,6 +16,7 @@ void updateProcBomb(PlaydateAPI* _pd) {
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
   renderBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb);
+  if (m_dungeon.m_level == 2) renderBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb2);
   renderArrows(_pd, 15, 5, 4);
 }
 
@@ -29,8 +31,13 @@ void bombTimer() {
 
   // Ran into bomb
   if (getGameState() == kMovePlayer 
-    && m_player.m_position_x > SIZE*9
-    && getPlayerChoice() == s_bomb) 
+      && m_player.m_position_x > SIZE*9
+      && (getPlayerChoice() == s_bomb
+          || (m_dungeon.m_level == 2 
+              && getPlayerChoice() == s_bomb2
+              )
+          )
+      ) 
   {
     s_state = 4;
     s_tick = s_ticks[ m_dungeon.m_level ] * 3;
@@ -43,6 +50,10 @@ bool tickBomb(bool _doInit) {
     s_state = 0;
     s_tick = 0;
     s_bomb = rand() % 3;
+    if (m_dungeon.m_level == 2) {
+      s_bomb2 = s_bomb;
+      while (s_bomb2 == s_bomb) { s_bomb2 = rand() % 3; }
+    }
     m_player.m_position_x = 0;
     m_player.m_position_y = SIZE*9;
     addCluter(8, 0, 20); // Only left half

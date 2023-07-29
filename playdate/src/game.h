@@ -1,7 +1,7 @@
 #pragma once
 
 //#define DEBUG_MODE
-//#define DEV
+#define DEV
 
 #include "pd_api.h"
 
@@ -28,7 +28,7 @@ typedef enum {
   kMaths,    // Puzzle 1
   kShapes,   // Puzzle 2
   kPattern,  // Puzzle 3
-  // Puzzle 4
+  kArrows,   // Puzzle 4
   //
   kDark,     // Skill 0
   kSaw,      // Skill 1
@@ -135,6 +135,7 @@ typedef struct {
 extern Dungeon_t m_dungeon;
 extern Player_t m_player;
 extern Clutter_t m_clutter;
+
 void setPDPtr(PlaydateAPI* p);
 
 int gameLoop(void* data);

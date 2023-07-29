@@ -81,7 +81,7 @@ bool tickPattern(bool _doInit) {
     // Choose angles
     {
       const int8_t _angleCorrect = s_correct[2];
-      s_angles[_angleCorrect] = (float)M_PI/180.0f * (rand()%180);
+      s_angles[_angleCorrect] = 20.0f * (float)M_PI/180.0f * (rand()%9);
       const float _aMod = 60.0f / (float)(m_dungeon.m_level + 1);
       for (int _i = 0; _i < 3; ++_i) {
         if (_i == _angleCorrect) continue;

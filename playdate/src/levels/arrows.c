@@ -1,0 +1,210 @@
+#include "arrows.h"
+#include "common.h"
+#include "../sound.h"
+
+static uint16_t s_state = 0;
+static uint16_t s_tick = 0;
+
+static uint8_t s_start = 0;
+static uint8_t s_correct = 0;
+
+static uint8_t s_maze0[3][3] = {0};
+static uint8_t s_maze1[5][7] = {0};
+
+static uint8_t s_stack[5*7*2] = {0};
+static uint16_t s_head = 0;
+
+typedef enum {
+  kN,
+  kE,
+  kS,
+  kW,
+  kNE,
+  kSE,
+  kSW,
+  kNW
+} Options_t;
+
+static Options_t s_mazeDisp0[3][3] = {kN};
+static Options_t s_mazeDisp1[5][7] = {kN};
+
+void updateProcArrows(PlaydateAPI* _pd) {
+  renderFloor(_pd, 0);
+  renderStandingStone(_pd, 5, 6 + s_start*4, kColorBlack, kCircle);
+  renderClutter(_pd);
+  renderPlayer(_pd);
+  renderWalls(_pd, true, true, true, true);
+  renderWallClutter(_pd);
+  renderArrows(_pd, 15, 5, 4);
+}
+
+void pushStack(int8_t _x, int8_t _y) {
+  s_stack[(s_head * 2) + 0] = _x;
+  s_stack[(s_head * 2) + 1] = _y;
+  if (m_dungeon.m_level == 0) s_maze0[_x][_y] = 1;
+  else s_maze1[_x][_y] = 1;
+  ++s_head;
+}
+
+void popStack(int8_t* _xPtr, int8_t* _yPtr) {
+  --s_head;
+  *_xPtr = s_stack[(s_head * 2) + 0];
+  *_yPtr = s_stack[(s_head * 2) + 1];
+}
+
+void getStack(uint16_t _loc, int8_t* _xPtr, int8_t* _yPtr) {
+  *_xPtr = s_stack[(_loc * 2) + 0];
+  *_yPtr = s_stack[(_loc * 2) + 1];
+}
+
+bool getOccupied(int8_t _x, int8_t _y) {
+  const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
+  if (_x < 0 || _x >= MAX_X || _y < 0 || _y >= MAX_Y) return true;
+  if (m_dungeon.m_level == 0) return s_maze0[_x][_y];
+  else return s_maze1[_x][_y];
+}
+
+bool tryMove(int8_t* _xPtr, int8_t* _yPtr) {
+  // Get available options
+  Options_t _options[8] = {kN};
+  uint8_t _nOpt = 0;
+  if (!getOccupied(*_xPtr + 0, *_yPtr - 1)) _options[_nOpt++] = kN;
+  if (!getOccupied(*_xPtr + 1, *_yPtr + 0)) _options[_nOpt++] = kE;
+  if (!getOccupied(*_xPtr + 0, *_yPtr + 1)) _options[_nOpt++] = kS;
+  if (!getOccupied(*_xPtr - 1, *_yPtr + 0)) _options[_nOpt++] = kW;
+  if (_nOpt == 0) {
+    // Cannot move
+    return false;
+  }
+  const Options_t _chosenOpt = _options[ rand() % _nOpt ];
+  switch (_chosenOpt) {
+    case kN: *_yPtr -= 1; break;
+    case kE: *_xPtr += 1; break;
+    case kS: *_yPtr += 1; break;
+    case kW: *_xPtr -= 1; break;   
+    default: break;
+  }
+  // Do move
+  pushStack(*_xPtr, *_yPtr);
+  return true;
+}
+
+void gen(uint8_t _start, uint8_t _correct, PlaydateAPI* _pd) {
+  memset(&s_maze0, 0, sizeof(uint8_t)*3*3);
+  memset(&s_maze1, 0, sizeof(uint8_t)*5*7);
+  memset(&s_stack, 0, sizeof(uint8_t)*5*7*2);
+  const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
+  s_head = 0;
+  int8_t _x = 0, _y = _start;
+  // Add start
+  pushStack(_x, _y);
+  #ifdef DEV
+  _pd->system->logToConsole(" Arrow: START %i,%i", _x, _y);
+  #endif
+  do {
+    // Try and move to a new square
+    bool didMove = tryMove(&_x, &_y);
+    // Else unwind one square
+    if (!didMove) {
+      popStack(&_x, &_y);
+      #ifdef DEV
+      _pd->system->logToConsole(" Arrow:   <- %i,%i", _x, _y);
+      #endif
+    } else {
+      #ifdef DEV
+      _pd->system->logToConsole(" Arrow: -> %i,%i", _x, _y);
+      #endif
+    }
+  } while (_x != MAX_X && _y != s_correct);
+  #ifdef DEV
+  _pd->system->logToConsole(" Arrow: STOP %i,%i", _x, _y);
+  #endif
+}
+
+Options_t getDir(int8_t _curX, int8_t _curY, int8_t _toX, int8_t _toY) {
+  if (_toX > _curX) return kE;
+  if (_toX < _curX) return kW;
+  if (_toY > _curY) return kS;
+  if (_toY < _curY) return kN;
+  return kN;
+}
+
+void set(void) {
+  // Walk the stack up to the last place (which must point right)
+  for (int16_t _s = 0; s < s_head - 1; ++_s) {
+    int8_t _curX = 0, _curY = 0, _toX = 0, _toY = 0;
+    getStack(_s + 0, &_curX, &_curY);
+    getStack(_s + 1, &_toX, &_toY);
+    if (m_dungeon.m_level == 0) {
+      s_mazeDisp0[_curX][_curY] = getDir(_curX, _curY, _toX, _toY);
+      s_maze0[_curX][_curY] = 2; // on the path
+    } else {
+      s_mazeDisp1[_curX][_curY] = getDir(_curX, _curY, _toX, _toY);
+      s_maze1[_curX][_curY] = 2; // on the path
+    }
+  }
+}
+
+bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
+  if (_doInit == true) {
+    const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
+    const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
+    s_state = 0;
+    s_tick = 0;
+    m_player.m_position_x = 0;
+    m_player.m_position_y = SIZE*9;
+    s_start = rand() % 3;
+    s_correct = rand() % 3;
+    // Choose entry and exit points
+    if (m_dungeon.m_level > 0) {
+      s_start = (s_start * 2) + 1;
+      s_correct = (s_correct * 2) + 1;
+    }
+    // Randomize
+    for (int _x = 0; _x < MAX_X; ++_x) {
+      for (int _y = 0; _y < MAX_Y; ++_y) {
+        if (m_dungeon.m_level == 0) s_mazeDisp0[_x][_y] = (Options_t) rand() % 4;;
+        else s_mazeDisp1[_x][_y] = (Options_t) rand() % 4;;
+      }
+    }
+    // But the three exits always point right
+    if (m_dungeon.m_level == 0) {
+      s_mazeDisp0[2][0] = kE;
+      s_mazeDisp0[2][1] = kE;
+      s_mazeDisp0[2][2] = kE;
+    } else {
+      s_mazeDisp0[4][1] = kE;
+      s_mazeDisp0[4][3] = kE;
+      s_mazeDisp0[4][5] = kE;
+    }
+    // Make path
+    gen(s_start, s_correct, _pd);
+    // Set path
+    set();
+    return false;
+  }
+
+  if (s_state == 0) { // start initial move
+    enterRoom(&s_state);
+  } else if (s_state == 1) { // initial move is done
+   m_player.m_target_x = SIZE*4;
+   switch (s_start) {
+     case 0: m_player.m_target_y = SIZE*5; break;
+     case 1: m_player.m_target_y = SIZE*9; break;
+     case 2: m_player.m_target_y = SIZE*13; break;
+   }
+   setGameState(kMovePlayer);
+   ++s_state;
+  } else if (s_state == 2) {
+     setGameState(kAwaitInput);
+     ++s_state;
+  } else if (s_state == 2) {
+     moveToExit(&s_state);
+  } else if (s_state == 3) {
+    setGameState(kFadeOut);
+  }
+  return true;
+
+}

@@ -40,15 +40,21 @@ void drawLine(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2, int _w, LCDC
 }
 
 void lines(PlaydateAPI* _pd, LCDColor _c, int _w) {
+  const bool _l = m_player.m_position_x < SIZE*15; 
+  const bool _p0 = _l || s_path == 0;
+  const bool _p1 = _l || s_path == 1;
+  const bool _p2 = _l || s_path == 2;
   for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
-    drawLine(_pd, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3], _w, _c);
-    drawLine(_pd, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3], _w, _c);
-    drawLine(_pd, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3], _w, _c);
+    if (_p0) drawLine(_pd, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3], _w, _c);
+    if (_p1) drawLine(_pd, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3], _w, _c);
+    if (_p2) drawLine(_pd, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3], _w, _c);
   }
 }
 
 void updateProcMaze(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
+
+  renderStandingStone(_pd, 4, 4 + s_path*6, kColorBlack, kCircle);
 
   LCDColor _c1 = kColorWhite, _c2 = kColorWhite;
   int _w = 4;
@@ -64,7 +70,7 @@ void updateProcMaze(PlaydateAPI* _pd) {
     lines(_pd, _c2, _w/2);
   } 
 
-  renderClutter(_pd);
+  if (m_dungeon.m_level == 2) renderClutter(_pd); // Obscure
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);

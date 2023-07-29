@@ -28,8 +28,9 @@
 #include "levels/pattern.h"
 #include "levels/gamble.h"
 #include "levels/shortcut.h"
+#include "levels/arrows.h"
 
-static PlaydateAPI* pd = NULL;
+PlaydateAPI* pd = NULL;
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
@@ -153,6 +154,7 @@ void dungeonUpdateProc() {
     case kDark: updateProcDark(pd); break;
     case kPattern: updateProcPattern(pd); break;
     case kMaze: updateProcMaze(pd); break;
+    case kArrows: updateProcArrows(pd); break;
     case kGreek: updateProcGreek(pd); break;
     case kSaw: updateProcSaw(pd); break;
     case kBomb: updateProcBomb(pd); break;
@@ -268,6 +270,7 @@ int gameLoop(void* data) {
       case kDark: requestRedraw = tickDark(_doInit); break;
       case kPattern: requestRedraw = tickPattern(_doInit); break;
       case kMaze: requestRedraw = tickMaze(pd, _doInit); break;
+      case kArrows: requestRedraw = tickArrows(pd, _doInit); break;
       case kGreek: requestRedraw = tickGreek(pd, _doInit); break;
       case kSaw: requestRedraw = tickSaw(_doInit); break;
       case kBomb: requestRedraw = tickBomb(_doInit); break;
