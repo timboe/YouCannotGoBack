@@ -270,6 +270,7 @@ bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
     setGameState(kLevelSpecific);
     if (--s_tickA == 0) {
       s_tickA = TICK/3;
+      clackSound();
       if (--s_tickB == 0) ++s_state; 
     }
   } else if (s_state == 3) {

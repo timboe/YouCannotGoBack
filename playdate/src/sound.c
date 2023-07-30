@@ -11,6 +11,10 @@ int8_t m_playing = 0;
 SamplePlayer* m_samplePlayer;
 SamplePlayer* m_loopPlayer;
 SamplePlayer* m_footPlayer;
+SamplePlayer* m_targetPlayer;
+SamplePlayer* m_fallPlayer;
+SamplePlayer* m_boomPlayer;
+SamplePlayer* m_clackPlayer;
 
 AudioSample* m_fireSample;
 AudioSample* m_chestSample;
@@ -30,6 +34,8 @@ AudioSample* m_password;
 AudioSample* m_fuse;
 AudioSample* m_hit;
 AudioSample* m_stairsAudio;
+AudioSample* m_targetSound;
+AudioSample* m_clackSound;
 
 void music(bool _onoff) {
   m_musicOn = _onoff;
@@ -62,6 +68,10 @@ void initSound(PlaydateAPI* _pd) {
   m_samplePlayer = pd->sound->sampleplayer->newPlayer(); // TODO: Report, docs say newSamplePlayer
   m_loopPlayer = pd->sound->sampleplayer->newPlayer();
   m_footPlayer = pd->sound->sampleplayer->newPlayer();
+  m_targetPlayer = pd->sound->sampleplayer->newPlayer();
+  m_boomPlayer = pd->sound->sampleplayer->newPlayer();
+  m_fallPlayer = pd->sound->sampleplayer->newPlayer();
+  m_clackPlayer = pd->sound->sampleplayer->newPlayer();
 
   m_fireSample = pd->sound->sample->load("sounds/270306__littlerobotsoundfactory__explosion-02");
   m_chestSample = pd->sound->sample->load("sounds/270338__littlerobotsoundfactory__open-01");
@@ -82,12 +92,18 @@ void initSound(PlaydateAPI* _pd) {
   m_fuse = pd->sound->sample->load("sounds/184519__soundslikewillem__fuse");
   m_sawSample = pd->sound->sample->load("sounds/108171__aarongnp__buzzsaw-addiction_modified");
   m_stairsAudio = pd->sound->sample->load("sounds/442770__qubodup__walk-down-stairs");
+  m_targetSound = pd->sound->sample->load("sounds/270302__littlerobotsoundfactory__collect_point_02");
+  m_clackSound = pd->sound->sample->load("sounds/270315__littlerobotsoundfactory__menu_navigate_03.wav");
 
   m_foot[0] = pd->sound->sample->load("sounds/197778__samulis__footstep-on-stone-1");
   m_foot[1] = pd->sound->sample->load("sounds/197779__samulis__footstep-on-stone-2");
   m_foot[2] = pd->sound->sample->load("sounds/197780__samulis__footstep-on-stone-3");
   m_foot[3] = pd->sound->sample->load("sounds/197781__samulis__footstep-on-stone-4");
 
+  pd->sound->sampleplayer->setSample(m_targetPlayer, m_targetSound);
+  pd->sound->sampleplayer->setSample(m_boomPlayer, m_boom);
+  pd->sound->sampleplayer->setSample(m_fallPlayer, m_fall);
+  pd->sound->sampleplayer->setSample(m_clackPlayer, m_clackSound);
 }
 
 void updateMusic(uint8_t _status) {
@@ -211,14 +227,12 @@ void reminderSound() {
 
 void boomSound() {
   if (!m_sfxOn) return;
-  pd->sound->sampleplayer->setSample(m_samplePlayer, m_boom);
-  pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
+  pd->sound->sampleplayer->play(m_boomPlayer, 1, 1.0f);
 }
 
 void fallSound() {
   if (!m_sfxOn) return;
-  pd->sound->sampleplayer->setSample(m_samplePlayer, m_fall);
-  pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
+  pd->sound->sampleplayer->play(m_fallPlayer, 1, 1.0f);
 }
 
 void passwordSound() {
@@ -234,4 +248,16 @@ void fuseSound(bool _start) {
   } else {
     pd->sound->sampleplayer->stop(m_loopPlayer);
   }
+}
+
+void targetSound() {
+  if (!m_sfxOn) return;
+  pd->sound->sampleplayer->stop(m_targetPlayer);
+  pd->sound->sampleplayer->play(m_targetPlayer, 1, 1.0f);
+}
+
+void clackSound() {
+  if (!m_sfxOn) return;
+  pd->sound->sampleplayer->stop(m_clackPlayer);
+  pd->sound->sampleplayer->play(m_clackPlayer, 1, 1.0f);
 }

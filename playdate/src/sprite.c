@@ -27,8 +27,8 @@ LCDBitmap* m_wheel;
 LCDBitmap* m_spin[2];
 
 LCDBitmapTable* m_floorArrow;
-
 LCDBitmapTable* m_clack;
+LCDBitmapTable* m_playerTable;
 
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
@@ -179,6 +179,7 @@ void initSprite(PlaydateAPI* _pd) {
 
   m_floorArrow = loadImageTableAtPath(_pd, "images/floorArrow");
   m_clack = loadImageTableAtPath(_pd, "images/clack");
+  m_playerTable = loadImageTableAtPath(_pd, "images/player");
   m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
 
   m_fontMain = loadFontAtPath(_pd, "fonts/font-Bitmore-Medieval-Bold");

@@ -32,23 +32,28 @@ void renderSpikeballUpper(PlaydateAPI* _pd, int8_t _x, int8_t _y) {
   if (_status == 0) {
     // noop
   } else if (_status <= 2) {
+    if (_status == 1) targetSound();
     drawBitmap(_pd, m_target, s_x[_x]-2, s_y[_y]-2);
   } else if (_status <= 4) {
     // noop
   } else if (_status <= 6) {
+    if (_status == 5) targetSound();
     drawBitmap(_pd, m_target, s_x[_x]-2, s_y[_y]-2);
   } else if (_status <= 8) {
     // noop
   } else if (_status <= 10) {
+    if (_status == 9) targetSound();
     drawBitmap(_pd, m_target, s_x[_x]-2, s_y[_y]-2);
   } else if (_status <= 12) {
     // noop
   } else if (_status <= 14) {
     drawBitmap(_pd, m_target, s_x[_x]-2, s_y[_y]-2);
   } else if (_status <= (14 + 16)) {
+    if (_status == 15) fallSound();
     const int16_t _y_off = 32 - (_status + 10) * 2;
     drawBitmapAbs(_pd, m_ball, (s_x[_x]-2) * SIZE, (s_y[_y]-8) * SIZE - _y_off);
   } else if (_status <= 32) {
+    if (_status == (14 + 16 + 1)) boomSound();
     drawBitmap(_pd, m_bomb[3], s_x[_x]-4, s_y[_y]-4);
   } else if (_status <= 34) {
     _pd->graphics->setDrawMode(kDrawModeInverted);

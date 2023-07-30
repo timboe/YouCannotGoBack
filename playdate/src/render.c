@@ -48,7 +48,7 @@ void renderGameFrame(PlaydateAPI* _pd) {
   static const char _portraitB[] = "Played In";
   static const char _portraitC[] = "Portrait";
   static const char _portraitD[] = "Mode!";
-  static const char _portraitVersion[] = "v1.2c";
+  static const char _portraitVersion[] = "v2.0c";
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _vb = {.x = 32+16, .y = 0, .width = 32, .height = 16};
     renderText(_pd, _portraitVersion, _vb, kDrawModeFillBlack);
@@ -615,11 +615,11 @@ void renderPlayer(PlaydateAPI* _pd) {
   uint16_t _pos_x = m_player.m_position_x;
   uint16_t _pos_y = m_player.m_position_y;
   if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) --_pos_y;
+  LCDBitmap* _ps = _pd->graphics->getTableBitmap(m_playerTable, m_player.m_playerFrame);
   if (m_player.m_rotation) {
-    // TODO
-    drawCBitmapAbs(_pd, &m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
+    drawBitmapAbsRot(_pd, _ps, _pos_x + 8, _pos_y + 8, m_player.m_rotation);
   } else {
-    drawCBitmapAbs(_pd, &m_playerSprite[ m_player.m_playerFrame ], _pos_x, _pos_y);
+    drawBitmapAbs(_pd, _ps, _pos_x, _pos_y);
   }
 }
 
@@ -687,7 +687,7 @@ void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
   if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y += 4;
 
   if (_in == false && (m_dungeon.m_fallingDeath == true 
-    || m_dungeon.m_spinningDeath == true)) m_player.m_rotation += 12.0f;
+    || m_dungeon.m_spinningDeath == true)) m_player.m_rotation += 24.0f;
 
   if (m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kShortcut) m_player.m_position_x += PLAYER_SPEED;
 
