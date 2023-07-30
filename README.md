@@ -38,9 +38,13 @@ Inspired by the classic TV show Knightmare, You Cannot Go Back is a dungeon expl
   * [Powers icons](https://opengameart.org/content/powers-icons) by Clint Bellanger
   * [Blocky animated classic hero](http://opengameart.org/content/blocky-animated-classic-hero-edit) by Umz
   * [Dead forrest pixel art](https://deepglowing.itch.io/dead-forest-pixel-art-asset) by deepglowing
+  * [Stone Wall](https://opengameart.org/content/stone-wall-0) by William.Thompsonj
+  * [Spike Ball](https://opengameart.org/content/spike-ball) bu Julien
   * [8bit Dungeon Boss](https://incompetech.com/) by Kevin MacLeod
   * [8bit Dungeon Level](https://incompetech.com/) by Kevin MacLeod
   * [Buzzsaw Addiction](https://freesound.org/people/AaronGNP/sounds/108171/) by AaronGNP
   * [8-Bit Sound Effects Library](https://freesound.org/people/LittleRobotSoundFactory/packs/16681/) by LittleRobotSoundFactory
   * [Fuse](https://freesound.org/people/soundslikewillem/sounds/184519/) by soundslikewillem
   * [Walk down stairs](https://freesound.org/people/qubodup/sounds/442770/) by qubodup
+  * [Bell](https://freesound.org/people/kgeshev/sounds/378799/) by kgeshev
+  * [Blackwood Castle](https://www.1001fonts.com/blackwood-castle-font.html)
