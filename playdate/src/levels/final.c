@@ -16,7 +16,7 @@ void updateProcFinal(PlaydateAPI* _pd) {
   renderFinalPit(_pd);
 
   if (s_state > 5) {
-    int8_t _level = m_dungeon.m_level;
+    const int8_t _level = m_dungeon.m_level;
     drawCBitmap(_pd, &m_innerCorner[3], 7, 6);
     drawCBitmap(_pd, &m_innerCorner[0], 7, 12);
     drawCBitmap(_pd, &m_innerWall[3], 9, 6);

@@ -16,7 +16,7 @@ void updateProcBomb(PlaydateAPI* _pd) {
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
   renderBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb);
-  if (m_dungeon.m_level == 2) renderBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb2);
+  if (m_dungeon.m_difficulty >= 2) renderBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb2);
   renderArrows(_pd, 15, 5, 4);
 }
 
@@ -33,7 +33,7 @@ void bombTimer() {
   if (getGameState() == kMovePlayer 
       && m_player.m_position_x > SIZE*9
       && (getPlayerChoice() == s_bomb
-          || (m_dungeon.m_level == 2 
+          || (m_dungeon.m_difficulty >= 2 
               && getPlayerChoice() == s_bomb2
               )
           )
@@ -50,7 +50,7 @@ bool tickBomb(bool _doInit) {
     s_state = 0;
     s_tick = 0;
     s_bomb = rand() % 3;
-    if (m_dungeon.m_level == 2) {
+    if (m_dungeon.m_difficulty >= 2) {
       s_bomb2 = s_bomb;
       while (s_bomb2 == s_bomb) { s_bomb2 = rand() % 3; }
     }

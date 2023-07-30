@@ -12,11 +12,17 @@ static float s_slowdown = 0;
 static const char _badA[] = "AN EVIL WIND!";
 static const char _badB[] = "YOU FEEL BAD";
 
+static const char _badC[] = "AN DARK BELL!";
+static const char _badD[] = "YOU FEEL HEAVY";
+
 static const char _goodA[] = "A GOOD OMEN!";
 static const char _goodB[] = "FEELING LUCKY";
 
 static const char _goodC[] = "A FADED NOTE";
 static const char _goodD[] = "SHORTCUT FOUND";
+
+  static const char _remindA[] = "A QUIET VOICE";
+  static char _remindB[16];
 
 void updateProcGamble(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
@@ -47,11 +53,32 @@ void updateProcGamble(PlaydateAPI* _pd) {
 }
 
 GambleOutcomes_t getGambleOutcome(void) {
-  if (s_angle < 30.0f) return s_spin ? kEvilWind : kInstantDeath;
-  else if (s_angle < 150.0f) return kClover;
-  else if (s_angle < 270.0f) return kUnlockShortcut;
-  else if (s_angle < 330.0f) return kEvilWind;
-  else return s_spin ? kEvilWind : kInstantDeath;
+  if (s_angle < 30.0f) {
+    switch (s_spin) {
+      case 0: return kInstantDeath;
+      case 1: return kDifficultyUp;
+      case 2: return kEvilWind;
+    } 
+  } else if (s_angle < 150.0f) {
+    switch (s_spin) {
+      case 0: case 1: return kClover;
+      case 2: return kGiveClue;
+    } 
+  } else if (s_angle < 270.0f) {
+    return kUnlockShortcut;
+  } else if (s_angle < 330.0f) {
+    switch (s_spin) {
+      case 0: case 1: return kDifficultyUp;
+      case 2: return kEvilWind;
+    }
+  } else {
+    switch (s_spin) {
+      case 0: return kInstantDeath;
+      case 1: return kDifficultyUp;
+      case 2: return kEvilWind;
+    }
+  }
+  return kClover;
 }
 
 bool checkShortcutRoom(int _l, int _r) {
@@ -76,6 +103,7 @@ void doShortcut(void) {
 }
 
 bool tickGamble(bool _doInit) {
+  const Hints_t _hint = m_dungeon.m_roomNeedHint[m_dungeon.m_level][m_dungeon.m_room];
   if (_doInit == true) {
     s_state = 0;
     m_player.m_position_x = 0;
@@ -89,9 +117,11 @@ bool tickGamble(bool _doInit) {
     s_angle = rand() % 365;
     s_clack = (int)(s_angle + 30) % 60;
     // Unusually, prefer the easier wheel (w/o instant death) at higher levels
-    s_spin = 0;
-    if (m_dungeon.m_level == 1) s_spin = rand() % 2;
-    else if (m_dungeon.m_level == 2) s_spin = rand() % 3 ? 0 : 1;
+    s_spin = rand() % 2;
+    if (m_dungeon.m_difficulty == 1) s_spin = rand() % 3;
+    else if (m_dungeon.m_difficulty >= 2) s_spin = 1 + (rand() % 2);
+    // Don't allow the third wheel if there is no clue
+    if (_hint == kNoHint && s_spin == 2) --s_spin;
     return false; 
   }
 
@@ -125,23 +155,29 @@ bool tickGamble(bool _doInit) {
     if (s_angle > 365.0f) s_angle -= 365.0f;
     s_v *= 0.97f;
     s_v -= s_slowdown;
-    if (s_v <= 0) {
-      s_state = 5;
-    }
+    if (s_v <= 0) s_state = 5;
   } else if (s_state == 5) {
     const GambleOutcomes_t _go = getGambleOutcome();
     if (_go == kEvilWind) {
       setDisplayMsg(_badA);
       hitSound();
-      if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
+    } else if (_go == kDifficultyUp) {
+      setDisplayMsg(_badB);
+      hitSound();
     } else if (_go == kClover) {
       setDisplayMsg(_goodA);
       hitSound();
-      ++m_dungeon.m_lives;
     } else if (_go == kUnlockShortcut) {
       setDisplayMsg(_goodC);
       hitSound();
-      doShortcut();
+    } else if (_go == kGiveClue) {
+      setDisplayMsg(_remindA);
+      hitSound();
+      if ( _hint == kSpell) {
+        snprintf(_remindB, 16, "REMEMBER %s", m_spellNames[ m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room] ]);
+      } else if (_hint == kNumber) {
+        snprintf(_remindB, 16, "REMEMBER %i", m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room]);
+      }
     } else if (_go == kInstantDeath) {
       m_dungeon.m_gameOver = 1;
       setGameState(kFadeOut);
@@ -155,12 +191,22 @@ bool tickGamble(bool _doInit) {
     if (_go == kEvilWind) {
       setDisplayMsg(_badB);
       debufSound();
+      if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
+    } else if (_go == kDifficultyUp) {
+      setDisplayMsg(_badD);
+      debufSound();
+      ++m_dungeon.m_difficulty;
     } else if (_go == kClover) {
       setDisplayMsg(_goodB);
       bufSound();
+      ++m_dungeon.m_lives;
+    } else if (_go == kGiveClue) {
+      setDisplayMsg(_remindB);
+      reminderSound();
     } else if (_go == kUnlockShortcut) {
       bufSound();
       setDisplayMsg(_goodD);
+      doShortcut();
     }
     setGameState(kDisplayMsg);
     ++s_state;

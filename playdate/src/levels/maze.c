@@ -59,18 +59,18 @@ void updateProcMaze(PlaydateAPI* _pd) {
   LCDColor _c1 = kColorWhite, _c2 = kColorWhite;
   int _w = 4;
 
-  switch (m_dungeon.m_level) {
+  switch (m_dungeon.m_difficulty) {
     case 0: _c1 = kColorWhite; _c2 = kColorBlack; _w = 4; break;
     case 1: _c1 = kColorBlack; _c2 = kColorWhite; _w = 4; break;
     default: _c1 = kColorWhite; _w = 1; break;
   }
   lines(_pd, _c1, _w);
 
-  if (m_dungeon.m_level < 3) {
+  if (m_dungeon.m_difficulty < 2) {
     lines(_pd, _c2, _w/2);
   } 
 
-  if (m_dungeon.m_level == 2) renderClutter(_pd); // Obscure
+  if (m_dungeon.m_difficulty >= 2) renderClutter(_pd); // Obscure
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);

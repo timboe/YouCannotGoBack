@@ -6,6 +6,8 @@
 typedef enum {
   kClover,
   kUnlockShortcut,
+  kGiveClue,
+  kDifficultyUp,
   kEvilWind,
   kInstantDeath,
   kNGambleTypes

@@ -70,8 +70,8 @@ bool tickShapes(PlaydateAPI* _pd, bool _doInit) {
       _pd->graphics->popContext();
     }
 
-    int _rot = m_dungeon.m_level > 0 ? rand() % 4 : 0;
-    int _f = m_dungeon.m_level > 1 ? rand() % 3 : 0;
+    int _rot = m_dungeon.m_difficulty > 0 ? rand() % 4 : 0;
+    int _f = m_dungeon.m_difficulty > 1 ? rand() % 3 : 0;
     LCDBitmapFlip _flip = kBitmapUnflipped;
     switch (_f) {
       case 1: _flip = kBitmapFlippedX; break;

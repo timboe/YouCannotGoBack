@@ -69,6 +69,8 @@ void populateScroll(PlaydateAPI* _pd,
   }
 }
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 bool tickGreek(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     #ifdef DEV
@@ -80,7 +82,7 @@ bool tickGreek(PlaydateAPI* _pd, bool _doInit) {
     memset(s_strB, 0, BUF_SIZE);
     memset(s_strC, 0, BUF_SIZE);
 
-    const int _lettersThisLevel = TOTAL_LETTERS/3 * (m_dungeon.m_level + 1);
+    const int _lettersThisLevel = MIN(6, TOTAL_LETTERS/3 * (m_dungeon.m_difficulty + 1));
 
     // Each clue symbol gets included at least once per string
     int _cluePoint[3] = {0};

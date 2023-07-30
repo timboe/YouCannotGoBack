@@ -89,7 +89,7 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
       snprintf(s_timeDisplay, 64, "TIME %im%is", (m_dungeon.m_ticksTotal/ANIM_FPS) / 60, (m_dungeon.m_ticksTotal/ANIM_FPS) % 60);
       s_score = SCORE_MAX - m_dungeon.m_ticksTotal * LOSS_PER_TICK;
       //TESTING - reduce the score a LOT
-      //s_score -= 9000;
+      //s_score -= 9000; 
       if (s_score < 0) s_score = 0;
       snprintf(s_scoreDisplay, 64, "SCORE %i", s_score);
       snprintf(s_bestDisplay, 64, "BEST ????");
@@ -99,10 +99,10 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
       #ifdef DEV
       if (addScore) _pd->system->logToConsole("addScore returned %i", addScore);
       #endif
-      // const int getPB = _pd->scoreboards->getPersonalBest(BOARD_NAME, personalBestCallback);
-      // #ifdef DEV
-      // if (getPB) _pd->system->logToConsole("getPersonalBest returned %i", getPB);
-      // #endif
+      const int getPB = _pd->scoreboards->getPersonalBest(BOARD_NAME, personalBestCallback);
+      #ifdef DEV
+      if (getPB) _pd->system->logToConsole("getPersonalBest returned %i", getPB);
+      #endif
     }
     return false;
   }

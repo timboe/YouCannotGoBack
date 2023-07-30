@@ -50,10 +50,10 @@ bool tickSpikes(bool _doInit) {
     s_scale[0] = 0;
     s_scale[1] = 0;
     s_scale[2] = 0;
-    switch (m_dungeon.m_level) {
+    switch (m_dungeon.m_difficulty) {
       case 0: s_ctotal = 32; s_countdown[0] = 22; s_countdown[1] = 11; s_countdown[2] = 1; break;
       case 1: s_ctotal = 16; s_countdown[0] = 1; s_countdown[1] = 1; s_countdown[2] = 1; break;
-      case 2: s_ctotal = 1; s_countdown[0] = rand()%16 + 1; s_countdown[1] = rand()%16 + 1; s_countdown[2] = rand()%16 + 1; break;
+      default: s_ctotal = 1; s_countdown[0] = rand()%16 + 1; s_countdown[1] = rand()%16 + 1; s_countdown[2] = rand()%16 + 1; break;
     }
     return false;
   }

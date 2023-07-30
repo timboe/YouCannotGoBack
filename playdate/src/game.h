@@ -97,6 +97,7 @@ typedef struct {
   int8_t m_level;
   int8_t m_room;
   int8_t m_lives;
+  int8_t m_difficulty;
   int8_t m_totalRooms;
   int8_t m_roomsVisited;
   int8_t m_roomsPerLevel[MAX_LEVELS];

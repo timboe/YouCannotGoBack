@@ -43,11 +43,11 @@ void updateProcArrows(PlaydateAPI* _pd) {
 
   // render floor arrows
   const bool _r = m_player.m_position_x > SIZE*8 && getFlash(true);
-  const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
-  const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
+  const int8_t MAX_X = (m_dungeon.m_difficulty == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_difficulty == 0 ? 3 : 7);
   for (int _x = 0; _x < MAX_X; ++_x) {
     for (int _y = 0; _y < MAX_Y; ++_y) {
-      if (m_dungeon.m_level == 0) {
+      if (m_dungeon.m_difficulty == 0) {
         _pd->graphics->setDrawMode(_r && s_maze0[_x][_y] == 2 ? kDrawModeInverted : kDrawModeCopy);
         drawBitmap(_pd, bmp(_pd, s_mazeDisp0[_x][_y]), 4 + (4*_x), 5 + (4*_y));
       } else {
@@ -69,8 +69,8 @@ void updateProcArrows(PlaydateAPI* _pd) {
 void pushStack(int8_t _x, int8_t _y) {
   s_stack[(s_head * 2) + 0] = _x;
   s_stack[(s_head * 2) + 1] = _y;
-  if (m_dungeon.m_level == 0) s_maze0[_x][_y] = 1;
-  else                        s_maze1[_x][_y] = 1;
+  if (m_dungeon.m_difficulty == 0) s_maze0[_x][_y] = 1;
+  else                             s_maze1[_x][_y] = 1;
   ++s_head;
 }
 
@@ -86,11 +86,11 @@ void getStack(uint16_t _loc, int8_t* _xPtr, int8_t* _yPtr) {
 }
 
 bool getOccupied(int8_t _x, int8_t _y) {
-  const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
-  const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
+  const int8_t MAX_X = (m_dungeon.m_difficulty == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_difficulty == 0 ? 3 : 7);
   if (_x < 0 || _x >= MAX_X || _y < 0 || _y >= MAX_Y) return true;
-  if (m_dungeon.m_level == 0) return s_maze0[_x][_y];
-  else return s_maze1[_x][_y];
+  if (m_dungeon.m_difficulty == 0) return s_maze0[_x][_y];
+  else                             return s_maze1[_x][_y];
 }
 
 bool tryMove(int8_t* _xPtr, int8_t* _yPtr, bool _backtrack) {
@@ -101,7 +101,7 @@ bool tryMove(int8_t* _xPtr, int8_t* _yPtr, bool _backtrack) {
   if (!getOccupied(*_xPtr + 1, *_yPtr + 0)) _options[_nOpt++] = kE;
   if (!getOccupied(*_xPtr + 0, *_yPtr + 1)) _options[_nOpt++] = kS;
   if (!getOccupied(*_xPtr - 1, *_yPtr + 0)) _options[_nOpt++] = kW;
-  if (m_dungeon.m_level == 2) {
+  if (m_dungeon.m_difficulty >= 2) {
     if (!getOccupied(*_xPtr + 1, *_yPtr - 1)) _options[_nOpt++] = kNE;
     if (!getOccupied(*_xPtr + 1, *_yPtr + 1)) _options[_nOpt++] = kSE;
     if (!getOccupied(*_xPtr - 1, *_yPtr + 1)) _options[_nOpt++] = kSW;
@@ -134,11 +134,11 @@ void gen(PlaydateAPI* _pd) {
   memset(&s_maze0, 0, sizeof(uint8_t)*3*3);
   memset(&s_maze1, 0, sizeof(uint8_t)*5*7);
   memset(&s_stack, 0, sizeof(uint8_t)*5*7*2);
-  const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
-  const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
+  const int8_t MAX_X = (m_dungeon.m_difficulty == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_difficulty == 0 ? 3 : 7);
   uint8_t _begin, _end;
   // Modify entry and exit points for the larger maze
-  if (m_dungeon.m_level == 0) {
+  if (m_dungeon.m_difficulty == 0) {
     _begin = s_start;
     _end = s_correct;
   }  else {
@@ -197,7 +197,7 @@ void set(PlaydateAPI* _pd) {
     #ifdef DEV
     _pd->system->logToConsole(" APath: Path %i,%i ->  %i,%i", _curX, _curY, _toX, _toY);
     #endif
-    if (m_dungeon.m_level == 0) {
+    if (m_dungeon.m_difficulty == 0) {
       s_mazeDisp0[_curX][_curY] = getDir(_curX, _curY, _toX, _toY);
       s_maze0[_curX][_curY] = 2; // on the path
     } else {
@@ -211,7 +211,7 @@ void set(PlaydateAPI* _pd) {
     #ifdef DEV
     _pd->system->logToConsole(" APath: FIN %i,%i", _x, _y);
     #endif
-  if (m_dungeon.m_level == 0) {
+  if (m_dungeon.m_difficulty == 0) {
     s_maze0[_x][_y] = 2;
   } else {
     s_maze1[_x][_y] = 2;
@@ -221,8 +221,8 @@ void set(PlaydateAPI* _pd) {
 bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
   #define TICK 6
   if (_doInit == true) {
-    const int8_t MAX_X = (m_dungeon.m_level == 0 ? 3 : 5);
-    const int8_t MAX_Y = (m_dungeon.m_level == 0 ? 3 : 7);
+    const int8_t MAX_X = (m_dungeon.m_difficulty == 0 ? 3 : 5);
+    const int8_t MAX_Y = (m_dungeon.m_difficulty == 0 ? 3 : 7);
     s_state = 0;
     s_tickA = TICK/3;
     s_tickB = TICK;
@@ -231,15 +231,15 @@ bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
     s_start = rand() % 3; // entry point
     s_correct = rand() % 3; // exit point
     // Randomize
-    const uint8_t maxR = m_dungeon.m_level == 2 ? 8 : 4;
+    const uint8_t maxR = m_dungeon.m_difficulty >= 2 ? 8 : 4;
     for (int _x = 0; _x < MAX_X; ++_x) {
       for (int _y = 0; _y < MAX_Y; ++_y) {
-        if (m_dungeon.m_level == 0) s_mazeDisp0[_x][_y] = (Options_t) rand() % maxR;
-        else                        s_mazeDisp1[_x][_y] = (Options_t) rand() % maxR;
+        if (m_dungeon.m_difficulty == 0) s_mazeDisp0[_x][_y] = (Options_t) rand() % maxR;
+        else                             s_mazeDisp1[_x][_y] = (Options_t) rand() % maxR;
       }
     }
     // But the three exits always point right
-    if (m_dungeon.m_level == 0) {
+    if (m_dungeon.m_difficulty == 0) {
       s_mazeDisp0[2][0] = kE;
       s_mazeDisp0[2][1] = kE;
       s_mazeDisp0[2][2] = kE;

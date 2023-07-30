@@ -151,8 +151,8 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
 
     // Choose spike drop order
     uint8_t r;
-    const uint8_t _level = m_dungeon.m_level;
-    if (_level == 0) {
+    const uint8_t _diff = m_dungeon.m_difficulty;
+    if (_diff == 0) {
       // Slow Left
       s_a0[1][rand() % 3] = 1;
 
@@ -175,7 +175,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
       s_a1[1][r] = 1;
     }
 
-    if (_level < 2) {
+    if (_diff < 2) {
       // Slow Right
       s_a1[2][rand() % 3] = 1;
 

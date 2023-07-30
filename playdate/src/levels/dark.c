@@ -48,7 +48,7 @@ bool tickDark(bool _doInit) {
   }
 
   if (s_state < 3) { // start initial move
-    s_ringSize += 1 + m_dungeon.m_level;
+    s_ringSize += 1 + m_dungeon.m_difficulty;
     if (s_ringSize > 20) {
       ++s_state;
       darkSound(s_correct[s_state]);

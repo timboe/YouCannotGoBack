@@ -15,7 +15,7 @@ void updateProcSaw(PlaydateAPI* _pd) {
 
   renderSawFloor(_pd, s_offset);
   renderPlayer(_pd);
-  if (s_count < 4 + m_dungeon.m_level) {
+  if (s_count < 4 + m_dungeon.m_difficulty) {
     if (s_type[s_count] == 1) {
       drawBitmapAbsRot(_pd, m_sawA, s_position + PD_OFFSET, 5*SIZE, s_rotation);
     } else if (s_type[s_count] == 3) {
@@ -55,7 +55,7 @@ bool tickSaw(bool _doInit) {
      ++s_state;
   } else if (s_state == 1) {
     setGameState(kLevelSpecificWButtons);
-    s_rotation += 5.0f + (m_dungeon.m_level * 2.0f);
+    s_rotation += 5.0f + (m_dungeon.m_difficulty * 2.0f);
     if (getFrameCount() % 3 == 0) {
       if (++m_player.m_playerFrame == MAX_FRAMES) {
         m_player.m_playerFrame = 0;
@@ -69,8 +69,8 @@ bool tickSaw(bool _doInit) {
     if      (m_player.m_target_y > m_player.m_position_y) m_player.m_position_y += PLAYER_SPEED;
     else if (m_player.m_target_y < m_player.m_position_y) m_player.m_position_y -= PLAYER_SPEED;
 
-    if (s_count < 4 + m_dungeon.m_level) {
-      s_position -= 3 + m_dungeon.m_level;
+    if (s_count < 4 + m_dungeon.m_difficulty) {
+      s_position -= 3 + m_dungeon.m_difficulty;
       if (s_position < -80) {
         s_position = 144;
         ++s_count;

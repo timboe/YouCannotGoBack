@@ -81,6 +81,7 @@ bool newRoom() {
     m_dungeon.m_rooms[0][0] = kEnd;
   } else  if ( ++m_dungeon.m_room == m_dungeon.m_roomsPerLevel[ m_dungeon.m_level ] ) { // New level
     ++m_dungeon.m_level;
+    ++m_dungeon.m_difficulty;
     m_dungeon.m_room = 0;
     if (m_dungeon.m_level == MAX_LEVELS-1) {
       updateMusic(1); // Moving in to the final level
