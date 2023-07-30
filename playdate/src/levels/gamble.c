@@ -12,13 +12,13 @@ static float s_slowdown = 0;
 static const char _badA[] = "AN EVIL WIND!";
 static const char _badB[] = "YOU FEEL BAD";
 
-static const char _badC[] = "AN DARK BELL!";
+static const char _badC[] = "AN EVIL BELL!";
 static const char _badD[] = "YOU FEEL HEAVY";
 
 static const char _goodA[] = "A GOOD OMEN!";
 static const char _goodB[] = "FEELING LUCKY";
 
-static const char _goodC[] = "A FADED NOTE";
+static const char _goodC[] = "AN AGED SIGN";
 static const char _goodD[] = "SHORTCUT FOUND";
 
   static const char _remindA[] = "A QUIET VOICE";
@@ -162,8 +162,8 @@ bool tickGamble(bool _doInit) {
       setDisplayMsg(_badA);
       hitSound();
     } else if (_go == kDifficultyUp) {
-      setDisplayMsg(_badB);
-      hitSound();
+      setDisplayMsg(_badC);
+      bellSound();
     } else if (_go == kClover) {
       setDisplayMsg(_goodA);
       hitSound();
@@ -194,7 +194,6 @@ bool tickGamble(bool _doInit) {
       if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
     } else if (_go == kDifficultyUp) {
       setDisplayMsg(_badD);
-      debufSound();
       ++m_dungeon.m_difficulty;
     } else if (_go == kClover) {
       setDisplayMsg(_goodB);

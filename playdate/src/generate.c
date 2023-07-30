@@ -60,12 +60,12 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
 
-      _newRoom = kStart;
+      _newRoom = kStart; // TODO test pattern
+      //m_dungeon.m_difficulty = 5;
 
-    } else if (TESTING && _level == 0 && _room == 1) {
+    //} else if (TESTING && _level == 0 && _room == 1) {
 
-      //_newRoom = kSBall; // TESTING
-      //m_dungeon.m_gameOver = 2; // TESTING
+      //_newRoom = kGreek; // TESTING
       //(*_consumeHint) = kGreekLetter; // TESTING
       //m_dungeon.m_lives = 0; // TESTING
 
@@ -120,8 +120,8 @@ void generate(PlaydateAPI* _pd) {
   #endif
 
   // Now we have high-scores, keep the total number of rooms consistent
-  #define TOT_ROOMS 30
-  #define ROOM_MIN 9
+  #define TOT_ROOMS 33
+  #define ROOM_MIN 10
   #define ROOM_VAR 3
   
   m_dungeon.m_totalRooms = TOT_ROOMS;
@@ -148,9 +148,9 @@ void generate(PlaydateAPI* _pd) {
       // Can we add a hint to this room?
       Hints_t _addHint = getHint(_level, _roomType);
 
-      if (TESTING && _level == 0 && _room == 0) {
-        //_addHint = kGreekLetter; // TESTING
-      }
+      //if (TESTING && _level == 0 && _room == 0) {
+      //  _addHint = kGreekLetter; // TESTING
+      //}
 
       if (_addHint != kNoHint) {
         ++m_hintsInPlay;
@@ -177,10 +177,12 @@ void generate(PlaydateAPI* _pd) {
         m_hintValue[_consumeHint] = 0;
       }
 
-      // Special for CHEST room, REMINDER
-      // By increasing the numbe on the right, we make it less likley that the player
-      // will get an extra life once they have been given a hint
-      if (_roomType == kChest && (m_hintIsActive[kSpell] == true || m_hintIsActive[kNumber] == true) && rand() % 6 != 0) {
+      // Special for CHEST/GAMBLE room, REMINDER
+      // By increasing the number on the right, we make it less likely that the player
+      // will get an extra life once they have been given a hint (chest only)
+      bool canGiveHint = m_hintIsActive[kSpell] || m_hintIsActive[kNumber];
+      canGiveHint &= (_roomType == kChest && rand() % 6) || _roomType == kGamble;
+      if (canGiveHint) {
         if (m_hintIsActive[kSpell] == true) {
           m_dungeon.m_roomNeedHint[_level][_room] = kSpell;
           m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[kSpell];

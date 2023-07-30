@@ -31,6 +31,7 @@ void stairsSound(void);
 void fuseSound(bool _start);
 void targetSound(void);
 void clackSound(void);
+void bellSound(void);
 
 //TODO
 void correctSound(void);

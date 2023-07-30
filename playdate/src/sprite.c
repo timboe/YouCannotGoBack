@@ -23,8 +23,12 @@ LCDBitmap* m_target;
 LCDBitmap* m_ball;
 LCDBitmap* m_danger;
 
+LCDBitmap* m_parchment;
+
 LCDBitmap* m_wheel;
-LCDBitmap* m_spin[2];
+LCDBitmap* m_spin[3];
+
+LCDBitmap* m_ycgb;
 
 LCDBitmapTable* m_floorArrow;
 LCDBitmapTable* m_clack;
@@ -32,7 +36,6 @@ LCDBitmapTable* m_playerTable;
 
 LCDFont* m_fontMain;
 LCDFont* m_fontMsg;
-LCDFont* m_fontIntro;
 LCDFont* m_fontGreek;
 
 struct CBitmap m_UOuterWall[3];
@@ -173,9 +176,14 @@ void initSprite(PlaydateAPI* _pd) {
   m_ball = loadImageAtPath(_pd, "images/ball");
   m_danger = loadImageAtPath(_pd, "images/danger");
 
+  m_parchment = loadImageAtPath(_pd, "images/parchment");
+
   m_wheel = loadImageAtPath(_pd, "images/wheel_frame");
   m_spin[0] = loadImageAtPath(_pd, "images/wheel_inner0");
   m_spin[1] = loadImageAtPath(_pd, "images/wheel_inner1");
+  m_spin[2] = loadImageAtPath(_pd, "images/wheel_inner2");
+
+  m_ycgb = loadImageAtPath(_pd, "images/ycgb");
 
   m_floorArrow = loadImageTableAtPath(_pd, "images/floorArrow");
   m_clack = loadImageTableAtPath(_pd, "images/clack");
@@ -184,7 +192,6 @@ void initSprite(PlaydateAPI* _pd) {
 
   m_fontMain = loadFontAtPath(_pd, "fonts/font-Bitmore-Medieval-Bold");
   m_fontMsg = loadFontAtPath(_pd, "fonts/Roobert-9-Mono-Condensed");
-  m_fontIntro = loadFontAtPath(_pd, "fonts/font-full-circle");
   m_fontGreek = loadFontAtPath(_pd, "fonts/Greek-8");
 
   _pd->graphics->setFont(m_fontMain);

@@ -56,8 +56,9 @@ bool tickMaths(PlaydateAPI* _pd, bool _doInit) {
     addCluter(5, 20, 1);
 
     s_puzzle = rand() % kNMathsPuzzles; // Choose seq
-    s_sequence[0] = (10 * m_dungeon.m_difficulty) + rand()%25; // Choose starting
-    uint16_t _mod = 1 + rand() % (5 + m_dungeon.m_difficulty * 2); // Chose modifier
+    uint8_t _difficulty = MIN(4, m_dungeon.m_difficulty);
+    s_sequence[0] = (10 * _difficulty) + rand()%25; // Choose starting
+    uint16_t _mod = 1 + rand() % (5 + _difficulty * 2); // Chose modifier
     for (int _i = 1; _i < 4; ++_i) {
       switch (s_puzzle) {
         case kAdd: s_sequence[_i] = s_sequence[_i - 1] + _mod; break; // Do seq

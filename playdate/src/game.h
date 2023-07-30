@@ -11,6 +11,8 @@
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 typedef enum {
   kStart,    // Special
   kStairs,   // Special

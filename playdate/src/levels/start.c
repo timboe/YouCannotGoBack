@@ -5,23 +5,7 @@ static uint16_t s_state = 0;
 void updateProcStart(PlaydateAPI* _pd) {
 
   renderFloor(_pd, 0);
-
-  static const char* _a = "YOU";
-  static const char* _b = "CANNOT";
-  static const char* _c = "GO";
-  static const char* _d = "BACK!";
-
-  const static int _yoff = SIZE + (SIZE/2);
-  PDRect _ra = {.x = 34, .y = 15+_yoff, .width = 80, .height = 100};
-  PDRect _rb = {.x = 34, .y = 45+_yoff, .width = 80, .height = 100};
-  PDRect _rc = {.x = 34, .y = 75+_yoff, .width = 80, .height = 100};
-  PDRect _rd = {.x = 34, .y = 105+_yoff, .width = 80, .height = 100};
-
-  static const int _offset = 2;
-  renderBorderText(_pd, _ra, m_fontIntro, _a, _offset, false);
-  renderBorderText(_pd, _rb, m_fontIntro, _b, _offset, true);
-  renderBorderText(_pd, _rc, m_fontIntro, _c, _offset, false);
-  renderBorderText(_pd, _rd, m_fontIntro, _d, _offset, true);
+  drawBitmapAbs(_pd, m_ycgb, 36, 16);
   renderClutter(_pd);
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);
@@ -42,26 +26,11 @@ bool tickStart(bool _doInit) {
     return false;
   }
 
-  static bool _first = false; // Redundant on playdate
-  static const char _msgA[] = "SHAKE TO TURN...";
-  static const char _msgB[] = "ON BACKLIGHT";
-
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
-    if (_first == true) {
-      setDisplayMsg(_msgA);
-      setGameState(kDisplayMsg);
-      s_state = 2;
-      _first = false;
-    } else {
-      setGameState(kAwaitInput);
-      s_state = 4;
-    }
-  } else if (s_state == 2) {
-    setDisplayMsg(_msgB);
-    setGameState(kDisplayMsg);
-    ++s_state;
+    setGameState(kAwaitInput);
+    s_state = 4;
   } else if (s_state == 3) {
     setGameState(kAwaitInput);
     ++s_state;

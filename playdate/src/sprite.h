@@ -47,8 +47,12 @@ extern LCDBitmap* m_target;
 extern LCDBitmap* m_ball;
 extern LCDBitmap* m_danger;
 
+extern LCDBitmap* m_parchment;
+
 extern LCDBitmap* m_wheel;
-extern LCDBitmap* m_spin[2];
+extern LCDBitmap* m_spin[3];
+
+extern LCDBitmap* m_ycgb;
 
 extern LCDBitmapTable* m_floorArrow;
 extern LCDBitmapTable* m_clack;
@@ -102,5 +106,4 @@ extern struct CBitmap m_symbol[MAX_SYMBOL];
 
 extern LCDFont* m_fontMain;
 extern LCDFont* m_fontMsg;
-extern LCDFont* m_fontIntro;
 extern LCDFont* m_fontGreek;

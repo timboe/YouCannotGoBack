@@ -9,14 +9,16 @@ static uint16_t s_tick = 0;
 const static uint16_t s_ticks[3] = {80, 60, 40};
 
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 void updateProcBomb(PlaydateAPI* _pd) {
   renderFloor(_pd, 0);
   renderClutter(_pd);
   renderPlayer(_pd);
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
-  renderBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb);
-  if (m_dungeon.m_difficulty >= 2) renderBomb(_pd, s_tick/s_ticks[ m_dungeon.m_level ], s_bomb2);
+  renderBomb(_pd, s_tick/s_ticks[ MIN(2, m_dungeon.m_difficulty) ], s_bomb);
+  if (m_dungeon.m_difficulty >= 2) renderBomb(_pd, s_tick/s_ticks[ MIN(2, m_dungeon.m_difficulty) ], s_bomb2);
   renderArrows(_pd, 15, 5, 4);
 }
 
@@ -24,7 +26,7 @@ void bombTimer() {
   if (s_state >= 4) return; 
 
   // Time out
-  if (++s_tick > s_ticks[ m_dungeon.m_level ] * 3) {
+  if (++s_tick > s_ticks[ MIN(2, m_dungeon.m_difficulty) ] * 3) {
     s_state = 4;
     setGameState(kLevelSpecific);
   }
@@ -40,7 +42,7 @@ void bombTimer() {
       ) 
   {
     s_state = 4;
-    s_tick = s_ticks[ m_dungeon.m_level ] * 3;
+    s_tick = s_ticks[ MIN(2, m_dungeon.m_difficulty) ] * 3;
     setGameState(kLevelSpecific);
   }
 }
@@ -78,5 +80,5 @@ bool tickBomb(bool _doInit) {
     boomSound();
   }
 
-  return s_tick % s_ticks[ m_dungeon.m_level ] == 0;
+  return s_tick % s_ticks[ MIN(2, m_dungeon.m_difficulty) ] == 0;
 }
