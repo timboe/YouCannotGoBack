@@ -60,8 +60,8 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
 
-      _newRoom = kStart; // TODO test pattern
-      //m_dungeon.m_difficulty = 5;
+      _newRoom = kStart;
+      //m_dungeon.m_difficulty = 5; // TESTING
 
     //} else if (TESTING && _level == 0 && _room == 1) {
 
@@ -104,6 +104,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
 void generate(PlaydateAPI* _pd) {
 
   memset(&m_dungeon, 0, sizeof(Dungeon_t));
+  memset(&m_player, 0, sizeof(Player_t));
   m_dungeon.m_seed = _pd->system->getSecondsSinceEpoch(NULL);
   srand(m_dungeon.m_seed);
   m_dungeon.m_finalPuzzle = rand() % 3;
