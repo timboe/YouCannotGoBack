@@ -214,15 +214,15 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
 
   uint8_t (*_activate)[3][3];
   _activate = NULL;
-  // Was 50 when there was a warning too
+  // Was F_START = 50 when there was a warning too
+  // Make the timer a little less punishing on L1
   #define F_START 10
-  switch (s_frame) {
-    case F_START: s_state = 1; _activate = &s_a0; break;
-    case F_START+(1*22): _activate = &s_a1; break;
-    case F_START+(3*22): _activate = &s_a2; break;
-    case F_START+(5*22): _activate = &s_a3; break;
-    case F_START+(7*22): s_s[0][1] = 1; break; // In case the player didn't move
-  }
+  const int DELAY   = (m_dungeon.m_difficulty == 0 ? 32 : 22); 
+  if      (s_frame == F_START)           { s_state = 1; _activate = &s_a0; }
+  else if (s_frame == F_START+(1*DELAY)) { _activate = &s_a1; }
+  else if (s_frame == F_START+(3*DELAY)) { _activate = &s_a2; }
+  else if (s_frame == F_START+(5*DELAY)) { _activate = &s_a3; }
+  else if (s_frame == F_START+(7*DELAY)) { s_s[0][1] = 1; } // In case the player didn't move
   if (_activate) {
     #ifdef DEV
     _pd->system->logToConsole("Activate");

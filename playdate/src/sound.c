@@ -52,9 +52,14 @@ void music(bool _onoff) {
 void sfx(bool _onoff) {
   m_sfxOn = _onoff;
   if (!m_sfxOn) {
-    sawSound(false);
-    fuseSound(false);
+    stopSounds();
   }
+}
+
+void stopSounds(void) {
+  sawSound(false);
+  fuseSound(false);
+  pd->sound->sampleplayer->setVolume(m_loopPlayer, 1.0f, 1.0f);
 }
 
 void initSound(PlaydateAPI* _pd) {
@@ -250,6 +255,7 @@ void fuseSound(bool _start) {
   if (_start && m_sfxOn) {
     pd->sound->sampleplayer->setSample(m_loopPlayer, m_fuse);
     pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
+    pd->sound->sampleplayer->setVolume(m_loopPlayer, 1.0f, 1.0f);
   } else {
     pd->sound->sampleplayer->stop(m_loopPlayer);
   }

@@ -244,9 +244,13 @@ bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
       s_mazeDisp0[2][1] = kE;
       s_mazeDisp0[2][2] = kE;
     } else {
+      s_mazeDisp1[4][0] = kSE;
       s_mazeDisp1[4][1] = kE;
+      s_mazeDisp1[4][2] = rand() % 2 ? kSE : kNE;
       s_mazeDisp1[4][3] = kE;
+      s_mazeDisp1[4][4] = rand() % 2 ? kSE : kNE;
       s_mazeDisp1[4][5] = kE;
+      s_mazeDisp1[4][6] = kNE;
     }
     // Make path
     gen(_pd);

@@ -61,6 +61,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     if (_level == 0 && _room == 0) { // First room
 
       _newRoom = kStart;
+      //_newRoom = kSBall;
       //m_dungeon.m_difficulty = 5; // TESTING
 
     //} else if (TESTING && _level == 0 && _room == 1) {
@@ -113,22 +114,25 @@ void generate(PlaydateAPI* _pd) {
     m_hintIsActive[_i] = 0;
   }
   m_dungeon.m_room = -1; // Will be incremented on kNewLevel
-  m_dungeon.m_lives = 1;
+  m_dungeon.m_lives = 0; // New for 2.0 - don't start with a life, now an extra way to get one
   updateMusic(0); // Reset
+  stopSounds(); // Reset
 
   #ifdef DEV
   _pd->system->logToConsole("win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
   #endif
 
   // Now we have high-scores, keep the total number of rooms consistent
-  #define TOT_ROOMS 33
-  #define ROOM_MIN 10
+  #define TOT_ROOMS 35
+  #define ROOM_MIN 11
   #define ROOM_VAR 3
-  
+  // Level 0, 1: 10-12 rooms
+  // Level 2: 11-15 (deliberate skew)
+
   m_dungeon.m_totalRooms = TOT_ROOMS;
 
-  m_dungeon.m_roomsPerLevel[0] = ROOM_MIN + rand() % ROOM_VAR;
-  m_dungeon.m_roomsPerLevel[1] = ROOM_MIN + rand() % ROOM_VAR;
+  m_dungeon.m_roomsPerLevel[0] = ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
+  m_dungeon.m_roomsPerLevel[1] = ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
   m_dungeon.m_roomsPerLevel[2] = TOT_ROOMS - m_dungeon.m_roomsPerLevel[1] - m_dungeon.m_roomsPerLevel[0];
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {

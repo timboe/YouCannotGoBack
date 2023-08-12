@@ -13,7 +13,7 @@ static int s_rank = 0;
 static PlaydateAPI* s_cachedPtr;
 
 #define SCORE_MAX 10000
-#define LOSS_PER_TICK 2
+#define LOSS_PER_TICK 1
 
 #define BOARD_NAME "High Scores"
 
@@ -45,19 +45,27 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
     _rect2.y += 14;
     static int16_t _basicTimer = 0;
     ++_basicTimer;
-    if (_basicTimer < 10) {
+    bool always = false;
+#ifndef SCOREBOARD
+    always = true;
+#endif
+    if (_basicTimer < 10 || always) {
       renderBorderText(_pd, _rect2, m_fontMain, s_scoreDisplay, 2, false);
     } else  {
       renderBorderText(_pd, _rect2, m_fontMain, s_bestDisplay, 2, false);
       if (_basicTimer == 20) _basicTimer = 0;
     }
+#ifdef SCOREBOARD
     _rect2.y += 14;
     renderBorderText(_pd, _rect2, m_fontMain, s_rankDisplay, 2, false);
+#endif
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawCBitmap(_pd, &m_arrow_d, 8, 12);
     }
   }
 }
+
+#ifdef SCOREBOARD
 
 void addScoreCallback(PDScore* score, const char* errorMessage) {
   #ifdef DEV
@@ -81,6 +89,8 @@ void personalBestCallback(PDScore* score, const char* errorMessage) {
   s_cachedPtr->scoreboards->freeScore(score);
 }
 
+#endif
+
 bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
@@ -92,7 +102,7 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
       snprintf(s_scoreDisplay, 64, "SCORE %i", s_score);
       snprintf(s_bestDisplay, 64, "BEST ????");
       snprintf(s_rankDisplay, 64, "RANK ????");
-
+#ifdef SCOREBOARD
       const int addScore = _pd->scoreboards->addScore(BOARD_NAME, s_score, addScoreCallback);
       #ifdef DEV
       if (addScore) _pd->system->logToConsole("addScore returned %i", addScore);
@@ -101,6 +111,7 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
       #ifdef DEV
       if (getPB) _pd->system->logToConsole("getPersonalBest returned %i", getPB);
       #endif
+#endif
     }
     return false;
   }

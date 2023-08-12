@@ -8,6 +8,8 @@ void deinitSound(void);
 void music(bool _onoff);
 void sfx(bool _onoff);
 
+void stopSounds(void);
+
 void updateMusic(uint8_t _status);
 
 void fireSound(void);
