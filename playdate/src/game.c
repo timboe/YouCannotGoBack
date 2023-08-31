@@ -209,7 +209,7 @@ void clickHandlerReplacement() {
   PDButtons current, pushed, released = 0;
   pd->system->getButtonState(&current, &pushed, &released);
   if (m_rotated) {
-    //if (pushed & kButtonUp) gameClickConfigHandler(kButtonLeft); // Button not used
+    if (pushed & kButtonUp) noSound(); // Button not used
     if (pushed & kButtonRight) gameClickConfigHandler(kButtonUp);
     if (pushed & kButtonDown) gameClickConfigHandler(kButtonRight);
     if (pushed & kButtonLeft) gameClickConfigHandler(kButtonDown);
@@ -217,10 +217,10 @@ void clickHandlerReplacement() {
     if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
     if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
     if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
-    //if (pushed & kButtonLeft) gameClickConfigHandler(kButtonLeft); // Button not used
+    if (pushed & kButtonLeft) noSound(); // Button not used
   }
-  //if (pushed & kButtonA) gameClickConfigHandler(kButtonA); // Button not used
-  //if (pushed & kButtonB) gameClickConfigHandler(kButtonB); // Button not used
+  if (pushed & kButtonA) noSound(); // Button not used
+  if (pushed & kButtonB) noSound(); // Button not used
 
   static float fx, fy, fz;
   if (m_autoRotation) {
@@ -295,8 +295,9 @@ int gameLoop(void* data) {
   }
 
   // Rotation prompt
-  if (!m_rotated && m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kStart) requestRedraw = true;
-
+  if (!m_rotated && m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kStart) {
+    requestRedraw = true;
+  }
 
   if (requestRedraw) {
     dungeonUpdateProc();

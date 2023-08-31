@@ -95,7 +95,7 @@ typedef enum {
 
 #define MAX_LEVELS 3
 #define MIN_ROOMS 6
-#define MAX_ROOMS 12
+#define MAX_ROOMS 20
 typedef struct {
   int8_t m_level;
   int8_t m_room;
@@ -111,8 +111,8 @@ typedef struct {
   int8_t m_roomNeedHintValue[MAX_LEVELS][MAX_ROOMS];
   int8_t m_finalPuzzle;
   int8_t m_gameOver;
-  bool m_fallingDeath;
-  bool m_spinningDeath;
+  int8_t m_fallingDeath;
+  int8_t m_spinningDeath;
   uint32_t m_seed;
   uint16_t m_ticksInLevel;
   uint16_t m_ticksTotal;

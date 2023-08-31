@@ -34,6 +34,7 @@ void fuseSound(bool _start);
 void targetSound(void);
 void clackSound(void);
 void bellSound(void);
+void noSound(void);
 
 //TODO
 void correctSound(void);

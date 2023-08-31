@@ -136,6 +136,11 @@ void generate(PlaydateAPI* _pd) {
   m_dungeon.m_roomsPerLevel[2] = TOT_ROOMS - m_dungeon.m_roomsPerLevel[1] - m_dungeon.m_roomsPerLevel[0];
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
+    if (m_dungeon.m_roomsPerLevel[_level] >= MAX_ROOMS) {
+      _pd->system->error("Rooms %i greater than max %i", m_dungeon.m_roomsPerLevel[_level], MAX_ROOMS);
+      return;
+    }
+
     #ifdef DEV
     _pd->system->logToConsole(" -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
     #endif

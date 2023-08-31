@@ -16,6 +16,7 @@ SamplePlayer* m_fallPlayer;
 SamplePlayer* m_boomPlayer;
 SamplePlayer* m_clackPlayer;
 SamplePlayer* m_bellPlayer;
+SamplePlayer* m_noPlayer;
 
 AudioSample* m_fireSample;
 AudioSample* m_chestSample;
@@ -38,6 +39,7 @@ AudioSample* m_stairsAudio;
 AudioSample* m_targetSound;
 AudioSample* m_clackSound;
 AudioSample* m_bellSound;
+AudioSample* m_noSound;
 
 void music(bool _onoff) {
   m_musicOn = _onoff;
@@ -80,6 +82,7 @@ void initSound(PlaydateAPI* _pd) {
   m_fallPlayer = pd->sound->sampleplayer->newPlayer();
   m_clackPlayer = pd->sound->sampleplayer->newPlayer();
   m_bellPlayer = pd->sound->sampleplayer->newPlayer();
+  m_noPlayer = pd->sound->sampleplayer->newPlayer();
 
   m_fireSample = pd->sound->sample->load("sounds/270306__littlerobotsoundfactory__explosion-02");
   m_chestSample = pd->sound->sample->load("sounds/270338__littlerobotsoundfactory__open-01");
@@ -103,6 +106,7 @@ void initSound(PlaydateAPI* _pd) {
   m_targetSound = pd->sound->sample->load("sounds/270302__littlerobotsoundfactory__collect_point_02");
   m_clackSound = pd->sound->sample->load("sounds/270315__littlerobotsoundfactory__menu_navigate_03.wav");
   m_bellSound = pd->sound->sample->load("sounds/378799__kgeshev__bell.wav");
+  m_noSound = pd->sound->sample->load("sounds/no.wav");
 
   m_foot[0] = pd->sound->sample->load("sounds/197778__samulis__footstep-on-stone-1");
   m_foot[1] = pd->sound->sample->load("sounds/197779__samulis__footstep-on-stone-2");
@@ -114,6 +118,7 @@ void initSound(PlaydateAPI* _pd) {
   pd->sound->sampleplayer->setSample(m_fallPlayer, m_fall);
   pd->sound->sampleplayer->setSample(m_clackPlayer, m_clackSound);
   pd->sound->sampleplayer->setSample(m_bellPlayer, m_bellSound);
+  pd->sound->sampleplayer->setSample(m_noPlayer, m_noSound);
 }
 
 void updateMusic(uint8_t _status) {
@@ -139,6 +144,11 @@ void deinitSound() {
   m_music[1] = NULL;
   m_samplePlayer = NULL;
   m_loopPlayer = NULL;
+}
+
+void noSound() {
+  if (!m_sfxOn) return;
+  pd->sound->sampleplayer->play(m_noPlayer, 1, 1.0f);
 }
 
 void fireSound() {

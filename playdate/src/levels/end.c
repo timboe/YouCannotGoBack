@@ -15,7 +15,7 @@ static PlaydateAPI* s_cachedPtr;
 #define SCORE_MAX 10000
 #define LOSS_PER_TICK 1
 
-#define BOARD_NAME "High Scores"
+#define BOARD_NAME "highscores"
 
 void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
 

@@ -76,7 +76,7 @@ bool tickSaw(bool _doInit) {
         ++s_count;
       }
 
-      if (abs( s_position+30 - m_player.m_position_x ) < 30) {
+      if (abs( s_position+35 - m_player.m_position_x ) < 30) {
         if (s_type[s_count] == 1 && m_player.m_position_y < 9*SIZE) s_state = 2;
         else if (s_type[s_count] == 2 && (m_player.m_position_y < 7*SIZE || m_player.m_position_y > 9*SIZE)) s_state = 2;
         else if (s_type[s_count] == 3 && m_player.m_position_y > 7*SIZE ) s_state = 2;
