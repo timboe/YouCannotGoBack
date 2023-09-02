@@ -61,13 +61,13 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     if (_level == 0 && _room == 0) { // First room
 
       _newRoom = kStart;
-      //_newRoom = kSBall;
-      //m_dungeon.m_difficulty = 5; // TESTING
+      //_newRoom = kMaze;
+      //m_dungeon.m_difficulty = 2; // TESTING
 
     //} else if (TESTING && _level == 0 && _room == 1) {
 
-      //_newRoom = kGreek; // TESTING
-      //(*_consumeHint) = kGreekLetter; // TESTING
+      //_newRoom = kStones; // TESTING
+      //(*_consumeHint) = kShield; // TESTING
       //m_dungeon.m_lives = 0; // TESTING
 
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
@@ -158,9 +158,9 @@ void generate(PlaydateAPI* _pd) {
       // Can we add a hint to this room?
       Hints_t _addHint = getHint(_level, _roomType);
 
-      //if (TESTING && _level == 0 && _room == 0) {
-      //  _addHint = kGreekLetter; // TESTING
-      //}
+      // if (TESTING && _level == 0 && _room == 0) {
+      //   _addHint = kShield; // TESTING
+      // }
 
       if (_addHint != kNoHint) {
         ++m_hintsInPlay;

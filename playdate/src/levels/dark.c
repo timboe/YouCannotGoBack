@@ -62,7 +62,7 @@ bool tickDark(bool _doInit) {
     setGameState(kAwaitInput);
     ++s_state;
   } else {
-    stonesCommon(&s_state, &s_fire, s_correct);
+    stonesCommon(&s_state, &s_fire, s_correct, /*dark*/ true);
   }
 
   return false;

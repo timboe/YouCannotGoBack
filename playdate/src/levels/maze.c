@@ -13,7 +13,7 @@ static const uint16_t s_sollution[N_MAZES][3] = {
   {1,0,2}, // Medium, straight
   {2,0,1}, // Medium, diagonal
   {2,1,0}, // Medium, straight2
-  {1,2,0}, // Medium, crooked
+  {2,0,1}, // Medium, crooked
   {0,2,1}, // Hard, straight
   {2,1,0}, // Hard, diagonal
   {0,1,2}  // Hard, crooked
@@ -59,9 +59,9 @@ void drawLine(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2, int _w, LCDC
 
 void lines(PlaydateAPI* _pd, LCDColor _c, int _w) {
   const bool _l = m_player.m_position_x < SIZE*8 || getFlash(true); 
-  const bool _p0 = _l || s_path == 0;
-  const bool _p1 = _l || s_path == 1;
-  const bool _p2 = _l || s_path == 2;
+  const bool _p0 = _l || s_path != 0;
+  const bool _p1 = _l || s_path != 1;
+  const bool _p2 = _l || s_path != 2;
   for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
     if (_p0) drawLine(_pd, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3], _w, _c);
     if (_p1) drawLine(_pd, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3], _w, _c);
@@ -102,7 +102,8 @@ bool tickMaze(PlaydateAPI* _pd, bool _doInit) {
     m_player.m_position_y = SIZE*9;
     addCluter(15, 20, 0);
     s_path = rand() % 3;
-    s_maze = MIN(N_MAZES-1, (m_dungeon.m_difficulty * 2) + (rand() % 4));
+    s_maze = (m_dungeon.m_difficulty * 2) + (rand() % 4);
+    s_maze = MIN(N_MAZES-1, s_maze);
     return false;
   }
 

@@ -230,6 +230,7 @@ bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
     m_player.m_position_y = SIZE*9;
     s_start = rand() % 3; // entry point
     s_correct = rand() % 3; // exit point
+
     // Randomize
     const uint8_t maxR = m_dungeon.m_difficulty >= 2 ? 8 : 4;
     for (int _x = 0; _x < MAX_X; ++_x) {
@@ -238,20 +239,24 @@ bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
         else                             s_mazeDisp1[_x][_y] = (Options_t) rand() % maxR;
       }
     }
+
     // But the three exits always point right
     if (m_dungeon.m_difficulty == 0) {
       s_mazeDisp0[2][0] = kE;
       s_mazeDisp0[2][1] = kE;
       s_mazeDisp0[2][2] = kE;
     } else {
-      s_mazeDisp1[4][0] = kSE;
       s_mazeDisp1[4][1] = kE;
-      s_mazeDisp1[4][2] = rand() % 2 ? kSE : kNE;
       s_mazeDisp1[4][3] = kE;
-      s_mazeDisp1[4][4] = rand() % 2 ? kSE : kNE;
       s_mazeDisp1[4][5] = kE;
-      s_mazeDisp1[4][6] = kNE;
+      if (m_dungeon.m_difficulty >= 2) {
+        s_mazeDisp1[4][0] = kSE;
+        s_mazeDisp1[4][2] = rand() % 2 ? kSE : kNE;
+        s_mazeDisp1[4][4] = rand() % 2 ? kSE : kNE;
+        s_mazeDisp1[4][6] = kNE;
+      }
     }
+
     // Make path
     gen(_pd);
     // Set path

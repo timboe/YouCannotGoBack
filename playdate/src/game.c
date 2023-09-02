@@ -246,6 +246,8 @@ int gameLoop(void* data) {
   bool requestRedraw = false;
   ++m_dungeon.m_ticksInLevel;
 
+  //pd->system->logToConsole("TIL %i TT %i", m_dungeon.m_ticksInLevel, m_dungeon.m_ticksTotal);
+
   bool _doInit = false;
   switch (s_gameState) {
     case kIdle: break;

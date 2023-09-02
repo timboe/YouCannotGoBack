@@ -94,8 +94,10 @@ uint16_t randomiseChoices(PlaydateAPI* _pd, int8_t* _choices, int _stage) {
 
 }
 
-void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
+void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct, bool _dark) {
+  static int playerChoice = 0;
   int _targetX, _step;
+
   switch (*_state) {
     case 5: case 6: _targetX = 6; _step = 0; break;
     case 7: case 8: _targetX = 10; _step = 1; break;
@@ -107,7 +109,8 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
     setGameState(kFadeOut);
   } else if ((*_state) % 2 == 1) { // ODD state
     m_player.m_target_x = SIZE*_targetX;
-    switch (getPlayerChoice()) {
+    playerChoice = getPlayerChoice();
+    switch (playerChoice) {
       case 0: m_player.m_target_y = SIZE*5; break;
       case 1: m_player.m_target_y = SIZE*9; break;
       case 2: m_player.m_target_y = SIZE*13; break;
@@ -120,11 +123,17 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
     if (getPlayerChoice() != _correct[_step]) {
       m_dungeon.m_gameOver = 1;
       setGameState(kFadeOut);
-      //vibes_long_pulse();
     } else if ((*_state) < 10) {
       setGameState(kAwaitInput);
     }
-    if (*_state <= 10) fireSound();
+    if (*_state <= 10) {
+      if (_dark) {
+        darkSound(playerChoice);
+        if (m_dungeon.m_gameOver) fireSound();
+      } else {
+        fireSound();
+      }
+    }
     ++(*_state); // On 6, draw first fires
     ++(*_fire);
     

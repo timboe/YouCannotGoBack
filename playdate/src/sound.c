@@ -17,6 +17,7 @@ SamplePlayer* m_boomPlayer;
 SamplePlayer* m_clackPlayer;
 SamplePlayer* m_bellPlayer;
 SamplePlayer* m_noPlayer;
+SamplePlayer* m_firePlayer;
 
 AudioSample* m_fireSample;
 AudioSample* m_chestSample;
@@ -83,6 +84,7 @@ void initSound(PlaydateAPI* _pd) {
   m_clackPlayer = pd->sound->sampleplayer->newPlayer();
   m_bellPlayer = pd->sound->sampleplayer->newPlayer();
   m_noPlayer = pd->sound->sampleplayer->newPlayer();
+  m_firePlayer = pd->sound->sampleplayer->newPlayer();
 
   m_fireSample = pd->sound->sample->load("sounds/270306__littlerobotsoundfactory__explosion-02");
   m_chestSample = pd->sound->sample->load("sounds/270338__littlerobotsoundfactory__open-01");
@@ -119,6 +121,7 @@ void initSound(PlaydateAPI* _pd) {
   pd->sound->sampleplayer->setSample(m_clackPlayer, m_clackSound);
   pd->sound->sampleplayer->setSample(m_bellPlayer, m_bellSound);
   pd->sound->sampleplayer->setSample(m_noPlayer, m_noSound);
+  pd->sound->sampleplayer->setSample(m_firePlayer, m_fireSample);
 }
 
 void updateMusic(uint8_t _status) {
@@ -153,8 +156,7 @@ void noSound() {
 
 void fireSound() {
   if (!m_sfxOn) return;
-  pd->sound->sampleplayer->setSample(m_samplePlayer, m_fireSample);
-  pd->sound->sampleplayer->play(m_samplePlayer, 1, 1.0f);
+  pd->sound->sampleplayer->play(m_firePlayer, 1, 1.0f);
 }
 
 void chestSound() {

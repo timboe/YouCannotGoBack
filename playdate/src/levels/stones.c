@@ -34,7 +34,7 @@ bool tickStones(PlaydateAPI* _pd, bool _doInit) {
     setGameState(kAwaitInput);
     s_state = 5; // for consistency w dark.c
   } else {
-    stonesCommon(&s_state, &s_fire, s_correct);
+    stonesCommon(&s_state, &s_fire, s_correct, /*dark*/ false);
   }
 
   return false;
