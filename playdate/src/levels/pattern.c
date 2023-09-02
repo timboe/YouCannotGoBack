@@ -42,7 +42,7 @@ void updateProcPattern(PlaydateAPI* _pd) {
   renderStonesCommonFire(_pd, s_correct, s_fire, s_state);
 
   // Only put the wall on tope while we are exiting
-  if (s_state == 13) renderWalls(_pd, true, true, true, true);
+  if (s_state == 12) renderWalls(_pd, true, true, true, true);
 
   // Answer box
   _pd->graphics->fillEllipse(3*SIZE + 0, 0, (SIZE*5) - 0, (SIZE*5) - 0, 0, 0, kColorBlack);

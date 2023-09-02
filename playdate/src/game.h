@@ -2,7 +2,7 @@
 
 //#define DEBUG_MODE
 //#define DEV
-#define SCOREBOARD
+//#define SCOREBOARD
 
 #include "pd_api.h"
 

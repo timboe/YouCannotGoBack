@@ -61,7 +61,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     if (_level == 0 && _room == 0) { // First room
 
       _newRoom = kStart;
-      //_newRoom = kMaze;
+      //_newRoom = kPattern;
       //m_dungeon.m_difficulty = 2; // TESTING
 
     //} else if (TESTING && _level == 0 && _room == 1) {

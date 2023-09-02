@@ -48,7 +48,11 @@ void renderGameFrame(PlaydateAPI* _pd) {
   static const char _portraitB[] = "Played In";
   static const char _portraitC[] = "Portrait";
   static const char _portraitD[] = "Mode!";
+#ifdef SCOREBOARD
   static const char _portraitVersion[] = "v2.0c";
+#else
+  static const char _portraitVersion[] = "v2.0i";
+#endif
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _vb = {.x = 32+16, .y = 0, .width = 32, .height = 16};
     renderText(_pd, _portraitVersion, _vb, kDrawModeFillWhite);
