@@ -2,6 +2,7 @@
 #include "render.h"
 #include "sound.h"
 #include "patterns.h"
+#include "game.h"
 
 #include "pd_api.h"
 
