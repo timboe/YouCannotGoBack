@@ -14,7 +14,8 @@ zip -r -q YouCannotGoBack_v2.0c.pdx.zip YouCannotGoBack.pdx
 
 ### 
 
-rm -r YouCannotGoBack.pdx
+rm -r YouCannotGoBack_c.pdx
+mv YouCannotGoBack.pdx YouCannotGoBack_c.pdx
 
 sed 's|#define SCOREBOARD|//#define SCOREBOARD|g' src/game.h --in-place=.bak
 rm src/*bak

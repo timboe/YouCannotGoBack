@@ -10,6 +10,9 @@ void drawCBitmap(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y);
 void drawCBitmapAbs(PlaydateAPI* _pd, struct CBitmap* _cbitmap, int _x, int _y);
 
 void renderGameFrame(PlaydateAPI* _pd);
+#ifdef SCOREBOARD
+void renderScoresFrame(PlaydateAPI* _pd);
+#endif
 void renderClear(PlaydateAPI* _pd, bool transparentCentre);
 void renderBlack(PlaydateAPI* _pd);
 void renderHintNumber(PlaydateAPI* _pd, PDRect _r, int _value, bool _invert);

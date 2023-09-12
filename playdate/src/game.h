@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <stdbool.h> 
 
+#define BOARD_NAME "highscores"
+
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
 
@@ -169,3 +171,9 @@ bool movePlayer(void);
 bool newRoom(void);
 int getHorizontalOffset(void);
 void dungeonUpdateProc(void);
+
+#ifdef SCOREBOARD
+extern char s_scoreNames[9][64];
+extern char s_scoreValues[9][64];
+void updateScores(void);
+#endif

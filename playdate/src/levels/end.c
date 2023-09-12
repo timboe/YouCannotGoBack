@@ -15,8 +15,6 @@ static PlaydateAPI* s_cachedPtr;
 #define SCORE_MAX 10000
 #define LOSS_PER_TICK 1
 
-#define BOARD_NAME "highscores"
-
 void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
 
   renderClear(_pd, false);
@@ -77,6 +75,9 @@ void addScoreCallback(PDScore* score, const char* errorMessage) {
   snprintf(s_scoreDisplay, 64, "SCORE %i", s_score);
   snprintf(s_rankDisplay, 64, "RANK %i", s_rank);
   s_cachedPtr->scoreboards->freeScore(score);
+  if (s_rank < 10) {
+    updateScores(); // Update the global score board too!
+  }
 }
 
 void personalBestCallback(PDScore* score, const char* errorMessage) {

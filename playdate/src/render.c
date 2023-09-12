@@ -57,7 +57,7 @@ void renderGameFrame(PlaydateAPI* _pd) {
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _vb = {.x = 32+16, .y = 0, .width = 32, .height = 16};
     renderText(_pd, _portraitVersion, _vb, kDrawModeFillWhite);
-    PDRect _b = {.x = 16, .y = 32, .width = 96, .height = 128+8};
+    PDRect _b = {.x = 8, .y = 52, .width = 96+16, .height = 128+8};
     renderTextInFrame(_pd, _portraitA, _b);
     _b.y += 16;
     renderText(_pd, _portraitB, _b, kDrawModeFillBlack);
@@ -68,9 +68,29 @@ void renderGameFrame(PlaydateAPI* _pd) {
     static float rot = 0;
     rot -= 4.0f;
     if (rot < -90.0f) rot = 90.0f;
-    drawBitmapAbsRot(_pd, m_rotate, 64, 128+5, rot > 0.0f ? -90.0f : rot);
+    drawBitmapAbsRot(_pd, m_rotate, 64, 128+5+20, rot > 0.0f ? -90.0f : rot);
   }
 }
+
+#ifdef SCOREBOARD
+void renderScoresFrame(PlaydateAPI* _pd) {
+  static char _buf[64*9 + 2];
+  static bool flip = false;
+  if (!getFrameCount()) flip = !flip;
+  if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
+    PDRect _b = {.x = 144+128+8 , .y = 32-8, .width = 96+16, .height = 128+64};
+    static const char _scoreA[] = "High Scores";
+    renderTextInFrame(_pd, _scoreA, _b);
+    for (int i = 0; i < 9; ++i) {
+      _b.y += 16;
+      snprintf(_buf, 64*9 + 2, "%i.        ", i+1);
+      renderText(_pd, _buf, _b, kDrawModeFillBlack);
+      snprintf(_buf, 64*9 + 2, "  %s", flip ? s_scoreValues[i] : s_scoreNames[i]);
+      renderText(_pd, _buf, _b, kDrawModeFillBlack);
+    }
+  }
+}
+#endif
 
 void renderClear(PlaydateAPI* _pd, bool transparentCentre) {
   if (transparentCentre) {

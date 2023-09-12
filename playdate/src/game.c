@@ -44,6 +44,10 @@ bool m_rotated = false;
 bool m_autoRotation = true;
 LCDBitmap* m_rotatedBitmap = NULL;
 
+#ifdef SCOREBOARD
+char s_scoreNames[9][64] = {}; // 9 slots of 64 char
+char s_scoreValues[9][64] = {};
+#endif
 
 int getFrameCount() { return s_frameCount; }
 GameState_t getGameState() { return s_gameState; }
@@ -190,6 +194,9 @@ void dungeonUpdateProc() {
   } else {
     pd->graphics->setDrawOffset(0, 0);
     renderGameFrame(pd);
+    #ifdef SCOREBOARD
+    renderScoresFrame(pd);
+    #endif
   }
 
   if (m_dungeon.m_gameOver == 0 && m_rotated) renderProgressBar(pd, m_rotated);
@@ -391,9 +398,44 @@ void gameWindowLoad() {
   
   pd->graphics->clear(kColorBlack);
   renderGameFrame(pd);
+  #ifdef SCOREBOARD
+  renderScoresFrame(pd);
+  updateScores();
+  #endif
 
   generate(pd);
 }
+
+#ifdef SCOREBOARD
+void scoresCallback(PDScoresList* scoresList, const char* errorMessage) {
+  #ifdef DEV
+  if (errorMessage) pd->system->logToConsole("scoresCallback err: %s", errorMessage);
+  #endif
+  for (uint32_t s = 0; s < scoresList->count; ++s) {
+    const PDScore* score = scoresList->scores + s;
+    if (score->rank > 9) continue;
+    const uint32_t rankIndex = score->rank - 1; // Rank 1 is index 0
+    if (strlen(score->player) >= 64) {
+      strcpy(s_scoreNames[rankIndex], "???");
+    } else {
+      strcpy(s_scoreNames[rankIndex], score->player);
+    }
+    snprintf(s_scoreValues[rankIndex], 64, "%u", (unsigned) score->value);
+  }
+
+  for (int s = 0; s < 9; ++s) {
+    s_scoreNames[s][8] = '\0'; // Truncate to 8 characters
+  }
+  pd->scoreboards->freeScoresList(scoresList);
+}
+
+void updateScores() {
+  const int getScore = pd->scoreboards->getScores(BOARD_NAME, scoresCallback);
+  #ifdef DEV
+  if (getScore) _pd->system->logToConsole("getScore returned %i", getScore);
+  #endif
+}
+#endif
 
 void gameWindowUnload() {
   pd->graphics->freeBitmap(m_rotatedBitmap);
