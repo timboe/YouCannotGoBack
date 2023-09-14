@@ -408,9 +408,10 @@ void gameWindowLoad() {
 
 #ifdef SCOREBOARD
 void scoresCallback(PDScoresList* scoresList, const char* errorMessage) {
-  #ifdef DEV
-  if (errorMessage) pd->system->logToConsole("scoresCallback err: %s", errorMessage);
-  #endif
+  if (errorMessage) {
+    pd->system->logToConsole("scoresCallback err: %s", errorMessage);
+  }
+  if (!scoresList) return;
   for (uint32_t s = 0; s < scoresList->count; ++s) {
     const PDScore* score = scoresList->scores + s;
     if (score->rank > 9) continue;

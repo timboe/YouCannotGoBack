@@ -66,9 +66,9 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
 #ifdef SCOREBOARD
 
 void addScoreCallback(PDScore* score, const char* errorMessage) {
-  #ifdef DEV
-  if (errorMessage) s_cachedPtr->system->logToConsole("addScoreCallback err: %s", errorMessage);
-  #endif
+  if (errorMessage) {
+    s_cachedPtr->system->logToConsole("addScoreCallback err: %s", errorMessage);
+  }
   if (!score) return;
   s_rank = score->rank;
   s_score = score->value;
@@ -81,9 +81,9 @@ void addScoreCallback(PDScore* score, const char* errorMessage) {
 }
 
 void personalBestCallback(PDScore* score, const char* errorMessage) {
-  #ifdef DEV
-  if (errorMessage) s_cachedPtr->system->logToConsole("personalBestCallback err: %s", errorMessage);
-  #endif
+  if (errorMessage) {
+    s_cachedPtr->system->logToConsole("personalBestCallback err: %s", errorMessage);
+  }
   if (!score) return;
   s_pb = score->value;
   snprintf(s_bestDisplay, 64, "BEST %i", s_pb);
