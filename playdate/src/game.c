@@ -422,7 +422,6 @@ void scoresCallback(PDScoresList* scoresList, const char* errorMessage) {
     }
     snprintf(s_scoreValues[rankIndex], 64, "%u", (unsigned) score->value);
   }
-
   for (int s = 0; s < 9; ++s) {
     s_scoreNames[s][8] = '\0'; // Truncate to 8 characters
   }
