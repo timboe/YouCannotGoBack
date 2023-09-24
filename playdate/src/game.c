@@ -410,6 +410,8 @@ void gameWindowLoad() {
 void scoresCallback(PDScoresList* scoresList, const char* errorMessage) {
   if (errorMessage) {
     pd->system->logToConsole("scoresCallback err: %s", errorMessage);
+    if (scoresList) pd->scoreboards->freeScoresList(scoresList);
+    return;
   }
   if (!scoresList) return;
   for (uint32_t s = 0; s < scoresList->count; ++s) {
@@ -428,7 +430,7 @@ void scoresCallback(PDScoresList* scoresList, const char* errorMessage) {
   }
   pd->scoreboards->freeScoresList(scoresList);
 }
-
+//
 void updateScores() {
   const int getScore = pd->scoreboards->getScores(BOARD_NAME, scoresCallback);
   #ifdef DEV
