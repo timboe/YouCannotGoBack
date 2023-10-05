@@ -2,5 +2,6 @@ name=You Cannot Go Back
 author=Tim Martin
 description=Test your memory, reach the treasure. Keep moving forwards, for you cannot go back!
 bundleID=uk.co.tim-martin.ycgb
+buildNumber=200
 version=2.0
 imagePath=titles/
