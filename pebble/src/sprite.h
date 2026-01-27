@@ -2,7 +2,13 @@
 #include <pebble.h>
 #include "game.h"
 
-#define SIZE 8
+#ifdef HIGH_RES
+  #define SIZE 11
+#else
+  #define SIZE 8
+#endif
+
+
 #define MAX_FLOOR 4
 #define N_SMALL_CLUTTER 8
 #define N_MED_CLUTTER 2
@@ -14,6 +20,10 @@ void deinitSprite();
 GBitmap* getOuterWall(int _d);
 GBitmap* getFloor(bool _random);
 GBitmap* getClutter(bool _broken);
+
+#ifdef YCGBv2
+extern GBitmap* m_ycgb;
+#endif
 
 extern GBitmap* m_UOuterWall[3];
 extern GBitmap* m_DOuterWall[3];

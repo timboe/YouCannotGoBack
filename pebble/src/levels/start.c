@@ -6,6 +6,9 @@ void updateProcStart(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
 
+#ifdef YCGBv2
+  drawBitmap(_ctx, m_ycgb, 6, 4);
+#else
   static const char* _a = "YOU";
   static const char* _b = "CANNOT";
   static const char* _c = "GO";
@@ -15,6 +18,8 @@ void updateProcStart(GContext* _ctx) {
   renderBorderText(_ctx, GRect(45, 45, 80, 100),  fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _b, 2, GTextAlignmentCenter, true);
   renderBorderText(_ctx, GRect(45, 75, 80, 100),  fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _c, 2, GTextAlignmentCenter, false);
   renderBorderText(_ctx, GRect(45, 105, 80, 100), fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _d, 2, GTextAlignmentCenter, true);
+#endif 
+
   renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);

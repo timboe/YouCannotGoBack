@@ -4,11 +4,19 @@
 //#define DEBUG_MODE
 //#define DEV
 
+#if PBL_DISPLAY_WIDTH == 200
+  #define YCGBv2 1
+  #define HIGH_RES 1 
+#endif
+
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
 
 #define ROUND_OFFSET_X 18
 #define ROUND_OFFSET_Y 10
+
+#define EMERY_OFFSET_X 1
+#define EMERY_OFFSET_Y 0
 
 #define PERSIST_KEY_VICTORY 0
 

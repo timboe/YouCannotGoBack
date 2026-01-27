@@ -7,6 +7,9 @@ void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
 #ifdef PBL_ROUND
   _r.origin.x += ROUND_OFFSET_X;
   _r.origin.y += ROUND_OFFSET_Y;
+#elif defined HIGH_RES
+  _r.origin.x += EMERY_OFFSET_X;
+  _r.origin.y += EMERY_OFFSET_Y;
 #endif
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
@@ -65,6 +68,9 @@ void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
 #ifdef PBL_ROUND
   _r.origin.x += ROUND_OFFSET_X;
   _r.origin.y += ROUND_OFFSET_Y;
+#elif defined HIGH_RES
+  _r.origin.x += EMERY_OFFSET_X;
+  _r.origin.y += EMERY_OFFSET_Y;
 #endif
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
@@ -111,6 +117,11 @@ void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
   _p1.y += ROUND_OFFSET_Y;
   _p2.x += ROUND_OFFSET_X;
   _p2.y += ROUND_OFFSET_Y;
+#elif defined HIGH_RES
+  _p1.x += EMERY_OFFSET_X;
+  _p1.y += EMERY_OFFSET_Y;
+  _p2.x += EMERY_OFFSET_X;
+  _p2.y += EMERY_OFFSET_Y;
 #endif
   graphics_context_set_stroke_width(_ctx, 7);
   graphics_context_set_stroke_color(_ctx, GColorDarkGray);
@@ -125,6 +136,9 @@ void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c) {
 #ifdef PBL_ROUND
   _p1.x += ROUND_OFFSET_X;
   _p1.y += ROUND_OFFSET_Y;
+#elif defined HIGH_RES
+  _p1.x += EMERY_OFFSET_X;
+  _p1.y += EMERY_OFFSET_Y;
 #endif
   graphics_context_set_fill_color(_ctx, GColorLightGray);
   graphics_fill_circle(_ctx, _p1, SIZE);
@@ -141,6 +155,9 @@ void renderFrame(GContext* _ctx, GRect _b) {
 #ifdef PBL_ROUND
   _b.origin.x += ROUND_OFFSET_X;
   _b.origin.y += ROUND_OFFSET_Y;
+#elif defined HIGH_RES
+  _b.origin.x += EMERY_OFFSET_X;
+  _b.origin.y += EMERY_OFFSET_Y;
 #endif
   graphics_fill_rect(_ctx, _b, 0, 0);
   graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
@@ -150,6 +167,9 @@ void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
 #ifdef PBL_ROUND
   _b.origin.x += ROUND_OFFSET_X;
   _b.origin.y += ROUND_OFFSET_Y;
+#elif defined HIGH_RES
+  _b.origin.x += EMERY_OFFSET_X;
+  _b.origin.y += EMERY_OFFSET_Y;
 #endif
   graphics_context_set_fill_color(_ctx, GColorWhite);
   graphics_fill_rect(_ctx, _b, 13, 0);
@@ -224,6 +244,10 @@ void renderWallClutter(GContext* _ctx) {
   #ifdef PBL_ROUND
     _p.x += ROUND_OFFSET_X;
     _p.y += ROUND_OFFSET_Y;
+  #endif
+  #if PBL_DISPLAY_WIDTH == 200
+    _p.x += EMERY_OFFSET_X;
+    _p.y += EMERY_OFFSET_X;
   #endif
       drawBitmap(_ctx, m_shieldSprite, _r, 0);
       graphics_context_set_fill_color(_ctx, getShieldColor(getShieldA(_hintValue)));
@@ -360,6 +384,9 @@ void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer,
 #ifdef PBL_ROUND
   _loc.origin.x += ROUND_OFFSET_X;
   _loc.origin.y += ROUND_OFFSET_Y;
+#elif defined HIGH_RES
+  _loc.origin.x += EMERY_OFFSET_X;
+  _loc.origin.y += EMERY_OFFSET_Y;
 #endif
 
   _loc.origin.y += _offset; // CU

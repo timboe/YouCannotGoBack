@@ -1,5 +1,8 @@
 #include "sprite.h"
 
+#ifdef YCGBv2
+GBitmap* m_ycgb;
+#endif
 
 GBitmap* m_spriteMap;
 GBitmap* m_saw;
@@ -80,6 +83,10 @@ GBitmap* getFloor(bool _random) {
 }
 
 void initSprite() {
+  #ifdef YCGBv2
+  m_ycgb = gbitmap_create_with_resource(RESOURCE_ID_YCGB);
+  #endif
+
   m_spriteMap = gbitmap_create_with_resource(RESOURCE_ID_SPRITESHEET);
   m_grave = gbitmap_create_with_resource(RESOURCE_ID_GRAVE);
   m_treasureBanner = gbitmap_create_with_resource(RESOURCE_ID_TREASURE);

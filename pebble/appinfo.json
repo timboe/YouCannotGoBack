@@ -3,9 +3,9 @@
   "shortName": "You Cannot Go Back",
   "longName": "You Cannot Go Back",
   "companyName": "Tim Martin",
-  "versionLabel": "1.0",
+  "versionLabel": "2.0",
   "sdkVersion": "3",
-  "targetPlatforms": ["basalt", "chalk"],
+  "targetPlatforms": ["basalt", "chalk", "diorite", "flint", "emery"],
   "enableMultiJS": true,
   "watchapp": {
     "watchface": false
@@ -18,7 +18,8 @@
       { "file": "images/spritesheet.png", "name": "SPRITESHEET", "type": "png" },
       { "file": "images/gameover.png", "name": "GRAVE", "type": "png" },
       { "file": "images/saw.png", "name": "SAW", "type": "png" },
-      { "file": "images/treasure.png", "name": "TREASURE", "type": "png" }
+      { "file": "images/treasure.png", "name": "TREASURE", "type": "png" },
+      { "file": "images/ycgb.png", "name": "YCGB", "type": "png", "targetPlatforms": ["emery"] }
     ]
   }
 }
