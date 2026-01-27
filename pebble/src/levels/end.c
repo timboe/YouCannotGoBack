@@ -9,10 +9,10 @@ void updateProcEnd(GContext* _ctx) {
 
   if (m_dungeon.m_gameOver == 1) {
     static const char _end1[] = "OOOOH, NASTY...";
-    renderTextInFrame(_ctx, _end1, GRect(0, 0, 144, 43));
+    renderTextInFrame(_ctx, _end1, GRect(0, 0, PBL_DISPLAY_WIDTH, 43));
     drawBitmapAbs(_ctx, m_grave, GPoint(50, 50));
     static const char _end2[] = "RESTART";
-    renderTextInFrame(_ctx, _end2, GRect(28, 125, 88, 43));
+    renderTextInFrame(_ctx, _end2, GRect(PBL_DISPLAY_WIDTH/5, 125, PBL_DISPLAY_WIDTH - (2*PBL_DISPLAY_WIDTH/5), 43));
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawBitmap(_ctx, m_arrow, 3, 13);
       drawBitmap(_ctx, m_arrow, 13, 13);
@@ -21,7 +21,7 @@ void updateProcEnd(GContext* _ctx) {
     static const char _end1[] = "NICELY DONE! DUNGEONEER";
     renderTextInFrame(_ctx, _end1, GRect(0, 0, 144, 63));
     drawBitmapAbs(_ctx, m_treasureBanner, GPoint(19, 68));
-    renderBorderText(_ctx, GRect(0, 145, 144, 20), fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), s_victories, 2, GTextAlignmentCenter, false);
+    renderBorderText(_ctx, GRect(0, 145, 144, 20), fonts_get_system_font(FONT_KEY_SMALL), s_victories, 2, GTextAlignmentCenter, false);
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawBitmap(_ctx, m_arrow, 8, 12);
     }
