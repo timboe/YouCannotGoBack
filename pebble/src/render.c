@@ -25,7 +25,7 @@ void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd) {
 void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert) {
   static char _hintText[3];
   snprintf(_hintText, 3, "%i", _value);
-  renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _hintText, 1, GTextAlignmentCenter, _invert);
+  renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_SMALL), _hintText, 1, GTextAlignmentCenter, _invert);
 }
 
 void renderClutter(GContext* _ctx) {
@@ -58,7 +58,11 @@ void renderProgressBar(Layer* _thisLayer, GContext* _ctx) {
   GPoint _s = GPoint(_x1, _h);
   GPoint _e = GPoint(_x1 + _x2, _h);
   graphics_context_set_stroke_width(_ctx, 3);
+#ifdef PBL_BW
+  graphics_context_set_stroke_color(_ctx, GColorWhite);
+#else
   graphics_context_set_stroke_color(_ctx, GColorRed);
+#endif
   graphics_draw_line(_ctx, _s, _e);
 }
 
@@ -167,9 +171,6 @@ void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
 #ifdef PBL_ROUND
   _b.origin.x += ROUND_OFFSET_X;
   _b.origin.y += ROUND_OFFSET_Y;
-#elif defined HIGH_RES
-  _b.origin.x += EMERY_OFFSET_X;
-  _b.origin.y += EMERY_OFFSET_Y;
 #endif
   graphics_context_set_fill_color(_ctx, GColorWhite);
   graphics_fill_rect(_ctx, _b, 13, 0);
@@ -177,7 +178,7 @@ void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
   graphics_context_set_stroke_width(_ctx, 3);
   graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
   graphics_context_set_text_color(_ctx, GColorBlack);
-  graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), GRect(_b.origin.x, _b.origin.y + 4, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+  graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_LARGE), GRect(_b.origin.x, _b.origin.y + 4, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 }
 
 void renderMessage(GContext* _ctx, const char* _msg) {
@@ -241,28 +242,33 @@ void renderWallClutter(GContext* _ctx) {
     int _r = 4 + (rand()%6);
     if (_hint == kShield) {   // Check shield
       GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
-  #ifdef PBL_ROUND
-    _p.x += ROUND_OFFSET_X;
-    _p.y += ROUND_OFFSET_Y;
-  #endif
-  #if PBL_DISPLAY_WIDTH == 200
-    _p.x += EMERY_OFFSET_X;
-    _p.y += EMERY_OFFSET_X;
-  #endif
+      uint8_t _radius = 3;
+    #ifdef PBL_ROUND
+      _p.x += ROUND_OFFSET_X;
+      _p.y += ROUND_OFFSET_Y;
+    #elif defined HIGH_RES
+      _p.x += EMERY_OFFSET_X;
+      _p.y += EMERY_OFFSET_X;
+      _radius = 5;
+    #endif
       drawBitmap(_ctx, m_shieldSprite, _r, 0);
       graphics_context_set_fill_color(_ctx, getShieldColor(getShieldA(_hintValue)));
-      graphics_fill_circle(_ctx, _p, 3);
+      graphics_fill_circle(_ctx, _p, _radius);
       graphics_context_set_fill_color(_ctx, getShieldColor(getShieldC(_hintValue)));
       _p.x += SIZE*2;
-      graphics_fill_circle(_ctx, _p, 3);
+      graphics_fill_circle(_ctx, _p, _radius);
       graphics_context_set_fill_color(_ctx, getShieldColor(getShieldB(_hintValue)));
       _p.x -= SIZE;
-      graphics_fill_circle(_ctx, _p, 3);
+      graphics_fill_circle(_ctx, _p, _radius);
     } else if (_hint == kSpell) { // Check spell
       drawBitmap(_ctx, m_tapestrySprite[0], _r, 0);
       for (int _i=1; _i<5; ++_i) drawBitmap(_ctx, m_tapestrySprite[1], _r+_i, 0);
       drawBitmap(_ctx, m_tapestrySprite[2], _r+5, 0);
-      renderBorderText(_ctx, GRect(_r * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
+      int8_t _xoffset = 0;
+      #ifdef HIGH_RES
+      _xoffset = 1;
+      #endif
+      renderBorderText(_ctx, GRect((_r+_xoffset) * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_SMALL), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
     } else if (_hint == kSymbol) { // Check symbol
       drawBitmap(_ctx, m_symbol[_hintValue], _r, 18);
     }
@@ -416,6 +422,8 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   GBitmap* _fBuffer = graphics_capture_frame_buffer(_ctx);
   int _flag = (_in == true ? s_progress : FADE_LEVELS - s_progress );
   // Have to do a funny iterating for round screens
+  // TODO - fix this for B&W
+#ifdef PBL_COLOR
   for (int _y = 0; _y < _b.size.h; ++_y) {
     GBitmapDataRowInfo _rowInfo = gbitmap_get_data_row_info(_fBuffer, _y);
     for (int _x = _rowInfo.min_x; _x < _rowInfo.max_x; ++_x) {
@@ -423,6 +431,7 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
       if (rand() % _flag == 0) (*_pixelAddr) = GColorBlack.argb;
      }
   }
+#endif
   graphics_release_frame_buffer(_ctx, _fBuffer);
   if (++s_progress == FADE_LEVELS) {
     s_progress = 1;

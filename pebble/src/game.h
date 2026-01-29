@@ -1,12 +1,17 @@
 #pragma once
 #include <pebble.h>
 
-//#define DEBUG_MODE
-//#define DEV
+#define DEBUG_MODE
+#define DEV
 
 #if PBL_DISPLAY_WIDTH == 200
   #define YCGBv2 1
-  #define HIGH_RES 1 
+  #define HIGH_RES 1
+  #define FONT_KEY_SMALL FONT_KEY_GOTHIC_18_BOLD
+  #define FONT_KEY_LARGE FONT_KEY_GOTHIC_28_BOLD
+#else
+  #define FONT_KEY_SMALL FONT_KEY_GOTHIC_14_BOLD
+  #define FONT_KEY_LARGE FONT_KEY_GOTHIC_24_BOLD 
 #endif
 
 #define ANIM_FPS 20

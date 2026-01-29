@@ -188,14 +188,23 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
   #ifdef DEBUG_MODE
   static char FPSBuffer[16];
   snprintf(FPSBuffer, 16, "%i/%i %i L:%i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS, m_dungeon.m_lives);
+#ifdef HIGH_RES
+  GRect _fpsRect = GRect( 75, 210, 100, 15);
+#else
   GRect _fpsRect = GRect( 50, 155, 100, 15);
+#endif
   graphics_context_set_text_color(_ctx, GColorWhite);
-  graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+  graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_SMALL), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
   #endif
 }
 
 bool movePlayer() {
+  if (m_player.m_target.x % 2) m_player.m_target.x += 1; // Only permit even
+  if (m_player.m_target.y % 2) m_player.m_target.y += 1;
+  if (m_player.m_position.x % 2) m_player.m_position.x += 1;
+  if (m_player.m_position.y % 2) m_player.m_position.y += 1;
   if (s_frameCount % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
+  APP_LOG(APP_LOG_LEVEL_INFO,"movePlayer target:%i,%i current:%i,%i",m_player.m_target.x, m_player.m_target.y, m_player.m_position.x, m_player.m_position.y); 
 
   if      (m_player.m_target.x > m_player.m_position.x) m_player.m_position.x += PLAYER_SPEED;
   if      (m_player.m_target.y > m_player.m_position.y) m_player.m_position.y += PLAYER_SPEED;
