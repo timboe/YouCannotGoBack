@@ -25,30 +25,20 @@ int m_hintsInPlay = 0;
 uint8_t m_hintIsActive[kNHintTypes] = {0};
 uint8_t m_hintValue[kNHintTypes] = {0};
 
-Hints_t getHint(int _level, Rooms_t _roomType) {
-  if (m_roomDescriptor[_roomType].m_giveHint == 0) return kNoHint; // Room does not allow hints
-  if (m_hintsInPlay == HINT_TYPES) return kNoHint; // Have max hints in play
-  if (rand() % 100 >= HINT_CHANCE) return kNoHint; // rnd
 
-  // Else choose a hint
-  Hints_t _hint = kNoHint;
-  while (_hint == kNoHint) {
-    Hints_t _random = rand() % kNHintTypes;
-    if ( m_hintIsActive[_random] == false ) _hint = _random;
-  }
-
-  return _hint;
-}
-
-
+Hints_t TESTING_ROOM_HINT;
 Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem) {
 
+  TESTING_ROOM_HINT = kNoHint;
   int _spin = 0;
   while (true) {
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      //_newRoom = kMaze; // TESTING
+      TESTING_ROOM_HINT = kSymbol; // TESTING
+    } else if (_level == 0 && _room == 1) { // TESTING
+      _newRoom = kBridge; // TESTING
+      APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor
@@ -73,12 +63,28 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       if ( m_roomDescriptor[_newRoom].m_reqHint[ _h ] == 1 && m_hintIsActive[ _h ] == 1) { // This hint is available
         _hints[ _nCompatableHints++ ] = _h;
       }
+      // APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - hint %i, needHint=%i, hint active %i", _h, m_roomDescriptor[_newRoom].m_reqHint[ _h ], m_hintIsActive[ _h ] );
     }
     if (_needsHint == true && _nCompatableHints == 0) continue; // Roll again
     else if (_needsHint == true) (*_consumeHint) = _hints[ rand() % _nCompatableHints ]; // Consume an available hint
 
     return _newRoom;
   }
+}
+
+Hints_t getHint(int _level, Rooms_t _roomType) {
+  if (m_roomDescriptor[_roomType].m_giveHint == 0) return kNoHint; // Room does not allow hints
+  if (m_hintsInPlay == HINT_TYPES) return kNoHint; // Have max hints in play
+  if (rand() % 100 >= HINT_CHANCE && TESTING_ROOM_HINT == kNoHint) return kNoHint; // rnd
+
+  // Else choose a hint
+  Hints_t _hint = kNoHint;
+  while (_hint == kNoHint) {
+    Hints_t _random = (TESTING_ROOM_HINT == kNoHint ? rand() % kNHintTypes : TESTING_ROOM_HINT);
+    if ( m_hintIsActive[_random] == false ) _hint = _random;
+  }
+
+  return _hint;
 }
 
 void generate() {

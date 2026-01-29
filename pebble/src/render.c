@@ -23,6 +23,7 @@ void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd) {
 }
 
 void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert) {
+  if (getFlash(false)) return;
   static char _hintText[3];
   snprintf(_hintText, 3, "%i", _value);
   renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_SMALL), _hintText, 1, GTextAlignmentCenter, _invert);
@@ -35,7 +36,7 @@ void renderClutter(GContext* _ctx) {
     if (_c == 0 && _hint == kGreek) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
       GPoint _p = GPoint((m_clutter.m_position[_c].x * SIZE) + 4, (m_clutter.m_position[_c].y * SIZE) + 2);
-      drawBitmapAbs(_ctx, m_greek[ _hintValue ], _p);
+      if (!getFlash(false)) drawBitmapAbs(_ctx, m_greek[ _hintValue ], _p);
     } else if (_c == 0 && _hint == kNumber) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
       renderHintNumber(_ctx, GRect(m_clutter.m_position[_c].x * SIZE, (m_clutter.m_position[_c].y * SIZE)-3, 16, 16), _hintValue, true);
@@ -240,25 +241,35 @@ void renderWallClutter(GContext* _ctx) {
     Hints_t _hint = m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room];
     int _hintValue = m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room];
     int _r = 4 + (rand()%6);
-    if (_hint == kShield) {   // Check shield
+    if (_hint == kShield && !getFlash(false)) {   // Check shield
       GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
       uint8_t _radius = 3;
-    #ifdef PBL_ROUND
-      _p.x += ROUND_OFFSET_X;
-      _p.y += ROUND_OFFSET_Y;
-    #elif defined HIGH_RES
-      _p.x += EMERY_OFFSET_X;
-      _p.y += EMERY_OFFSET_X;
-      _radius = 5;
-    #endif
+      uint8_t _border = 1;
+      #ifdef PBL_ROUND
+        _p.x += ROUND_OFFSET_X;
+        _p.y += ROUND_OFFSET_Y;
+      #elif defined HIGH_RES
+        _p.x += EMERY_OFFSET_X;
+        _p.y += EMERY_OFFSET_X;
+        _radius = 5;
+        _border = 2;
+      #endif
       drawBitmap(_ctx, m_shieldSprite, _r, 0);
+      graphics_context_set_fill_color(_ctx, GColorBlack);
+      graphics_fill_circle(_ctx, _p, _radius + _border);
       graphics_context_set_fill_color(_ctx, getShieldColor(getShieldA(_hintValue)));
       graphics_fill_circle(_ctx, _p, _radius);
-      graphics_context_set_fill_color(_ctx, getShieldColor(getShieldC(_hintValue)));
+
       _p.x += SIZE*2;
+      graphics_context_set_fill_color(_ctx, GColorBlack);
+      graphics_fill_circle(_ctx, _p, _radius + _border);
+      graphics_context_set_fill_color(_ctx, getShieldColor(getShieldC(_hintValue)));
       graphics_fill_circle(_ctx, _p, _radius);
-      graphics_context_set_fill_color(_ctx, getShieldColor(getShieldB(_hintValue)));
+
       _p.x -= SIZE;
+      graphics_context_set_fill_color(_ctx, GColorBlack);
+      graphics_fill_circle(_ctx, _p, _radius + _border);
+      graphics_context_set_fill_color(_ctx, getShieldColor(getShieldB(_hintValue)));
       graphics_fill_circle(_ctx, _p, _radius);
     } else if (_hint == kSpell) { // Check spell
       drawBitmap(_ctx, m_tapestrySprite[0], _r, 0);
@@ -268,8 +279,8 @@ void renderWallClutter(GContext* _ctx) {
       #ifdef HIGH_RES
       _xoffset = 1;
       #endif
-      renderBorderText(_ctx, GRect((_r+_xoffset) * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_SMALL), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
-    } else if (_hint == kSymbol) { // Check symbol
+      if (!getFlash(false)) renderBorderText(_ctx, GRect((_r+_xoffset) * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_SMALL), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
+    } else if (_hint == kSymbol && !getFlash(false)) { // Check symbol
       drawBitmap(_ctx, m_symbol[_hintValue], _r, 18);
     }
 }
@@ -440,12 +451,23 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   }
 }
 
+#ifdef PBL_BW
 GColor getShieldColor(int8_t _value) {
   switch (_value) {
-    case 0: return GColorRed;
-    case 1: return GColorBlack;
-    case 2: return GColorWhite;
-    case 3: return GColorBlue;
+    case 0: return GColorBlack;
+    case 1: return GColorWhite;
+    case 2: return GColorDarkGray;
     default: return GColorLightGray;
   }
 }
+#else
+  GColor getShieldColor(int8_t _value) {
+    switch (_value) {
+      case 0: return GColorRed;
+      case 1: return GColorBlack;
+      case 2: return GColorWhite;
+      case 3: return GColorBlue;
+      default: return GColorLightGray;
+    }
+  }
+#endif

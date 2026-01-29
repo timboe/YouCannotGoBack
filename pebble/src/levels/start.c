@@ -39,6 +39,9 @@ bool tickStart(bool _doInit) {
   }
 
   static bool _first = true;
+  #ifdef DEV
+  _first = false;
+  #endif
   static const char _msgA[] = "SHAKE TO TURN...";
   static const char _msgB[] = "ON BACKLIGHT";
 

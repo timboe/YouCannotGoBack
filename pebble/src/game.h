@@ -1,7 +1,7 @@
 #pragma once
 #include <pebble.h>
 
-#define DEBUG_MODE
+// #define DEBUG_MODE
 #define DEV
 
 #if PBL_DISPLAY_WIDTH == 200
@@ -9,9 +9,11 @@
   #define HIGH_RES 1
   #define FONT_KEY_SMALL FONT_KEY_GOTHIC_18_BOLD
   #define FONT_KEY_LARGE FONT_KEY_GOTHIC_28_BOLD
+  #define PLAYER_SPEED 3
 #else
   #define FONT_KEY_SMALL FONT_KEY_GOTHIC_14_BOLD
-  #define FONT_KEY_LARGE FONT_KEY_GOTHIC_24_BOLD 
+  #define FONT_KEY_LARGE FONT_KEY_GOTHIC_24_BOLD
+  #define PLAYER_SPEED 2
 #endif
 
 #define ANIM_FPS 20
@@ -73,17 +75,29 @@ typedef enum {
   kLevelSpecificWButtons = 10
 } GameState_t;
 
-typedef enum {
-  kRWb,
-  kRbB,
-  kbBb,
-  kbRW,
-  kBbR,
-  kBRR,
-  kNShieldTypes
-} ShieldTypes_t;
-//RGBWb
-//https://www.random.org/integer-sets/?sets=10&num=3&min=1&max=5&commas=on&order=random&format=html&rnd=new
+#ifdef PBL_BW
+  typedef enum {
+    kBWC,
+    kBCW,
+    kWCB,
+    kWBC,
+    kCBW,
+    kCWB,
+    kNShieldTypes
+  } ShieldTypes_t;
+#else
+  typedef enum {
+    kRWb,
+    kRbB,
+    kbBb,
+    kbRW,
+    kBbR,
+    kBRR,
+    kNShieldTypes
+  } ShieldTypes_t;
+  //RGBWb
+  //https://www.random.org/integer-sets/?sets=10&num=3&min=1&max=5&commas=on&order=random&format=html&rnd=new
+#endif
 
 #define MAX_LEVELS 3
 #define MIN_ROOMS 5
@@ -105,10 +119,11 @@ typedef struct {
   int8_t m_gameOver;
   bool m_fallingDeath;
   uint32_t m_seed;
+  uint16_t m_ticksInLevel;
+  uint16_t m_ticksTotal;
 } Dungeon_t;
 
 #define MAX_FRAMES 6
-#define PLAYER_SPEED 2
 typedef struct {
   uint16_t m_playerFrame;
   GPoint m_position;
@@ -130,6 +145,8 @@ int getPlayerChoice();
 GameState_t getGameState();
 void setGameState(GameState_t _state);
 void setDisplayMsg(const char* _msg);
+
+bool getFlash(bool _constant);
 
 extern const char* const m_spellNames[MAX_SPELLS];
 int getHintValueMax(Hints_t hint);

@@ -23,6 +23,10 @@ static void init(void) {
   });
 
   accel_tap_service_subscribe(tapHandle);
+
+  #ifdef DEV
+  light_enable(true);
+  #endif
 }
 
 static void deinit(void) {
