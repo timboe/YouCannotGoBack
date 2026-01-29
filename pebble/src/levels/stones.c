@@ -8,7 +8,12 @@ static int8_t s_coloursB[3] = {0};
 static int8_t s_coloursC[3] = {0};
 
 void updateProcStones(GContext* _ctx) {
-  renderStonesCommon(_ctx, s_coloursA, s_coloursB, s_coloursC, s_correct, s_fire, s_state);
+  renderPit(_ctx);
+  renderStandingStoneFloor(_ctx);
+  renderStandingStoneGrid(_ctx, s_coloursA, s_coloursB, s_coloursC, s_correct, s_state, false);
+  renderPlayer(_ctx);
+  renderStonesCommonFire(_ctx, s_correct, s_fire, s_state);
+  renderWalls(_ctx, true, true, true, true);
 }
 
 bool tickStones(bool _doInit) {

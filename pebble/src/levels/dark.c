@@ -22,7 +22,12 @@ void updateProcDark(GContext* _ctx) {
     return;
   }
 
-  renderStonesCommon(_ctx, s_colours, s_colours, s_colours, s_correct, s_fire, s_state);
+  renderPit(_ctx);
+  renderStandingStoneFloor(_ctx);
+  renderStandingStoneGrid(_ctx, s_colours, s_colours, s_colours, s_correct, s_state, false); // s_correct & s_state not used
+  renderPlayer(_ctx);
+  renderStonesCommonFire(_ctx, s_correct, s_fire, s_state);
+  renderWalls(_ctx, true, true, true, true);
 }
 
 bool tickDark(bool _doInit) {
@@ -39,7 +44,7 @@ bool tickDark(bool _doInit) {
   }
 
   if (s_state < 3) { // start initial move
-    s_ringSize += 1 + m_dungeon.m_level;
+    s_ringSize += 1 + MIN(4, m_dungeon.m_difficulty);
     if (s_ringSize > 20) {
       ++s_state;
       s_ringSize = 0;

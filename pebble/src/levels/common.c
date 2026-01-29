@@ -124,12 +124,7 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct) {
   }
 }
 
-void renderStonesCommon(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _correct, int8_t _fire, int16_t _state) {
-  renderPit(_ctx);
-  renderStandingStoneGrid(_ctx, _coloursA, _coloursB, _coloursC);
-  renderPlayer(_ctx);
-  renderWalls(_ctx, true, true, true, true);
-
+void renderStonesCommonFire(GContext* _ctx, int8_t* _correct, int8_t _fire, int16_t _state) {
   for (int _f = 0; _f < 3; ++_f) {  // Draw fires
     if (_fire < _f) break;
     for (int _i = 0; _i < 3; ++_i) {
@@ -142,5 +137,5 @@ void renderStonesCommon(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, in
   int _off = 0;
   if (_state == 7) _off = 4;
   else if (_state == 9) _off = 8;
-  renderArrows(_ctx, 6 + _off, 3, 4);
+  renderArrows(_ctx, 6 + _off, 5, 4);
 }

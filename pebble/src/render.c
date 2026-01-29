@@ -85,7 +85,7 @@ static void endRenderMsg(void* _data) {
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific);
 }
 
-void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC) {
+void renderStandingStoneFloor(GContext* _ctx) {
 
   renderLinePath(_ctx, 4, 10,   7, 6); // to upper
   renderLinePath(_ctx, 4, 10,   15, 10); // straight accross
@@ -103,13 +103,24 @@ void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _colours
   renderLinePath(_ctx, 7, 10,   11, 14);
   renderLinePath(_ctx, 11, 6,   15, 10);
   renderLinePath(_ctx, 11, 14,  15, 10);
+}
+
+void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _correct, int16_t _state, bool _isPattern) {
 
   renderStandingStone(_ctx, 4, 10, GColorLightGray);
 
-  for (int _s = 0; _s < 3; ++_s) {
-    renderStandingStone(_ctx, 7, 6 + (4 * _s), getShieldColor(_coloursA[_s])); // Top row
-    renderStandingStone(_ctx, 11, 6 + (4 * _s), getShieldColor(_coloursB[_s])); // Middle row
-    renderStandingStone(_ctx, 15, 6 + (4 * _s), getShieldColor(_coloursC[_s])); // Bottom row
+  if (_isPattern) {
+
+    // TODO
+
+  } else {
+
+    for (int _s = 0; _s < 3; ++_s) {
+      renderStandingStone(_ctx, 7, 6 + (4 * _s), getShieldColor(_coloursA[_s])); // Top row
+      renderStandingStone(_ctx, 11, 6 + (4 * _s), getShieldColor(_coloursB[_s])); // Middle row
+      renderStandingStone(_ctx, 15, 6 + (4 * _s), getShieldColor(_coloursC[_s])); // Bottom row
+    }
+
   }
 
 }
@@ -117,6 +128,8 @@ void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _colours
 void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
   GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
   GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
+  uint8_t _w1 = 3;
+  uint8_t _w2 = 7;
 #ifdef PBL_ROUND
   _p1.x += ROUND_OFFSET_X;
   _p1.y += ROUND_OFFSET_Y;
@@ -127,11 +140,13 @@ void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
   _p1.y += EMERY_OFFSET_Y;
   _p2.x += EMERY_OFFSET_X;
   _p2.y += EMERY_OFFSET_Y;
+  _w1 = 5;
+  _w2 = 9;
 #endif
-  graphics_context_set_stroke_width(_ctx, 7);
+  graphics_context_set_stroke_width(_ctx, _w2);
   graphics_context_set_stroke_color(_ctx, GColorDarkGray);
   graphics_draw_line(_ctx, _p1, _p2);
-  graphics_context_set_stroke_width(_ctx, 3);
+  graphics_context_set_stroke_width(_ctx, _w1);
   graphics_context_set_stroke_color(_ctx, GColorLightGray);
   graphics_draw_line(_ctx, _p1, _p2);
 }

@@ -4,6 +4,8 @@
 // #define DEBUG_MODE
 #define DEV
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 #if PBL_DISPLAY_WIDTH == 200
   #define YCGBv2 1
   #define HIGH_RES 1
@@ -50,7 +52,12 @@ typedef enum {
 #define MAX_GREEK 8
 #define MAX_SYMBOL 4
 #define MAX_NUMBER 43
-#define MAX_SHIELD_COLOUR 4
+#ifdef PBL_BW
+  #define MAX_SHIELD_COLOUR 3
+#else
+  #define MAX_SHIELD_COLOUR 4
+#endif
+
 typedef enum {
   kNoHint,
   kSpell,
