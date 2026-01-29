@@ -66,7 +66,7 @@ extern GBitmap* m_fire[2];
 extern GBitmap* m_bridge[3];
 extern GBitmap* m_grave;
 extern GBitmap* m_flagstone[3];
-extern GBitmap* m_chest;
+extern GBitmap* m_chest[2];
 extern GBitmap* m_table;
 extern GBitmap* m_black;
 extern GBitmap* m_treasureBanner;

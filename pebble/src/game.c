@@ -69,6 +69,7 @@ bool newRoom() {
     m_dungeon.m_rooms[0][0] = kEnd;
   } else  if ( ++m_dungeon.m_room == m_dungeon.m_roomsPerLevel[ m_dungeon.m_level ] ) { // New level
     ++m_dungeon.m_level;
+    ++m_dungeon.m_difficulty;
     m_dungeon.m_room = 0;
   };
   ++m_dungeon.m_roomsVisited;
@@ -187,12 +188,16 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
   if (s_gameState == kFadeIn) renderFade(_thisLayer, _ctx, true);
   else if (s_gameState == kFadeOut) renderFade(_thisLayer, _ctx, false);
 
-  // On round we need some masking borders
+  // On round and high res we need some masking borders
   #ifdef PBL_ROUND
   graphics_context_set_fill_color(_ctx, GColorBlack);
   GRect _b = layer_get_bounds(_thisLayer);
   graphics_fill_rect(_ctx, GRect(0,                        0, ROUND_OFFSET_X, _b.size.h), 0, GCornerNone);
   graphics_fill_rect(_ctx, GRect(_b.size.w-ROUND_OFFSET_X, 0, ROUND_OFFSET_X, _b.size.h), 0, GCornerNone);
+  #elif defined HIGH_RES
+  graphics_context_set_fill_color(_ctx, GColorBlack);
+  GRect _b = layer_get_bounds(_thisLayer);
+  graphics_fill_rect(_ctx, GRect(_b.size.w - 1, 0, 1, _b.size.h), 0, GCornerNone);
   #endif
 
   // Draw FPS indicator (dbg only)

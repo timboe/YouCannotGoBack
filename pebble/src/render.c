@@ -169,20 +169,25 @@ void renderFrame(GContext* _ctx, GRect _b) {
 }
 
 void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
-#ifdef PBL_ROUND
-  _b.origin.x += ROUND_OFFSET_X;
-  _b.origin.y += ROUND_OFFSET_Y;
-#endif
+  #ifdef PBL_ROUND
+    _b.origin.x += ROUND_OFFSET_X;
+    _b.origin.y += ROUND_OFFSET_Y;
+  #endif
+  uint8_t _offset = 4;
+  #ifdef HIGH_RES
+    _offset *= 2;
+  #endif
   graphics_context_set_fill_color(_ctx, GColorWhite);
   graphics_fill_rect(_ctx, _b, 13, 0);
   graphics_context_set_stroke_color(_ctx, GColorBlack);
   graphics_context_set_stroke_width(_ctx, 3);
   graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
   graphics_context_set_text_color(_ctx, GColorBlack);
-  graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_LARGE), GRect(_b.origin.x, _b.origin.y + 4, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+  graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_LARGE), GRect(_b.origin.x, _b.origin.y + _offset, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 }
 
 void renderMessage(GContext* _ctx, const char* _msg) {
+
   GRect _b = GRect(0*SIZE, 8*SIZE, 18*SIZE, 5*SIZE);
   renderTextInFrame(_ctx, _msg, _b);
   app_timer_register(1500, endRenderMsg, NULL);
@@ -277,7 +282,7 @@ void renderWallClutter(GContext* _ctx) {
       drawBitmap(_ctx, m_tapestrySprite[2], _r+5, 0);
       int8_t _xoffset = 0;
       #ifdef HIGH_RES
-      _xoffset = 1;
+      _xoffset = 1; // TODO reduce?
       #endif
       if (!getFlash(false)) renderBorderText(_ctx, GRect((_r+_xoffset) * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_SMALL), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
     } else if (_hint == kSymbol && !getFlash(false)) { // Check symbol

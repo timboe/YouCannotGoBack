@@ -7,9 +7,17 @@ void updateProcChest(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
 
+  // repeat on a 8s loop
+  const uint16_t _t = m_dungeon.m_ticksInLevel % (ANIM_FPS * 8);
+  const uint8_t _d = m_dungeon.m_difficulty;
   for (int _i = 0; _i < 3; ++_i) {
+    bool _badChest = (_i == s_bad);
+    if (_d >= 1) {
+      if (_t < 2*ANIM_FPS) _badChest = false; // Show later
+      if (_t > 4*ANIM_FPS && _d >= 2) _badChest = false; // Then hide
+    }
     drawBitmap(_ctx, m_table, 7, 5 + (_i * 4));
-    drawBitmap(_ctx, m_chest, 8, 4 + (_i * 4));
+    drawBitmap(_ctx, m_chest[_badChest ? 1 : 0], 8, 4 + (_i * 4));
   }
 
   renderClutter(_ctx);

@@ -44,7 +44,7 @@ GBitmap* m_bridge[3];
 GBitmap* m_grave;
 GBitmap* m_fire[2];
 GBitmap* m_flagstone[3];
-GBitmap* m_chest;
+GBitmap* m_chest[2];
 GBitmap* m_table;
 GBitmap* m_black;
 GBitmap* m_treasureBanner;
@@ -186,7 +186,8 @@ void initSprite() {
   m_bridge[1] = getSprite(9, 6, 1, 2);
   m_bridge[2] = getSprite(14, 10, 1, 2);
 
-  m_chest = getSprite(8, 10, 2, 2);
+  m_chest[0] = getSprite(18, 12, 2, 2);
+  m_chest[1] = getSprite(8, 10, 2, 2);
   m_table = getSprite(4, 10, 4, 2);
   m_black = getSprite(2, 2, 2, 2);
 
@@ -248,7 +249,8 @@ void deinitSprite() {
 
   gbitmap_destroy(m_guardian);
   gbitmap_destroy(m_block);
-  gbitmap_destroy(m_chest);
+  gbitmap_destroy(m_chest[0]);
+  gbitmap_destroy(m_chest[1]);
   gbitmap_destroy(m_table);
   gbitmap_destroy(m_black);
 

@@ -28,7 +28,7 @@ void updateProcFinal(GContext* _ctx) {
 
   drawBitmap(_ctx, m_treasure[0], 11, 7);
   drawBitmap(_ctx, m_treasure[2], 14, 8);
-  drawBitmap(_ctx, m_chest, 12, 9);
+  drawBitmap(_ctx, m_chest[0], 12, 9);
 
   renderPlayer(_ctx);
   renderWalls(_ctx, true, false, true, false);
