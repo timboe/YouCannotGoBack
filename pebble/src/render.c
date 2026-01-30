@@ -80,6 +80,12 @@ void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
+void drawBitmapAbsNoCorrection(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
+  GRect _r = gbitmap_get_bounds(_bitmap);
+  _r.origin = _p;
+  graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
+}
+
 static void endRenderMsg(void* _data) {
   // Stop displaying message timeout
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific);
@@ -188,6 +194,20 @@ void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
     _b.origin.x += ROUND_OFFSET_X;
     _b.origin.y += ROUND_OFFSET_Y;
   #endif
+  uint8_t _offset = 4;
+  #ifdef HIGH_RES
+    _offset *= 2;
+  #endif
+  graphics_context_set_fill_color(_ctx, GColorWhite);
+  graphics_fill_rect(_ctx, _b, 13, 0);
+  graphics_context_set_stroke_color(_ctx, GColorBlack);
+  graphics_context_set_stroke_width(_ctx, 3);
+  graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
+  graphics_context_set_text_color(_ctx, GColorBlack);
+  graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_LARGE), GRect(_b.origin.x, _b.origin.y + _offset, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+}
+
+void renderTextInFrameNoCorrection(GContext* _ctx, const char* _msg, GRect _b) {
   uint8_t _offset = 4;
   #ifdef HIGH_RES
     _offset *= 2;
@@ -445,9 +465,33 @@ void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer,
   graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
 }
 
+void renderBorderTextNoCorrection(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert) {
+
+  graphics_context_set_text_color(_ctx, GColorBlack);
+  if (_invert == true) graphics_context_set_text_color(_ctx, GColorWhite);
+
+  _loc.origin.y += _offset; // CU
+  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
+  _loc.origin.x += _offset; // RU
+  _loc.origin.y -= _offset; // CR
+  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
+  _loc.origin.y -= _offset; // DR
+  _loc.origin.x -= _offset; // DC
+  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
+  _loc.origin.x -= _offset; // DR
+  _loc.origin.y += _offset; // CR
+  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
+
+  // main
+  graphics_context_set_text_color(_ctx, GColorWhite);
+  if (_invert == true) graphics_context_set_text_color(_ctx, GColorBlack);
+  _loc.origin.x += _offset; // O
+  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
+}
+
 #define FADE_LEVELS 8
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
-  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position.y++;
+  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position.y += PLAYER_SPEED;
   static int s_progress = 1;
   GRect _b = layer_get_bounds(_thisLayer);
   GBitmap* _fBuffer = graphics_capture_frame_buffer(_ctx);

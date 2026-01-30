@@ -7,23 +7,40 @@ static char s_victories[16];
 
 void updateProcEnd(GContext* _ctx) {
 
+
   if (m_dungeon.m_gameOver == 1) {
-    static const char _end1[] = "OOOOH, NASTY...";
-    renderTextInFrame(_ctx, _end1, GRect(0, 0, PBL_DISPLAY_WIDTH, 43));
-    drawBitmapAbs(_ctx, m_grave, GPoint(50, 50));
+    uint8_t _height = 43;
+    #ifdef HIGH_RES
+      _height = 56;
+    #endif
+    static const char _end1[] = "OOOH, NASTY...";
+    renderTextInFrameNoCorrection(_ctx, _end1, GRect(0, 0, PBL_DISPLAY_WIDTH, _height));
+    // Grave sprite is 40x68
+    drawBitmapAbsNoCorrection(_ctx, m_grave, GPoint(PBL_DISPLAY_WIDTH/2 - 20, PBL_DISPLAY_HEIGHT/2 - 34));
     static const char _end2[] = "RESTART";
-    renderTextInFrame(_ctx, _end2, GRect(PBL_DISPLAY_WIDTH/5, 125, PBL_DISPLAY_WIDTH - (2*PBL_DISPLAY_WIDTH/5), 43));
+    renderTextInFrameNoCorrection(_ctx, _end2, 
+      GRect(PBL_DISPLAY_WIDTH/5, PBL_DISPLAY_HEIGHT - _height,
+            PBL_DISPLAY_WIDTH - (2*PBL_DISPLAY_WIDTH/5), _height));
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
       drawBitmap(_ctx, m_arrow, 3, 13);
       drawBitmap(_ctx, m_arrow, 13, 13);
     }
   } else {
+    uint8_t _height = 63;
+    uint8_t _n = 2;
+    #ifdef HIGH_RES
+      _height = 75;
+    #endif
+    #ifdef PBL_ROUND
+      _n = 4;
+    #endif
     static const char _end1[] = "NICELY DONE! DUNGEONEER";
-    renderTextInFrame(_ctx, _end1, GRect(0, 0, 144, 63));
-    drawBitmapAbs(_ctx, m_treasureBanner, GPoint(19, 68));
-    renderBorderText(_ctx, GRect(0, 145, 144, 20), fonts_get_system_font(FONT_KEY_SMALL), s_victories, 2, GTextAlignmentCenter, false);
+    renderTextInFrameNoCorrection(_ctx, _end1, GRect(0, 0, PBL_DISPLAY_WIDTH, _height));
+    // 107x76
+    drawBitmapAbsNoCorrection(_ctx, m_treasureBanner, GPoint(PBL_DISPLAY_WIDTH/2 - 54, PBL_DISPLAY_HEIGHT/2 - 38 + 3*SIZE));
+    renderBorderTextNoCorrection(_ctx, GRect(0, PBL_DISPLAY_HEIGHT - _n*SIZE, PBL_DISPLAY_WIDTH, _n*SIZE), fonts_get_system_font(FONT_KEY_SMALL), s_victories, 2, GTextAlignmentCenter, false);
     if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
-      drawBitmap(_ctx, m_arrow, 8, 12);
+      drawBitmap(_ctx, m_arrow, 8, 13);
     }
   }
 }

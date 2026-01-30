@@ -5,6 +5,7 @@
 
 void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y);
 void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p);
+void drawBitmapAbsNoCorrection(GContext* _ctx, GBitmap* _bitmap, GPoint _p);
 
 void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert);
 void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC);
@@ -13,8 +14,10 @@ void renderFloor(GContext* _ctx, int mode);
 void renderPlayer(GContext* _ctx);
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in);
 void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert);
+void renderBorderTextNoCorrection(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert);
 void renderClutter(GContext* _ctx);
 void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b);
+void renderTextInFrameNoCorrection(GContext* _ctx, const char* _msg, GRect _b);
 void renderMessage(GContext* _ctx, const char* _msg);
 void renderPit(GContext* _ctx);
 void renderFinalPit(GContext* _ctx);
