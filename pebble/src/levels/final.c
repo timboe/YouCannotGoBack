@@ -82,14 +82,14 @@ bool tickFinal(bool _doInit) {
     for (int _f = 0; _f < 2; ++_f) {
       bool _move = false;
       if (s_fire[_f].x < m_player.m_position.x - SIZE) {
-        ++s_fire[_f].x;
+        s_fire[_f].x += PLAYER_SPEED;
         _move = true;
       }
-      if (s_fire[_f].y < m_player.m_position.y) {
-        ++s_fire[_f].y;
+      if (_f == 0 && s_fire[_f].y < m_player.m_position.y) {
+        s_fire[_f].y += PLAYER_SPEED;
         _move = true;
-      } else if (s_fire[_f].y > m_player.m_position.y) {
-        --s_fire[_f].y;
+      } else if (_f == 1 && s_fire[_f].y > m_player.m_position.y) {
+        s_fire[_f].y -= PLAYER_SPEED;
         _move = true;
       }
       if (_move == false) {

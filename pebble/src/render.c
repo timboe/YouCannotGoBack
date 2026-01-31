@@ -67,23 +67,27 @@ void renderProgressBar(Layer* _thisLayer, GContext* _ctx) {
   graphics_draw_line(_ctx, _s, _e);
 }
 
-void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
+void drawBitmapAbsInternal(GContext* _ctx, GBitmap* _bitmap, GPoint _p, bool _correction) {
   GRect _r = gbitmap_get_bounds(_bitmap);
   _r.origin = _p;
-#ifdef PBL_ROUND
-  _r.origin.x += ROUND_OFFSET_X;
-  _r.origin.y += ROUND_OFFSET_Y;
-#elif defined HIGH_RES
-  _r.origin.x += EMERY_OFFSET_X;
-  _r.origin.y += EMERY_OFFSET_Y;
-#endif
+  if (_correction) {
+    #ifdef PBL_ROUND
+      _r.origin.x += ROUND_OFFSET_X;
+      _r.origin.y += ROUND_OFFSET_Y;
+    #elif defined HIGH_RES
+      _r.origin.x += EMERY_OFFSET_X;
+      _r.origin.y += EMERY_OFFSET_Y;
+    #endif
+  }
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
+void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
+  drawBitmapAbsInternal(_ctx, _bitmap, _p, true);
+}
+
 void drawBitmapAbsNoCorrection(GContext* _ctx, GBitmap* _bitmap, GPoint _p) {
-  GRect _r = gbitmap_get_bounds(_bitmap);
-  _r.origin = _p;
-  graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
+  drawBitmapAbsInternal(_ctx, _bitmap, _p, false);
 }
 
 static void endRenderMsg(void* _data) {
@@ -189,11 +193,14 @@ void renderFrame(GContext* _ctx, GRect _b) {
   graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
 }
 
-void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
-  #ifdef PBL_ROUND
-    _b.origin.x += ROUND_OFFSET_X;
-    _b.origin.y += ROUND_OFFSET_Y;
-  #endif
+
+void renderTextInFrameInternal(GContext* _ctx, const char* _msg, GRect _b, bool _correction) {
+  if (_correction) {
+    #ifdef PBL_ROUND
+      _b.origin.x += ROUND_OFFSET_X;
+      _b.origin.y += ROUND_OFFSET_Y;
+    #endif
+  }
   uint8_t _offset = 4;
   #ifdef HIGH_RES
     _offset *= 2;
@@ -207,18 +214,13 @@ void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
   graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_LARGE), GRect(_b.origin.x, _b.origin.y + _offset, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 }
 
+
+void renderTextInFrame(GContext* _ctx, const char* _msg, GRect _b) {
+  renderTextInFrameInternal(_ctx, _msg, _b, true);
+}
+
 void renderTextInFrameNoCorrection(GContext* _ctx, const char* _msg, GRect _b) {
-  uint8_t _offset = 4;
-  #ifdef HIGH_RES
-    _offset *= 2;
-  #endif
-  graphics_context_set_fill_color(_ctx, GColorWhite);
-  graphics_fill_rect(_ctx, _b, 13, 0);
-  graphics_context_set_stroke_color(_ctx, GColorBlack);
-  graphics_context_set_stroke_width(_ctx, 3);
-  graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
-  graphics_context_set_text_color(_ctx, GColorBlack);
-  graphics_draw_text(_ctx, _msg, fonts_get_system_font(FONT_KEY_LARGE), GRect(_b.origin.x, _b.origin.y + _offset, _b.size.w, _b.size.h), GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+  renderTextInFrameInternal(_ctx, _msg, _b, false);
 }
 
 void renderMessage(GContext* _ctx, const char* _msg) {
@@ -434,17 +436,21 @@ void renderPlayer(GContext* _ctx) {
   drawBitmapAbs(_ctx, m_playerSprite[ m_player.m_playerFrame ], _pos);
 }
 
-void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert) {
+
+void renderBorderTextInternal(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert, bool _correction) {
 
   graphics_context_set_text_color(_ctx, GColorBlack);
   if (_invert == true) graphics_context_set_text_color(_ctx, GColorWhite);
-#ifdef PBL_ROUND
-  _loc.origin.x += ROUND_OFFSET_X;
-  _loc.origin.y += ROUND_OFFSET_Y;
-#elif defined HIGH_RES
-  _loc.origin.x += EMERY_OFFSET_X;
-  _loc.origin.y += EMERY_OFFSET_Y;
-#endif
+
+  if (_correction) {
+    #ifdef PBL_ROUND
+      _loc.origin.x += ROUND_OFFSET_X;
+      _loc.origin.y += ROUND_OFFSET_Y;
+    #elif defined HIGH_RES
+      _loc.origin.x += EMERY_OFFSET_X;
+      _loc.origin.y += EMERY_OFFSET_Y;
+    #endif
+  }
 
   _loc.origin.y += _offset; // CU
   graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
@@ -465,28 +471,12 @@ void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer,
   graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
 }
 
+void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert) {
+  renderBorderTextInternal(_ctx, _loc, _f, _buffer, _offset, _al, _invert, true);
+}
+
 void renderBorderTextNoCorrection(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert) {
-
-  graphics_context_set_text_color(_ctx, GColorBlack);
-  if (_invert == true) graphics_context_set_text_color(_ctx, GColorWhite);
-
-  _loc.origin.y += _offset; // CU
-  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
-  _loc.origin.x += _offset; // RU
-  _loc.origin.y -= _offset; // CR
-  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
-  _loc.origin.y -= _offset; // DR
-  _loc.origin.x -= _offset; // DC
-  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
-  _loc.origin.x -= _offset; // DR
-  _loc.origin.y += _offset; // CR
-  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
-
-  // main
-  graphics_context_set_text_color(_ctx, GColorWhite);
-  if (_invert == true) graphics_context_set_text_color(_ctx, GColorBlack);
-  _loc.origin.x += _offset; // O
-  graphics_draw_text(_ctx, _buffer, _f, _loc, GTextOverflowModeWordWrap, _al, NULL);
+  renderBorderTextInternal(_ctx, _loc, _f, _buffer, _offset, _al, _invert, false);
 }
 
 #define FADE_LEVELS 8
@@ -498,15 +488,15 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   int _flag = (_in == true ? s_progress : FADE_LEVELS - s_progress );
   // Have to do a funny iterating for round screens
   // TODO - fix this for B&W
-#ifdef PBL_COLOR
-  for (int _y = 0; _y < _b.size.h; ++_y) {
-    GBitmapDataRowInfo _rowInfo = gbitmap_get_data_row_info(_fBuffer, _y);
-    for (int _x = _rowInfo.min_x; _x < _rowInfo.max_x; ++_x) {
-      uint8_t* _pixelAddr = _rowInfo.data + _x;
-      if (rand() % _flag == 0) (*_pixelAddr) = GColorBlack.argb;
-     }
-  }
-#endif
+  #ifdef PBL_COLOR
+    for (int _y = 0; _y < _b.size.h; ++_y) {
+      GBitmapDataRowInfo _rowInfo = gbitmap_get_data_row_info(_fBuffer, _y);
+      for (int _x = _rowInfo.min_x; _x < _rowInfo.max_x; ++_x) {
+        uint8_t* _pixelAddr = _rowInfo.data + _x;
+        if (rand() % _flag == 0) (*_pixelAddr) = GColorBlack.argb;
+       }
+    }
+  #endif
   graphics_release_frame_buffer(_ctx, _fBuffer);
   if (++s_progress == FADE_LEVELS) {
     s_progress = 1;
@@ -516,14 +506,14 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
 }
 
 #ifdef PBL_BW
-GColor getShieldColor(int8_t _value) {
-  switch (_value) {
-    case 0: return GColorBlack;
-    case 1: return GColorWhite;
-    case 2: return GColorDarkGray;
-    default: return GColorLightGray;
+  GColor getShieldColor(int8_t _value) {
+    switch (_value) {
+      case 0: return GColorBlack;
+      case 1: return GColorWhite;
+      case 2: return GColorDarkGray;
+      default: return GColorLightGray;
+    }
   }
-}
 #else
   GColor getShieldColor(int8_t _value) {
     switch (_value) {
