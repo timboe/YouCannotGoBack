@@ -35,9 +35,9 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      TESTING_ROOM_HINT = kShield; // TESTING
+      TESTING_ROOM_HINT = kNumber; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
-      _newRoom = kMaze; // TESTING
+      _newRoom = kPword; // TESTING
       // m_dungeon.m_difficulty = 0; // TESTING
       // m_dungeon.m_gameOver = 2; // TESTING
       APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);

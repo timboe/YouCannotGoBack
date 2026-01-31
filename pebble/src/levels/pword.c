@@ -26,7 +26,11 @@ void updateProcPword(GContext* _ctx) {
         GRect _r = GRect(SIZE*10, SIZE*(5 + 4*_i),  SIZE*6, SIZE*2);
         renderHintNumber(_ctx, _r, s_choices[_i], true);
       } else {
-        GRect _r = GRect(SIZE*10, SIZE*(4 + 4*_i),  SIZE*6, SIZE*2);
+        uint8_t _yoff = SIZE*(4 + 4*_i);
+        #ifdef HIGH_RES
+          _yoff += SIZE;
+        #endif
+        GRect _r = GRect(SIZE*10, _yoff,  SIZE*6, SIZE*2);
         renderBorderText(_ctx, _r, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), m_spellNames[s_choices[_i]], 2, GTextAlignmentCenter, false);
       }
     }
