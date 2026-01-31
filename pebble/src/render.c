@@ -23,7 +23,6 @@ void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd) {
 }
 
 void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert) {
-  if (getFlash(false)) return;
   static char _hintText[3];
   snprintf(_hintText, 3, "%i", _value);
   renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_SMALL), _hintText, 1, GTextAlignmentCenter, _invert);
@@ -39,7 +38,7 @@ void renderClutter(GContext* _ctx) {
       if (!getFlash(false)) drawBitmapAbs(_ctx, m_greek[ _hintValue ], _p);
     } else if (_c == 0 && _hint == kNumber) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
-      renderHintNumber(_ctx, GRect(m_clutter.m_position[_c].x * SIZE, (m_clutter.m_position[_c].y * SIZE)-3, 16, 16), _hintValue, true);
+      if (!getFlash(false)) renderHintNumber(_ctx, GRect(m_clutter.m_position[_c].x * SIZE, (m_clutter.m_position[_c].y * SIZE)-3, 16, 16), _hintValue, true);
     } else {
       drawBitmap(_ctx, getClutter(false), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
     }

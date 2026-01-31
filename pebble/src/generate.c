@@ -37,8 +37,8 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       _newRoom = kStart;
       TESTING_ROOM_HINT = kShield; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
-      _newRoom = kFinal; // TESTING
-      // m_dungeon.m_difficulty = 0; // TESTING
+      _newRoom = kMaths; // TESTING
+      m_dungeon.m_difficulty = 0; // TESTING
       // m_dungeon.m_gameOver = 2; // TESTING
       APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
@@ -86,6 +86,7 @@ Hints_t getHint(int _level, Rooms_t _roomType) {
     if ( m_hintIsActive[_random] == false ) _hint = _random;
   }
 
+  if (_roomType == kMaths && _hint == kNumber) return kNoHint; // This is just confusing otherwise
   return _hint;
 }
 
@@ -100,7 +101,11 @@ void generate() {
     m_hintIsActive[_i] = 0;
   }
   m_dungeon.m_room = -1; // Will be incremented on kNewLevel
-  m_dungeon.m_lives = 1;
+  #ifdef YCGBv2
+    m_dungeon.m_lives = 0; // More ways to get lives mid game in v2
+  #else
+    m_dungeon.m_lives = 1;
+  #endif
 
   #ifdef DEV
   APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
@@ -149,8 +154,16 @@ void generate() {
         m_hintValue[_consumeHint] = 0;
       }
 
-      // Special for CHEST room, REMINDER
-      if (_roomType == kChest && (m_hintIsActive[kSpell] == true || m_hintIsActive[kNumber] == true) && rand() % 2 == 0) {
+      // Special for CHEST/GAMBLE room, REMINDER
+      // By increasing the number on the right, we make it less likely that the player
+      // will get an extra life once they have been given a hint (chest only)
+      bool canGiveHint = m_hintIsActive[kSpell] || m_hintIsActive[kNumber];
+      #ifdef YCGBv2
+        canGiveHint &= (_roomType == kChest && rand() % 6); // TODO || _roomType == kGamble;
+      #else
+        canGiveHint &= (_roomType == kChest && rand() % 6);
+      #endif
+      if (canGiveHint) {
         if (m_hintIsActive[kSpell] == true) {
           m_dungeon.m_roomNeedHint[_level][_room] = kSpell;
           m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[kSpell];

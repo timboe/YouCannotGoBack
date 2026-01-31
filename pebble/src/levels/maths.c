@@ -15,13 +15,18 @@ static int8_t s_correct = 0;
 
 void updateProcMaths(GContext* _ctx) {
 
+  uint8_t _xoff = 0;
+  #ifdef HIGH_RES
+    _xoff = 4;
+  #endif
+
   renderFloor(_ctx, 0);
 
   drawBitmap(_ctx, m_block, 5, 9);
   drawBitmap(_ctx, m_block, 13, 9);
 
   for (int _s = 0; _s < 3; ++_s) {
-    renderHintNumber(_ctx, GRect((7 + _s*2)*SIZE, 9*SIZE, 16, 16), s_sequence[_s], false);   // sequence
+    renderHintNumber(_ctx, GRect((7 + _s*2)*SIZE + _xoff, 9*SIZE, 16, 16), s_sequence[_s], false);   // sequence
   }
 
   renderClutter(_ctx);
@@ -32,7 +37,7 @@ void updateProcMaths(GContext* _ctx) {
   for (int _s = 0; _s < 3; ++_s) {
     GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);   // Choices
     renderFrame(_ctx, _b);
-    renderHintNumber(_ctx, GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s], false);
+    renderHintNumber(_ctx, GRect(16*SIZE - 1 + _xoff, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s], false);
   }
   renderArrows(_ctx, 14, 4, 4);
 
@@ -44,14 +49,14 @@ bool tickMaths(bool _doInit) {
     m_player.m_position = GPoint(0, SIZE*9);
     addCluter(5, 20, 1);
 
+    // Keep this below 100
     s_puzzle = rand() % kNMathsPuzzles; // Choose seq
-    s_sequence[0] = (10 * m_dungeon.m_level) + rand()%10; // Choose starting
-    uint16_t _modA = 1 + rand()%5; // Chose modifier
-    uint16_t _modB = 0;
-    if (m_dungeon.m_level > 0) _modB = 1 + rand()%4;
+    uint8_t _difficulty = MIN(4, m_dungeon.m_difficulty);
+    s_sequence[0] = (10 * _difficulty) + rand() % 10; // Choose starting
+    uint16_t _mod = 1 + rand() % (5 + _difficulty * 2); // Chose modifier
     for (int _i = 1; _i < 4; ++_i) {
       switch (s_puzzle) {
-        case kAdd: s_sequence[_i] = s_sequence[_i - 1] + _modA + (_i * _modB); break; // Do seq
+        case kAdd: s_sequence[_i] = s_sequence[_i - 1] + _mod; break; // Do seq
         default: break;
       }
     }
@@ -63,7 +68,12 @@ bool tickMaths(bool _doInit) {
     s_correct = rand() % 3;
     s_choices[ s_correct ] = s_sequence[3];
 
-    shuffler(s_choices, s_sequence[3] - 10, 20);
+    uint8_t _range = (_difficulty == 0 ? 1 : _difficulty) * 2;
+    shuffler(s_choices, s_sequence[3] - _range/2, _range*2); // /2 biases towards larger numbers
+
+    for (int _i = 0; _i < 3; ++_i) {
+      if (s_choices[_i] < 0) s_choices[_i] *= -1;
+    }
 
     return false;
   }
