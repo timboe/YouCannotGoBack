@@ -37,8 +37,8 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       _newRoom = kStart;
       TESTING_ROOM_HINT = kShield; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
-      _newRoom = kMaths; // TESTING
-      m_dungeon.m_difficulty = 0; // TESTING
+      _newRoom = kMaze; // TESTING
+      // m_dungeon.m_difficulty = 0; // TESTING
       // m_dungeon.m_gameOver = 2; // TESTING
       APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game

@@ -1,13 +1,22 @@
 #include "bridge.h"
 
-#define N_MAZES 5
+#define N_MAZES 8
 #define N_MAZE_STEP 30
 
 static uint16_t s_state = 0;
 static uint16_t s_maze = 0;
 static uint16_t s_path = 0;
 //static uint16_t s_correct = 0;
-static const uint16_t s_sollution[N_MAZES][3] = { {2,0,1}, {1,0,2}, {0,2,1}, {2,0,1}, {2,1,0} };
+static const uint16_t s_sollution[N_MAZES][3] = { 
+  {2,0,1}, // Easy, striaght
+  {1,0,2}, // Medium, straight
+  {2,0,1}, // Medium, diagonal
+  {2,1,0}, // Medium, straight2
+  {2,0,1}, // Medium, crooked
+  {0,2,1}, // Hard, straight
+  {2,1,0}, // Hard, diagonal
+  {0,1,2}  // Hard, crooked
+};
 
 typedef struct {
   uint8_t m_path2[N_MAZE_STEP];
@@ -16,21 +25,30 @@ typedef struct {
 } Maze_t;
 
 static const Maze_t s_mazes[N_MAZES] = {
-  [0].m_path0 = {5,4, 13,4, 13,12, 7,12, 7,14, 15,14},
+  [0].m_path0 = {5,4, 13,4, 13,12, 7,12, 7,14, 15,14}, // Easy, straight
   [0].m_path1 = {5,10, 6,10, 6,3, 10,3, 10,6, 15,6},
   [0].m_path2 = {5,16, 10,16, 10,8, 7,8, 7,10, 15,10},
-  [1].m_path0 = {5,4, 6,4, 6,9, 8,9, 8,10, 10,10, 10,14, 6,14, 6,17, 11,17, 11,11, 14,11, 14,10, 15,10},
+  [1].m_path0 = {5,4, 6,4, 6,9, 8,9, 8,10, 10,10, 10,14, 6,14, 6,17, 11,17, 11,11, 14,11, 14,10, 15,10}, // Medium, straight
   [1].m_path1 = {5,10, 6,10, 6,13, 7,13, 7, 3, 8,3, 8,7, 13,7, 13,6, 15,6},
   [1].m_path2 = {5,16, 8,16, 8,11, 9,11, 9,3, 11,3, 11,10, 13,10, 13,14, 15,14},
-  [2].m_path0 = {5,4, 6,4, 6,7, 11,7, 11,16, 13,16, 13,6, 15,6},
-  [2].m_path1 = {5,10, 9,10, 9,8, 10,8, 10,9, 6,9, 6,13, 9,13, 9,15, 7,15, 7,17, 14,17, 14,14, 15,14},
-  [2].m_path2 = {5,16, 6,16, 6,14, 8,14, 8,6, 12,6, 12,5, 8,5, 8,3, 14,3, 14,10, 15,10},
-  [3].m_path0 = {5,4, 6,4, 10,8, 6,12, 12,18, 14,16, 14,14, 15,14},
-  [3].m_path1 = {5,10, 6,10, 9,13, 10,12, 13,15, 10,18, 6,14, 14,6, 15,6},
-  [3].m_path2 = {5,16, 6,16, 7,17, 12,12, 6,6, 10,2, 13,5, 11,7, 14,10, 15,10},
-  [4].m_path0 = {5,4, 6,4, 12,10, 14,8, 12,6, 6,12, 9,15, 8,16, 6,14, 9,11, 12,14, 15,14},
-  [4].m_path1 = {5,10, 6,10, 11,15, 10,16, 11,17, 12,16, 13,17, 14,16, 13,15, 15,13, 13,11, 14,10, 15,10},
-  [4].m_path2 = {5,16, 6,16, 11,11, 6,6, 9,3, 11,5, 10,6, 12,8, 14,6, 15,6}
+  [2].m_path0 = {5,4, 6,4, 10,8, 6,12, 12,18, 14,16, 14,14, 15,14}, // Medium, diagonal
+  [2].m_path1 = {5,10, 6,10, 9,13, 10,12, 13,15, 10,18, 6,14, 14,6, 15,6},
+  [2].m_path2 = {5,16, 6,16, 7,17, 12,12, 6,6, 10,2, 13,5, 11,7, 14,10, 15,10},
+  [3].m_path0 = {5,4, 13,4, 13,9, 9,9, 9,16, 14,16, 14,14, 15,14}, // Medium, straight2
+  [3].m_path1 = {5,10, 12,10, 12,7, 10,7, 10,3, 8,3, 8,14, 13,14, 13,10, 15,10},
+  [3].m_path2 = {5,16, 7,16, 7,6, 15,6},
+  [4].m_path0 = {5,4, 6,11, 12,7, 8,13, 15,14}, // Medium, crooked
+  [4].m_path1 = {5,10, 8,17, 14,13, 8,5, 12,3, 15,6},
+  [4].m_path2 = {5,16, 12,13, 8,7, 12,5, 15,10},
+  [5].m_path0 = {5,4, 6,4, 6,7, 11,7, 11,16, 13,16, 13,6, 15,6}, // Hard, straight
+  [5].m_path1 = {5,10, 9,10, 9,8, 10,8, 10,9, 6,9, 6,13, 9,13, 9,15, 7,15, 7,17, 14,17, 14,14, 15,14},
+  [5].m_path2 = {5,16, 6,16, 6,14, 8,14, 8,6, 12,6, 12,5, 8,5, 8,3, 14,3, 14,10, 15,10},
+  [6].m_path0 = {5,4, 6,4, 12,10, 14,8, 12,6, 6,12, 9,15, 8,16, 6,14, 9,11, 12,14, 15,14}, // Hard, diagonal
+  [6].m_path1 = {5,10, 6,10, 11,15, 10,16, 11,17, 12,16, 13,17, 14,16, 13,15, 15,13, 13,11, 14,10, 15,10},
+  [6].m_path2 = {5,16, 6,16, 11,11, 6,6, 9,3, 11,5, 10,6, 12,8, 14,6, 15,6},
+  [7].m_path0 = {5,4, 7,4, 5,6, 11,12, 9,14, 11,16, 13,16, 13,12, 11,10, 15,6}, // Hard, crooked
+  [7].m_path1 = {5,10, 7,10, 9,8, 11,8, 9,6, 9,4, 11,4, 11,6, 15,10},
+  [7].m_path2 = {5,16, 9,16, 7,14, 5,14, 7,12, 9,12, 11,14, 15,14}
 };
 
 void drawLine(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
@@ -46,23 +64,50 @@ void drawLine(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
   graphics_draw_line(_ctx, _p1, _p2);
 }
 
+void lines(GContext* _ctx, GColor _c, int _w) {
+  const bool _l = m_player.m_position.x < SIZE*8 || getFlash(true); 
+  const bool _p0 = _l || s_path != 0;
+  const bool _p1 = _l || s_path != 1;
+  const bool _p2 = _l || s_path != 2;
+  graphics_context_set_stroke_width(_ctx, _w);
+  graphics_context_set_stroke_color(_ctx, _c);
+  for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
+    if (_p0) drawLine(_ctx, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3]);
+    if (_p1) drawLine(_ctx, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3]);
+    if (_p2) drawLine(_ctx, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3]);
+  }
+}
+
 void updateProcMaze(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
+  renderStandingStone(_ctx, 4, 4 + s_path*6, GColorBlack); // kCircle);
 
-  graphics_context_set_stroke_width(_ctx, 2);
+  GColor _c1 = GColorWhite;
+  GColor _c2 = GColorBlack;
+  uint8_t _w1 = 6;
+  uint8_t _w2 = 2;
   switch (m_dungeon.m_level) {
-    case 0: graphics_context_set_stroke_color(_ctx, GColorWhite); break;
-    case 1: graphics_context_set_stroke_color(_ctx, GColorBlack); break;
-    default: graphics_context_set_stroke_color(_ctx, GColorYellow); break;
-  }
-  for (int _p = 0; _p < N_MAZE_STEP - 3; _p += 2) {
-    drawLine(_ctx, s_mazes[s_maze].m_path0[_p], s_mazes[s_maze].m_path0[_p+1],  s_mazes[s_maze].m_path0[_p+2], s_mazes[s_maze].m_path0[_p+3]);
-    drawLine(_ctx, s_mazes[s_maze].m_path1[_p], s_mazes[s_maze].m_path1[_p+1],  s_mazes[s_maze].m_path1[_p+2], s_mazes[s_maze].m_path1[_p+3]);
-    drawLine(_ctx, s_mazes[s_maze].m_path2[_p], s_mazes[s_maze].m_path2[_p+1],  s_mazes[s_maze].m_path2[_p+2], s_mazes[s_maze].m_path2[_p+3]);
+    case 0: break;
+    case 1: _c1 = GColorBlack; _c2 = GColorWhite; break;
+    #ifdef PBL_BW
+      default: _c1 = GColorWhite; _w1 = 1;
+    #else
+      default: _c1 = GColorYellow; _w1 = 1;
+    #endif
   }
 
-  renderClutter(_ctx);
+  #ifdef HIGH_RES
+    _w1 += (m_dungeon.m_level == 2 ? 0 : 2);
+    _w2 += 2;
+  #endif
+
+  lines(_ctx, _c1, _w1);
+  if (m_dungeon.m_level < 2) { // NOTE: This goes off of LEVEL not DIFFICULTY 
+    lines(_ctx, _c2, _w2);
+  } 
+
+  if (m_dungeon.m_difficulty >= 2) renderClutter(_ctx); // Obscure
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);
   renderWallClutter(_ctx);
@@ -75,7 +120,8 @@ bool tickMaze(bool _doInit) {
     m_player.m_position = GPoint(0, SIZE*9);
     addCluter(15, 20, 0);
     s_path = rand() % 3;
-    s_maze = rand() % N_MAZES;
+    s_maze = (m_dungeon.m_difficulty * 2) + (rand() % 4);
+    s_maze = MIN(N_MAZES-1, s_maze);
     return false;
   }
 
