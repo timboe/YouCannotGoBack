@@ -92,8 +92,12 @@ void initSprite() {
   m_treasureBanner = gbitmap_create_with_resource(RESOURCE_ID_TREASURE);
 
   m_saw = gbitmap_create_with_resource(RESOURCE_ID_SAW);
-  m_sawA = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 0, 80, 40));
-  m_sawB = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 40, 80, 40));
+  uint8_t _sawSize = 80;
+  #ifdef HIGH_RES
+    _sawSize = 112;
+  #endif
+  m_sawA = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 0, _sawSize, _sawSize/2));
+  m_sawB = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, _sawSize/2, _sawSize, _sawSize/2));
 
 
   for (int _w = 0; _w < 3; ++_w) { // Walls
