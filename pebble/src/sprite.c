@@ -4,6 +4,7 @@
 GBitmap* m_ycgb;
 
 GBitmap* m_fuse[3];
+GBitmap* m_floorArrow[8];
 #endif
 
 GBitmap* m_spriteMap;
@@ -206,6 +207,10 @@ void initSprite() {
   m_fuse[0] = getSprite(28, 0, 2, 2);
   m_fuse[1] = getSprite(28, 2, 2, 2);
   m_fuse[2] = getSprite(28, 4, 2, 2);
+
+  for (uint8_t _i = 0; _i < kNOptionTypes; ++_i) {
+    m_floorArrow[_i] = getSprite(30, 2*_i, 2, 2);
+  }
   #endif
 
 }
@@ -269,6 +274,7 @@ void deinitSprite() {
 
   #ifdef YCGBv2
     for (int _i = 1; _i < 3; ++_i) gbitmap_destroy(m_fuse[_i]);
+    for (int _i = 1; _i < kNOptionTypes; ++_i) gbitmap_destroy(m_floorArrow[_i]);
   #endif
 
   // Actual bitmaps

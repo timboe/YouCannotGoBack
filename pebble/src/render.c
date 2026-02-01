@@ -431,10 +431,14 @@ void renderFinalPit(GContext* _ctx) {
 
 void renderPlayer(GContext* _ctx) {
   GPoint _pos = m_player.m_position;
-  if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) --_pos.y;
+  if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) {
+    --_pos.y;
+    #ifdef HIGH_RES
+    --_pos.y;
+    #endif
+  }
   drawBitmapAbs(_ctx, m_playerSprite[ m_player.m_playerFrame ], _pos);
 }
-
 
 void renderBorderTextInternal(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert, bool _correction) {
 
@@ -585,6 +589,25 @@ void renderBoxGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t*
     renderBoxGridBox(_ctx, 11, 5 + (4 * _s), getShieldColor(_coloursC[_s]), _offset[_o++]); // Bottom row
   }
 
+}
+
+void renderFloorArrows(GContext* _ctx, Options_t maze0[3][3], uint8_t mwin0[3][3], Options_t maze1[5][7], uint8_t mwin1[5][7], uint16_t _tickB) {
+  const bool _r = m_player.m_position.x > SIZE*8 && getFlash(true);
+  const int8_t MAX_X = (m_dungeon.m_difficulty == 0 ? 3 : 5);
+  const int8_t MAX_Y = (m_dungeon.m_difficulty == 0 ? 3 : 7);
+  for (int _x = 0; _x < MAX_X; ++_x) {
+    for (int _y = 0; _y < MAX_Y; ++_y) {
+      if (m_dungeon.m_difficulty == 0) {
+        if (_r && mwin0[_x][_y] == 2) continue;
+        GBitmap* _bmp = m_floorArrow[ (maze0[_x][_y] + _tickB) % 8 ];
+        drawBitmap(_ctx, _bmp, 4 + (4*_x), 5 + (4*_y));
+      } else {
+        if (_r && mwin1[_x][_y] == 2) continue;
+        GBitmap* _bmp = m_floorArrow[ (maze1[_x][_y] + _tickB) % 8 ];
+        drawBitmap(_ctx, _bmp, 4 + (2*_x), 3 + (2*_y));
+      }
+    }
+  }
 }
 
 #endif // YCGBv2

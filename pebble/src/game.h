@@ -55,7 +55,7 @@ typedef enum {
   #ifdef YCGBv2
     // kShapes,   // Puzzle 2
     // kPattern,  // Puzzle 3
-    // kArrows,   // Puzzle 4
+    kArrows,   // Puzzle 4
   #endif
   //
   kDark,     // Skill 0
@@ -133,6 +133,18 @@ typedef enum {
   //RGBWb
   //https://www.random.org/integer-sets/?sets=10&num=3&min=1&max=5&commas=on&order=random&format=html&rnd=new
 #endif
+
+typedef enum {
+  kN,
+  kE,
+  kS,
+  kW,
+  kNE,
+  kSE,
+  kSW,
+  kNW,
+  kNOptionTypes
+} Options_t;
 
 #define MAX_LEVELS 3
 #define MIN_ROOMS 5

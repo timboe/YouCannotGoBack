@@ -25,6 +25,7 @@ GBitmap* getClutter(bool _broken);
 extern GBitmap* m_ycgb;
 
 extern GBitmap* m_fuse[3];
+extern GBitmap* m_floorArrow[kNOptionTypes];
 #endif
 
 extern GBitmap* m_UOuterWall[3];

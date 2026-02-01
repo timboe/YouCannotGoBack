@@ -25,7 +25,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  // [kShapes].m_minL   = 0, [kShapes].m_giveHint   = 1, [kShapes].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kBomb].m_minL     = 0, [kBomb].m_giveHint     = 1, [kBomb].m_reqHint     = {0, 0, 0, 0, 0, 0},
  [kBoxes].m_minL    = 0, [kBoxes].m_giveHint    = 0, [kBoxes].m_reqHint    = {0, 0, 0, 1, 0, 0},
- // [kArrows].m_minL   = 0, [kArrows].m_giveHint   = 0, [kArrows].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ [kArrows].m_minL   = 0, [kArrows].m_giveHint   = 0, [kArrows].m_reqHint   = {0, 0, 0, 0, 0, 0},
  #endif
  [kMaze].m_minL     = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint       = {0, 0, 0, 0, 0, 0},
  [kDeath].m_minL    = 9, [kDeath].m_giveHint  = 0, [kDeath].m_reqHint      = {0, 0, 0, 0, 0, 0},
@@ -47,14 +47,14 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      TESTING_ROOM_HINT = kShield; // TESTING
+      // TESTING_ROOM_HINT = kShield; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
       #ifdef YCGBv2
-      _newRoom = kBoxes; // TESTING
+      _newRoom = kArrows; // TESTING
       #else
       _newRoom = kMaths;
       #endif
-      m_dungeon.m_difficulty = 0; // TESTING
+      m_dungeon.m_difficulty = 2; // TESTING
       // m_dungeon.m_gameOver = 2; // TESTING
       APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game

@@ -19,6 +19,7 @@
 #ifdef YCGBv2
 #include "levels/bomb.h"
 #include "levels/boxes.h"
+#include "levels/arrows.h"
 #endif
 
 static int s_frameCount = 0;
@@ -141,6 +142,7 @@ void gameLoop(void* data) {
       #ifdef YCGBv2
         case kBomb: requestRedraw = tickBomb(_doInit); break;
         case kBoxes: requestRedraw = tickBoxes(_doInit); break;
+        case kArrows: requestRedraw = tickArrows(_doInit); break;
       #endif
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
@@ -189,6 +191,7 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     #ifdef YCGBv2
       case kBomb: updateProcBomb(_ctx); break;
       case kBoxes: updateProcBoxes(_ctx); break;
+      case kArrows: updateProcArrows(_ctx); break;
     #endif
     case kDeath: updateProcDeath(_ctx); break;
     case kFinal: updateProcFinal(_ctx); break;
