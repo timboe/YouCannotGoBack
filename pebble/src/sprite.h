@@ -23,6 +23,8 @@ GBitmap* getClutter(bool _broken);
 
 #ifdef YCGBv2
 extern GBitmap* m_ycgb;
+
+extern GBitmap* m_fuse[3];
 #endif
 
 extern GBitmap* m_UOuterWall[3];
@@ -42,7 +44,6 @@ extern GBitmap* m_stairs;
 extern GBitmap* m_saw;
 extern GBitmap* m_sawB;
 extern GBitmap* m_sawA;
-
 
 extern GBitmap* m_arrow;
 

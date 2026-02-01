@@ -2,6 +2,8 @@
 
 #ifdef YCGBv2
 GBitmap* m_ycgb;
+
+GBitmap* m_fuse[3];
 #endif
 
 GBitmap* m_spriteMap;
@@ -99,6 +101,7 @@ void initSprite() {
   m_sawA = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, 0, _sawSize, _sawSize/2));
   m_sawB = gbitmap_create_as_sub_bitmap(m_saw, GRect(0, _sawSize/2, _sawSize, _sawSize/2));
 
+  // Items from spritesheet come below
 
   for (int _w = 0; _w < 3; ++_w) { // Walls
     m_UOuterWall[_w] = getSprite(_w + 0, 6, 2, 2);
@@ -199,11 +202,17 @@ void initSprite() {
   m_treasure[1] = getSprite(18, 10, 2, 2);
   m_treasure[2] = getSprite(23, 12, 1, 1);
 
+  #ifdef YCGBv2
+  m_fuse[0] = getSprite(28, 0, 2, 2);
+  m_fuse[1] = getSprite(28, 2, 2, 2);
+  m_fuse[2] = getSprite(28, 4, 2, 2);
+  #endif
+
 }
 
 void deinitSprite() {
 
-  for (int _i = 1; _i < 4; ++_i) {
+  for (uint8_t _i = 1; _i < 4; ++_i) {
     gbitmap_destroy(m_outerCorner[_i]);
     gbitmap_destroy(m_innerCorner[_i]);
     gbitmap_destroy(m_innerWall[_i]);
@@ -258,9 +267,17 @@ void deinitSprite() {
   gbitmap_destroy(m_table);
   gbitmap_destroy(m_black);
 
+  #ifdef YCGBv2
+    for (int _i = 1; _i < 3; ++_i) gbitmap_destroy(m_fuse[_i]);
+  #endif
+
   // Actual bitmaps
   gbitmap_destroy(m_spriteMap);
   gbitmap_destroy(m_grave);
   gbitmap_destroy(m_treasureBanner);
   gbitmap_destroy(m_saw);
+
+  #ifdef YCGBv2
+    gbitmap_destroy(m_ycgb);
+  #endif
 }

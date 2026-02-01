@@ -32,7 +32,7 @@ void updateProcBridge(GContext* _ctx) {
       renderHintNumber(_ctx, GRect(16*SIZE - 1, (5 + (_s*4))*SIZE - 1, 16, 16), s_choices[_s], true);
     } else if ( _hint == kSymbol ) {
       drawBitmap(_ctx, m_symbol[ s_choices[_s] ], 16, 5 + (_s*4));
-    } else if ( _hint == kGreek ) {
+    } else if ( _hint == kGreekLetter ) {
       GRect _b = GRect(16*SIZE - 2, (5 + (_s*4))*SIZE - 2, 2*SIZE + 4, 2*SIZE + 4);
       renderFrame(_ctx, _b);
       drawBitmapAbs(_ctx, m_greek[ s_choices[_s] ], GPoint(16*SIZE + 4, (5 + (_s*4))*SIZE + 4));

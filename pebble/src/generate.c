@@ -1,7 +1,7 @@
 #include "game.h"
 #include "generate.h"
 
-//Hints Format   kNoHint, kSpell, kSymbol, kShield, kNumber, kGreek, kNHintTypes
+//Hints Format   kNoHint, kSpell, kSymbol, kShield, kNumber, kGreekLetter, kNHintTypes
 // kNoHint is currently unused, any other bit true will indicate that reqHint is true
 // Set levels which are not to be chosen at random to minL = 9
 RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
@@ -37,8 +37,12 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       _newRoom = kStart;
       // TESTING_ROOM_HINT = kNumber; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
-      _newRoom = kSaw; // TESTING
-      m_dungeon.m_difficulty = 4; // TESTING
+      #ifdef YCGBv2
+      _newRoom = kBomb; // TESTING
+      #else
+      _newRoom = kMaths;
+      #endif
+      m_dungeon.m_difficulty = 2; // TESTING
       // m_dungeon.m_gameOver = 2; // TESTING
       APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game

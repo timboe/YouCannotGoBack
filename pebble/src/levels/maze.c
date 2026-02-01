@@ -81,7 +81,6 @@ void lines(GContext* _ctx, GColor _c, int _w) {
 void updateProcMaze(GContext* _ctx) {
 
   renderFloor(_ctx, 0);
-  renderStandingStone(_ctx, 4, 4 + s_path*6, GColorBlack); // kCircle);
 
   GColor _c1 = GColorWhite;
   GColor _c2 = GColorBlack;
@@ -107,6 +106,7 @@ void updateProcMaze(GContext* _ctx) {
     lines(_ctx, _c2, _w2);
   } 
 
+  renderStandingStone(_ctx, 4, 4 + s_path*6, GColorBlack); // kCircle);
   if (m_dungeon.m_difficulty >= 2) renderClutter(_ctx); // Obscure
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);

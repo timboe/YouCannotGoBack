@@ -32,7 +32,7 @@ void renderClutter(GContext* _ctx) {
   Hints_t _hint = m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room];
   int _hintValue = m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room];
   for (int _c = 0; _c < m_clutter.m_nClutter; ++_c) {
-    if (_c == 0 && _hint == kGreek) {
+    if (_c == 0 && _hint == kGreekLetter) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
       GPoint _p = GPoint((m_clutter.m_position[_c].x * SIZE) + 4, (m_clutter.m_position[_c].y * SIZE) + 2);
       if (!getFlash(false)) drawBitmapAbs(_ctx, m_greek[ _hintValue ], _p);
@@ -503,6 +503,71 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
     else setGameState(kNewRoom);
   }
 }
+
+#ifdef YCGBv2
+
+void renderBomb(GContext* _ctx, uint8_t _bombStage, int8_t _location) {
+
+  uint8_t _bombSize = SIZE*2;
+  GColor _c1 = GColorBlack;
+  GColor _c2 = GColorWhite;
+  if (getFlash(true) || _bombStage == 3) { 
+    // _pd->graphics->setDrawMode(kDrawModeInverted);
+    _c1 = GColorWhite;
+    _c2 = GColorBlack;
+  }
+
+  GPoint _bLoc = GPoint(12 * SIZE, (6 + (4 * _location)) * SIZE);
+  GPoint _bFuse = GPoint(_bLoc.x - 14, _bLoc.y - 28);
+  #ifdef HIGH_RES
+  _bFuse = GPoint(_bLoc.x - 20, _bLoc.y - 39);
+  #endif
+  graphics_context_set_fill_color(_ctx, _c1);
+  graphics_fill_circle(_ctx, _bLoc, _bombSize);
+  graphics_context_set_fill_color(_ctx, _c2);
+  graphics_fill_circle(_ctx, _bLoc, _bombSize - 2);
+  graphics_context_set_fill_color(_ctx, _c1);
+  graphics_fill_circle(_ctx, _bLoc, _bombSize - 4);
+
+  if (_bombStage == 3) {
+    #define BOMB_LINES 32
+    static int16_t _xoff[BOMB_LINES] = {0};
+    static int16_t _yoff[BOMB_LINES] = {0};
+    static uint8_t _w[BOMB_LINES] = {0};
+    static GColor _c[BOMB_LINES];
+    if (!_xoff[0]) { // Populate 
+      for (uint8_t _i = 0; _i < BOMB_LINES; ++_i) {
+        uint16_t _angle = rand() % TRIG_MAX_ANGLE ;
+        uint8_t _len = (SIZE*4) + (rand() % (SIZE*8));
+        _w[_i] = 2 + rand() % 5;
+        _c[_i] = GColorWhite;
+        #ifdef PBL_COLOR
+          switch(rand() % 7) {
+            case 0: _c[_i] = GColorIcterine; break;
+            case 1: _c[_i] = GColorYellow; break;
+            case 2: _c[_i] = GColorChromeYellow; break;
+            case 3: _c[_i] = GColorRajah; break;
+            case 4: _c[_i] = GColorOrange; break;
+            case 5: _c[_i] = GColorRed; break; 
+            default: _c[_i] = GColorFolly; break; 
+          }
+        #endif
+        _xoff[_i] = ( sin_lookup(_angle) * _len / TRIG_MAX_RATIO);
+        _yoff[_i] = (-cos_lookup(_angle) * _len / TRIG_MAX_RATIO);
+      }
+    }
+    graphics_context_set_stroke_color(_ctx, GColorWhite);
+    for (uint8_t _i = 0; _i < BOMB_LINES; ++_i) {
+      graphics_context_set_stroke_width(_ctx, _w[_i]);
+      graphics_context_set_stroke_color(_ctx, _c[_i]);
+      graphics_draw_line(_ctx, _bLoc, GPoint(_bLoc.x + _xoff[_i], _bLoc.y + _yoff[_i]));
+    }
+  } else {
+    drawBitmapAbs(_ctx, m_fuse[ _bombStage ], _bFuse);
+  }
+}
+
+#endif // YCGBv2
 
 #ifdef PBL_BW
   GColor getShieldColor(int8_t _value) {

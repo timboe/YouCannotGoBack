@@ -16,6 +16,9 @@
 #include "levels/chest.h"
 #include "levels/empty.h"
 #include "levels/saw.h"
+#ifdef YCGBv2
+#include "levels/bomb.h"
+#endif
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
@@ -134,6 +137,9 @@ void gameLoop(void* data) {
       case kDark: requestRedraw = tickDark(_doInit); break;
       case kMaze: requestRedraw = tickMaze(_doInit); break;
       case kSaw: requestRedraw = tickSaw(_doInit); break;
+      #ifdef YCGBv2
+        case kBomb: requestRedraw = tickBomb(_doInit); break;
+      #endif
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
       case kEnd: requestRedraw = tickEnd(_doInit); break;
@@ -141,6 +147,14 @@ void gameLoop(void* data) {
     } break;
     default: break;
   }
+
+  #ifdef YCGBv2
+    // Special case (bomb needs to be able to explode at any time)
+    if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kBomb) {
+      bombTimer();
+      requestRedraw = true;
+    }
+  #endif
 
   if (requestRedraw == true) {
     layer_mark_dirty(s_dungeonLayer);
@@ -170,6 +184,9 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     case kDark: updateProcDark(_ctx); break;
     case kMaze: updateProcMaze(_ctx); break;
     case kSaw: updateProcSaw(_ctx); break;
+    #ifdef YCGBv2
+      case kBomb: updateProcBomb(_ctx); break;
+    #endif
     case kDeath: updateProcDeath(_ctx); break;
     case kFinal: updateProcFinal(_ctx); break;
     case kEnd: updateProcEnd(_ctx); break;
@@ -271,7 +288,7 @@ int getHintValueMax(Hints_t _hint) {
     case kSymbol: return MAX_SYMBOL;
     case kSpell: return MAX_SPELLS;
     case kNumber: return MAX_NUMBER;
-    case kGreek: return MAX_GREEK;
+    case kGreekLetter: return MAX_GREEK;
     default: return 0;
   }
 }

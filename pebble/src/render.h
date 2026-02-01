@@ -31,4 +31,8 @@ void renderSawFloor(GContext* _ctx, int8_t _offset);
 void renderSawWalls(GContext* _ctx, int8_t _offset);
 void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd);
 
+#ifdef YCGBv2
+  void renderBomb(GContext* _ctx, uint8_t _bombStage, int8_t _location);
+#endif
+
 GColor getShieldColor(int8_t _value);

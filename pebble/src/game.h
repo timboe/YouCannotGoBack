@@ -6,8 +6,7 @@
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
-#if PBL_DISPLAY_WIDTH == 200
-  #define YCGBv2 1
+#if PBL_DISPLAY_WIDTH >= 200
   #define HIGH_RES 1
   #define FONT_KEY_SMALL FONT_KEY_GOTHIC_18_BOLD
   #define FONT_KEY_LARGE FONT_KEY_GOTHIC_28_BOLD
@@ -16,6 +15,11 @@
   #define FONT_KEY_SMALL FONT_KEY_GOTHIC_14_BOLD
   #define FONT_KEY_LARGE FONT_KEY_GOTHIC_24_BOLD
   #define PLAYER_SPEED 2
+#endif
+
+// B&W graphics save enough memory for more levels! Or double the RAM, that helps too
+#if defined(PBL_PLATFORM_FLINT) || defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_DIORITE)
+  #define YCGBv2 1
 #endif
 
 #define ANIM_FPS 20
@@ -30,20 +34,44 @@
 #define PERSIST_KEY_VICTORY 0
 
 typedef enum {
-  kStart,
-  kStairs,
-  kChest,
-  kEmpty,
-  kPword,
-  kBridge,
-  kMaze,
-  kMaths,
-  kStones,
-  kDark,
-  kSaw,
-  kDeath,
-  kFinal,
-  kEnd,
+  kStart,     // Special
+  kStairs,    // Special
+  kChest,     // Misc 0
+  kEmpty,     // Misc 1
+  #ifdef YCGBv2
+    // kGamble,  // Misc 2
+  #endif
+  //
+  kPword,     // Recall 0
+  kBridge,    // Recall 1
+  kStones,    // Recall 2
+  #ifdef YCGBv2
+    // kBoxes,   // Recall 3
+    // kGreek,   // Recall 4
+  #endif
+  //
+  kMaze,       // Puzzle 0
+  kMaths,      // Puzzle 1
+  #ifdef YCGBv2
+    // kShapes,   // Puzzle 2
+    // kPattern,  // Puzzle 3
+    // kArrows,   // Puzzle 4
+  #endif
+  //
+  kDark,     // Skill 0
+  kSaw,      // Skill 1
+  #ifdef YCGBv2
+    kBomb,   // Skill 2
+    // kSpikes, // Skill 3
+    // kSBall,  // Skill 4
+  #endif
+  //
+  #ifdef YCGBv2
+    // kShortcut, // Special
+  #endif
+  kDeath,      // Special
+  kFinal,      // Special
+  kEnd,        // Special
   kNRoomTypes
 } Rooms_t;
 
@@ -64,7 +92,7 @@ typedef enum {
   kSymbol,
   kShield,
   kNumber,
-  kGreek,
+  kGreekLetter,
   kNHintTypes
 } Hints_t;
 
@@ -125,7 +153,7 @@ typedef struct {
   int8_t m_roomNeedHintValue[MAX_LEVELS][MAX_ROOMS];
   int8_t m_finalPuzzle;
   int8_t m_gameOver;
-  bool m_fallingDeath;
+  int8_t m_fallingDeath;
   uint32_t m_seed;
   uint16_t m_ticksInLevel;
   uint16_t m_ticksTotal;
