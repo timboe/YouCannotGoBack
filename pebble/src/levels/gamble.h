@@ -4,8 +4,4 @@
 #include "common.h"
 #ifdef YCGBv2
 
-void updateProcBomb(GContext* _ctx);
-bool tickBomb(bool _doInit);
-void bombTimer(void);
-
 #endif

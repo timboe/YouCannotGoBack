@@ -58,6 +58,7 @@ extern GBitmap* m_RDoorstep;
 extern GBitmap* m_greek[MAX_GREEK];
 extern GBitmap* m_tapestrySprite[3];
 extern GBitmap* m_shieldSprite;
+extern GBitmap* m_clutterSprite[MAX_CLUTTER];
 
 extern GBitmap* m_guardian;
 extern GBitmap* m_blockWall[3];

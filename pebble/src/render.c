@@ -567,6 +567,26 @@ void renderBomb(GContext* _ctx, uint8_t _bombStage, int8_t _location) {
   }
 }
 
+void renderBoxGridBox(GContext* _ctx, uint8_t _x1, uint8_t _y1, GColor _c, int8_t _offset) {
+  drawBitmapAbs(_ctx, m_clutterSprite[2], GPoint(_x1*SIZE + _offset, _y1*SIZE + _offset));
+  graphics_context_set_fill_color(_ctx, _c);
+  uint8_t _coff = 4;
+  #ifdef HIGH_RES
+  _coff = 6;
+  #endif
+  graphics_fill_rect(_ctx, GRect(_x1*SIZE + _coff + _offset, _y1*SIZE + _coff/2 + _offset, SIZE, SIZE), 0, 0);
+}
+
+void renderBoxGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _offset) {
+  uint8_t _o = 0;
+  for (int _s = 0; _s < 3; ++_s) {
+    renderBoxGridBox(_ctx, 5, 5 + (4 * _s),  getShieldColor(_coloursA[_s]), _offset[_o++]); // Top row
+    renderBoxGridBox(_ctx, 8, 5 + (4 * _s),  getShieldColor(_coloursB[_s]), _offset[_o++]); // Middle row
+    renderBoxGridBox(_ctx, 11, 5 + (4 * _s), getShieldColor(_coloursC[_s]), _offset[_o++]); // Bottom row
+  }
+
+}
+
 #endif // YCGBv2
 
 #ifdef PBL_BW

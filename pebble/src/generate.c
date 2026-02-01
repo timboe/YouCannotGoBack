@@ -5,20 +5,32 @@
 // kNoHint is currently unused, any other bit true will indicate that reqHint is true
 // Set levels which are not to be chosen at random to minL = 9
 RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
- [kStart].m_minL  = 9, [kStart].m_giveHint  = 1, [kStart].m_reqHint  = {0, 0, 0, 0, 0, 0},
- [kStairs].m_minL = 9, [kStairs].m_giveHint = 1, [kStairs].m_reqHint = {0, 0, 0, 0, 0, 0},
- [kChest].m_minL  = 0, [kChest].m_giveHint  = 1, [kChest].m_reqHint  = {0, 0, 0, 0, 0, 0},
- [kEmpty].m_minL  = 0, [kEmpty].m_giveHint  = 1, [kEmpty].m_reqHint  = {0, 0, 0, 0, 0, 0},
- [kPword].m_minL  = 0, [kPword].m_giveHint  = 1, [kPword].m_reqHint  = {0, 1, 0, 0, 1, 0},
- [kBridge].m_minL = 1, [kBridge].m_giveHint = 1, [kBridge].m_reqHint = {0, 0, 1, 0, 0, 1},
- [kMaths].m_minL  = 0, [kMaths].m_giveHint  = 1, [kMaths].m_reqHint  = {0, 0, 0, 0, 0, 0},
- [kStones].m_minL = 1, [kStones].m_giveHint = 0, [kStones].m_reqHint = {0, 0, 0, 1, 0, 0},
- [kDark].m_minL   = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint   = {0, 0, 0, 0, 0, 0},
- [kSaw].m_minL    = 0, [kSaw].m_giveHint    = 0, [kSaw].m_reqHint    = {0, 0, 0, 0, 0, 0},
- [kMaze].m_minL   = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint   = {0, 0, 0, 0, 0, 0},
- [kDeath].m_minL  = 9, [kDeath].m_giveHint  = 0, [kDeath].m_reqHint  = {0, 0, 0, 0, 0, 0},
- [kFinal].m_minL  = 9, [kFinal].m_giveHint  = 0, [kFinal].m_reqHint  = {0, 0, 0, 0, 0, 0},
- [kEnd].m_minL    = 9, [kEnd].m_giveHint    = 0, [kEnd].m_reqHint    = {0, 0, 0, 0, 0, 0}
+ [kStart].m_minL    = 9, [kStart].m_giveHint  = 1, [kStart].m_reqHint      = {0, 0, 0, 0, 0, 0},
+ [kStairs].m_minL   = 9, [kStairs].m_giveHint = 1, [kStairs].m_reqHint     = {0, 0, 0, 0, 0, 0},
+ [kChest].m_minL    = 0, [kChest].m_giveHint  = 1, [kChest].m_reqHint      = {0, 0, 0, 0, 0, 0},
+ [kEmpty].m_minL    = 0, [kEmpty].m_giveHint  = 1, [kEmpty].m_reqHint      = {0, 0, 0, 0, 0, 0},
+ [kPword].m_minL    = 0, [kPword].m_giveHint  = 1, [kPword].m_reqHint      = {0, 1, 0, 0, 1, 0},
+ [kBridge].m_minL   = 1, [kBridge].m_giveHint = 1, [kBridge].m_reqHint     = {0, 0, 1, 0, 0, 1},
+ [kMaths].m_minL    = 0, [kMaths].m_giveHint  = 1, [kMaths].m_reqHint      = {0, 0, 0, 0, 0, 0},
+ [kStones].m_minL   = 1, [kStones].m_giveHint = 0, [kStones].m_reqHint     = {0, 0, 0, 1, 0, 0},
+ [kDark].m_minL     = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint       = {0, 0, 0, 0, 0, 0},
+ [kSaw].m_minL      = 0, [kSaw].m_giveHint    = 0, [kSaw].m_reqHint        = {0, 0, 0, 0, 0, 0},
+ #ifdef YCGBv2
+ // [kGamble].m_minL   = 0, [kGamble].m_giveHint   = 1, [kGamble].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ // [kShortcut].m_minL = 9, [kShortcut].m_giveHint = 0, [kShortcut].m_reqHint = {0, 0, 0, 0, 0, 0},
+ // [kGreek].m_minL    = 0, [kGreek].m_giveHint    = 1, [kGreek].m_reqHint    = {0, 0, 0, 0, 0, 1},
+ // [kPattern].m_minL  = 0, [kPattern].m_giveHint  = 0, [kPattern].m_reqHint  = {0, 0, 0, 0, 0, 0},
+ // [kSpikes].m_minL   = 0, [kSpikes].m_giveHint   = 1, [kSpikes].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ // [kSBall].m_minL    = 0, [kSBall].m_giveHint    = 0, [kSBall].m_reqHint    = {0, 0, 0, 0, 0, 0},
+ // [kShapes].m_minL   = 0, [kShapes].m_giveHint   = 1, [kShapes].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ [kBomb].m_minL     = 0, [kBomb].m_giveHint     = 1, [kBomb].m_reqHint     = {0, 0, 0, 0, 0, 0},
+ [kBoxes].m_minL    = 0, [kBoxes].m_giveHint    = 0, [kBoxes].m_reqHint    = {0, 0, 0, 1, 0, 0},
+ // [kArrows].m_minL   = 0, [kArrows].m_giveHint   = 0, [kArrows].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ #endif
+ [kMaze].m_minL     = 0, [kMaze].m_giveHint   = 1, [kMaze].m_reqHint       = {0, 0, 0, 0, 0, 0},
+ [kDeath].m_minL    = 9, [kDeath].m_giveHint  = 0, [kDeath].m_reqHint      = {0, 0, 0, 0, 0, 0},
+ [kFinal].m_minL    = 9, [kFinal].m_giveHint  = 0, [kFinal].m_reqHint      = {0, 0, 0, 0, 0, 0},
+ [kEnd].m_minL      = 9, [kEnd].m_giveHint    = 0, [kEnd].m_reqHint        = {0, 0, 0, 0, 0, 0}
 };
 
 int m_hintsInPlay = 0;
@@ -35,14 +47,14 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      // TESTING_ROOM_HINT = kNumber; // TESTING
+      TESTING_ROOM_HINT = kShield; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
       #ifdef YCGBv2
-      _newRoom = kBomb; // TESTING
+      _newRoom = kBoxes; // TESTING
       #else
       _newRoom = kMaths;
       #endif
-      m_dungeon.m_difficulty = 2; // TESTING
+      m_dungeon.m_difficulty = 0; // TESTING
       // m_dungeon.m_gameOver = 2; // TESTING
       APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game

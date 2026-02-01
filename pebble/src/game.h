@@ -46,7 +46,7 @@ typedef enum {
   kBridge,    // Recall 1
   kStones,    // Recall 2
   #ifdef YCGBv2
-    // kBoxes,   // Recall 3
+    kBoxes,   // Recall 3
     // kGreek,   // Recall 4
   #endif
   //

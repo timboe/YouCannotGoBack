@@ -1,5 +1,4 @@
 #include "bomb.h"
-#include "common.h"
 #ifdef YCGBv2
 
 static uint16_t s_state = 0;
