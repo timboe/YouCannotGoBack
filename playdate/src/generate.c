@@ -23,7 +23,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kSpikes].m_minL   = 0, [kSpikes].m_giveHint   = 1, [kSpikes].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kSBall].m_minL    = 0, [kSBall].m_giveHint    = 0, [kSBall].m_reqHint    = {0, 0, 0, 0, 0, 0},
  [kShapes].m_minL   = 0, [kShapes].m_giveHint   = 1, [kShapes].m_reqHint   = {0, 0, 0, 0, 0, 0},
- [kBomb].m_minL     = 0, [kBomb].m_giveHint     = 1, [kSaw].m_reqHint      = {0, 0, 0, 0, 0, 0},
+ [kBomb].m_minL     = 0, [kBomb].m_giveHint     = 1, [kBomb].m_reqHint     = {0, 0, 0, 0, 0, 0},
  [kBoxes].m_minL    = 0, [kBoxes].m_giveHint    = 0, [kBoxes].m_reqHint    = {0, 0, 0, 1, 0, 0},
  [kMaze].m_minL     = 0, [kMaze].m_giveHint     = 0, [kMaze].m_reqHint     = {0, 0, 0, 0, 0, 0},
  [kArrows].m_minL   = 0, [kArrows].m_giveHint   = 0, [kArrows].m_reqHint   = {0, 0, 0, 0, 0, 0},
