@@ -67,7 +67,7 @@ typedef enum {
   #endif
   //
   #ifdef YCGBv2
-    // kShortcut, // Special
+    kShortcut, // Special
   #endif
   kDeath,      // Special
   kFinal,      // Special

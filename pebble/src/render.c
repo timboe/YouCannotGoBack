@@ -610,6 +610,27 @@ void renderFloorArrows(GContext* _ctx, Options_t maze0[3][3], uint8_t mwin0[3][3
   }
 }
 
+void renderShortcutFloor(GContext* _ctx) {
+  const int8_t _level = m_dungeon.m_level;
+  for (int _x = 0; _x < 20; _x += 2) {
+    drawBitmapAbs(_ctx, getFloor(true), GPoint(_x*SIZE, 8*SIZE));
+    drawBitmapAbs(_ctx, m_halfUpperWall[0], GPoint(_x*SIZE, 7*SIZE));
+    drawBitmapAbs(_ctx, m_halfLowerWall[0], GPoint(_x*SIZE, 10*SIZE));
+  }
+}
+
+void renderShortcutWalls(GContext* _ctx) {
+  graphics_context_set_fill_color(_ctx, GColorBlack);
+  graphics_fill_rect(_ctx, GRect(0, 0, SIZE*19, SIZE*6), 0, 0);
+  graphics_fill_rect(_ctx, GRect(0, SIZE*13, SIZE*19, SIZE*8), 0, 0);
+  for (int _x = 0; _x < 20; _x += 2) {
+    drawBitmapAbs(_ctx, m_halfUpperWall[1], GPoint(_x*SIZE, 6*SIZE));
+    drawBitmapAbs(_ctx, m_halfLowerWall[1], GPoint(_x*SIZE, 11*SIZE));
+    drawBitmapAbs(_ctx, m_black, GPoint(_x*SIZE, 4*SIZE));
+    drawBitmapAbs(_ctx, m_black, GPoint(_x*SIZE, 12*SIZE));
+  }
+}
+
 #endif // YCGBv2
 
 #ifdef PBL_BW
