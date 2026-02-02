@@ -631,6 +631,69 @@ void renderShortcutWalls(GContext* _ctx) {
   }
 }
 
+void renderGreekText(GContext* _ctx, uint8_t _msg[TOTAL_LETTERS], uint8_t _i, uint8_t _lettersThisLevel) {
+  GPoint _p = GPoint(9*SIZE - SIZE/4, 5*SIZE + _i*4*SIZE + SIZE/2);
+  switch (_lettersThisLevel) {
+    case 4: _p.x += SIZE/2; break;
+    case 3: _p.x += SIZE; break;
+    default: break;
+  }
+  #ifdef PBL_ROUND
+    _p.x += ROUND_OFFSET_X;
+    _p.y += ROUND_OFFSET_Y;
+  #elif defined HIGH_RES
+    _p.x += EMERY_OFFSET_X;
+    _p.y += EMERY_OFFSET_Y;
+  #endif
+  for (uint8_t _i = 0; _i < _lettersThisLevel; ++_i) {
+    drawBitmapAbs(_ctx, m_greek[_msg[_i]], _p);
+    _p.x += SIZE;
+  }
+}
+
+void renderGreekFrames(GContext* _ctx, uint8_t _a[TOTAL_LETTERS], uint8_t _b[TOTAL_LETTERS], uint8_t _c[TOTAL_LETTERS], uint8_t _lettersThisLevel) {
+  #ifdef PBL_BW
+  graphics_context_set_fill_color(_ctx, GColorWhite);
+  graphics_context_set_stroke_color(_ctx, GColorBlack);
+  #else
+  graphics_context_set_fill_color(_ctx, GColorPastelYellow);
+  graphics_context_set_stroke_color(_ctx, GColorBlack); // Change this?
+  #endif
+  //
+  #ifdef HIGH_RES
+  uint8_t _w = 2;
+  graphics_context_set_stroke_width(_ctx, 3);
+  #else
+  uint8_t _w = 1;
+  graphics_context_set_stroke_width(_ctx, 1);
+  #endif
+  //
+  for (int _i = 0; _i < 3; ++_i) {
+    GRect _rect = GRect(8*SIZE, 5*SIZE + _i*4*SIZE, 6*SIZE, 2*SIZE);
+    #ifdef PBL_ROUND
+      _rect.origin.x += ROUND_OFFSET_X;
+      _rect.origin.y += ROUND_OFFSET_Y;
+    #elif defined HIGH_RES
+      _rect.origin.x += EMERY_OFFSET_X;
+      _rect.origin.y += EMERY_OFFSET_Y;
+    #endif
+    graphics_fill_rect(_ctx, _rect, 0, 0);
+    graphics_draw_rect(_ctx, GRect(_rect.origin.x-_w, _rect.origin.y-_w, _rect.size.w+(2*_w), _rect.size.h+(2*_w)));
+
+    #ifdef HIGH_RES
+      drawBitmapAbs(_ctx, m_parchment[0], GPoint(_rect.origin.x - SIZE/2, _rect.origin.y - 7));
+      drawBitmapAbs(_ctx, m_parchment[1], GPoint(_rect.origin.x + 5*SIZE + 3, _rect.origin.y - 1));
+    #else
+      drawBitmapAbs(_ctx, m_parchment[0], GPoint(_rect.origin.x - SIZE/2, _rect.origin.y - 5));
+      drawBitmapAbs(_ctx, m_parchment[1], GPoint(_rect.origin.x + 5*SIZE + 3, _rect.origin.y - 1));
+    #endif
+  }
+  renderGreekText(_ctx, _a, 0, _lettersThisLevel);
+  renderGreekText(_ctx, _b, 1, _lettersThisLevel);
+  renderGreekText(_ctx, _c, 2, _lettersThisLevel);
+
+}
+
 #endif // YCGBv2
 
 #ifdef PBL_BW

@@ -37,6 +37,7 @@ void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd);
   void renderFloorArrows(GContext* _ctx, Options_t maze0[3][3], uint8_t mwin0[3][3], Options_t maze1[5][7], uint8_t mwin1[5][7], uint16_t _tickB);
   void renderShortcutFloor(GContext* _ctx);
   void renderShortcutWalls(GContext* _ctx);
+  void renderGreekFrames(GContext* _ctx, uint8_t _a[TOTAL_LETTERS], uint8_t _b[TOTAL_LETTERS], uint8_t _c[TOTAL_LETTERS], uint8_t _lettersThisLevel);
 #endif
 
 GColor getShieldColor(int8_t _value);

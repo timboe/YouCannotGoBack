@@ -5,6 +5,7 @@ GBitmap* m_ycgb;
 
 GBitmap* m_fuse[3];
 GBitmap* m_floorArrow[8];
+GBitmap* m_parchment[2];
 #endif
 
 GBitmap* m_spriteMap;
@@ -166,15 +167,15 @@ void initSprite() {
   }
 
   for (int _p = 0; _p < MAX_FRAMES; ++_p) {
-    m_playerSprite[_p] = getSprite(16 + (_p*2), 14, 2, 2);
+    m_playerSprite[_p] = getSprite(16 + (_p*2), (_p  > 3 ? 4 : 14), 2, 2);
   }
 
   int _clutter = 0;
   for (int _c = 0; _c < N_SMALL_CLUTTER; ++_c) {
     m_clutterSprite[_clutter++] = getSprite(_c*2, 14, 2, 2);
   }
-  m_clutterSprite[_clutter++] = getSprite(24, 10,  2, 4); // med 1
-  m_clutterSprite[_clutter++] = getSprite(26, 10,  2, 4); // med 2
+  m_clutterSprite[_clutter++] = getSprite(24, 10,  2, 3); // med 1
+  m_clutterSprite[_clutter++] = getSprite(26, 10,  2, 3); // med 2
 
   m_tapestrySprite[0] = getSprite(20, 12,  1, 2);
   m_tapestrySprite[1] = getSprite(21, 12,  1, 2);
@@ -207,6 +208,9 @@ void initSprite() {
   m_fuse[0] = getSprite(28, 0, 2, 2);
   m_fuse[1] = getSprite(28, 2, 2, 2);
   m_fuse[2] = getSprite(28, 4, 2, 2);
+
+  m_parchment[0] = getSprite(24, 13, 1, 3);
+  m_parchment[1] = getSprite(25, 13, 1, 3);
 
   for (uint8_t _i = 0; _i < kNOptionTypes; ++_i) {
     m_floorArrow[_i] = getSprite(30, 2*_i, 2, 2);
@@ -275,6 +279,7 @@ void deinitSprite() {
   #ifdef YCGBv2
     for (int _i = 1; _i < 3; ++_i) gbitmap_destroy(m_fuse[_i]);
     for (int _i = 1; _i < kNOptionTypes; ++_i) gbitmap_destroy(m_floorArrow[_i]);
+    for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_parchment[_i]);
   #endif
 
   // Actual bitmaps

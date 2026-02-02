@@ -47,7 +47,7 @@ typedef enum {
   kStones,    // Recall 2
   #ifdef YCGBv2
     kBoxes,   // Recall 3
-    // kGreek,   // Recall 4
+    kGreek,   // Recall 4
   #endif
   //
   kMaze,       // Puzzle 0
@@ -85,6 +85,8 @@ typedef enum {
 #else
   #define MAX_SHIELD_COLOUR 4
 #endif
+
+#define TOTAL_LETTERS 5
 
 typedef enum {
   kNoHint,

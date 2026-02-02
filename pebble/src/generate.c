@@ -18,7 +18,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  #ifdef YCGBv2
  // [kGamble].m_minL   = 0, [kGamble].m_giveHint   = 1, [kGamble].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kShortcut].m_minL = 9, [kShortcut].m_giveHint = 0, [kShortcut].m_reqHint = {0, 0, 0, 0, 0, 0},
- // [kGreek].m_minL    = 0, [kGreek].m_giveHint    = 1, [kGreek].m_reqHint    = {0, 0, 0, 0, 0, 1},
+ [kGreek].m_minL    = 0, [kGreek].m_giveHint    = 1, [kGreek].m_reqHint    = {0, 0, 0, 0, 0, 1},
  // [kPattern].m_minL  = 0, [kPattern].m_giveHint  = 0, [kPattern].m_reqHint  = {0, 0, 0, 0, 0, 0},
  // [kSpikes].m_minL   = 0, [kSpikes].m_giveHint   = 1, [kSpikes].m_reqHint   = {0, 0, 0, 0, 0, 0},
  // [kSBall].m_minL    = 0, [kSBall].m_giveHint    = 0, [kSBall].m_reqHint    = {0, 0, 0, 0, 0, 0},
@@ -47,14 +47,14 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
-      // TESTING_ROOM_HINT = kShield; // TESTING
+      TESTING_ROOM_HINT = kGreekLetter; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
       #ifdef YCGBv2
-      _newRoom = kShortcut; // TESTING
+      _newRoom = kGreek; // TESTING
       #else
       _newRoom = kMaths;
       #endif
-      m_dungeon.m_difficulty = 2; // TESTING
+      m_dungeon.m_difficulty = 0; // TESTING
       // m_dungeon.m_gameOver = 2; // TESTING
       APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
