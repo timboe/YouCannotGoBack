@@ -36,14 +36,7 @@ bool tickChest(bool _doInit) {
     return false;
   }
 
-  static const char _badA[] = "AN EVIL WIND!";
-  static const char _badB[] = "YOU FEEL BAD";
-
-  static const char _goodA[] = "A GOOD FAERIE!";
-  static const char _goodB[] = "FEELING LUCKY";
-
-  static const char _goodC[] = "A QUIET VOICE";
-  static char _goodD[16];
+  static char _reminderTxt[16];
 
   Hints_t _hint = m_dungeon.m_roomNeedHint[m_dungeon.m_level][m_dungeon.m_room];
 
@@ -62,24 +55,20 @@ bool tickChest(bool _doInit) {
     ++s_state;
   } else if (s_state == 3) {
     if (getPlayerChoice() == s_bad) {
-      setDisplayMsg(_badA);
+      setDisplayMsg(txtEvilWind0());
       if (m_dungeon.m_lives > 0) --m_dungeon.m_lives;
-    } else if ( _hint == kSpell) {
-      setDisplayMsg(_goodC);
-      snprintf(_goodD, 16, "REMEMBER %s", m_spellNames[ m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room] ]);
-    } else if (_hint == kNumber) {
-      setDisplayMsg(_goodC);
-      snprintf(_goodD, 16, "REMEMBER %i", m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room]);
+    } else if ( _hint == kSpell || _hint == kNumber ) {
+      setDisplayMsg(txtQuietVoice0());
     } else {
-      setDisplayMsg(_goodA);
+      setDisplayMsg(txtGoodFaerie0());
       ++m_dungeon.m_lives;
     }
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 4) {
-    if (getPlayerChoice() == s_bad) setDisplayMsg(_badB);
-    else if (_hint == kSpell || _hint == kNumber) setDisplayMsg(_goodD);
-    else setDisplayMsg(_goodB);
+    if (getPlayerChoice() == s_bad) setDisplayMsg(txtEvilWind1());
+    else if (_hint == kSpell || _hint == kNumber) setDisplayMsg(txtQuietVoice1());
+    else setDisplayMsg(txtGoodFaerie1());
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 5) {

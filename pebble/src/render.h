@@ -30,6 +30,7 @@ void renderProgressBar(Layer* _thisLayer, GContext* _ctx);
 void renderSawFloor(GContext* _ctx, int8_t _offset);
 void renderSawWalls(GContext* _ctx, int8_t _offset);
 void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd);
+void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2, bool _force);
 
 #ifdef YCGBv2
   void renderBomb(GContext* _ctx, uint8_t _bombStage, int8_t _location);
@@ -38,6 +39,8 @@ void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd);
   void renderShortcutFloor(GContext* _ctx);
   void renderShortcutWalls(GContext* _ctx);
   void renderGreekFrames(GContext* _ctx, uint8_t _a[TOTAL_LETTERS], uint8_t _b[TOTAL_LETTERS], uint8_t _c[TOTAL_LETTERS], uint8_t _lettersThisLevel);
+  void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clack);
+
 #endif
 
 GColor getShieldColor(int8_t _value);

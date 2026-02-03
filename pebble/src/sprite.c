@@ -6,6 +6,7 @@ GBitmap* m_ycgb;
 GBitmap* m_fuse[3];
 GBitmap* m_floorArrow[8];
 GBitmap* m_parchment[2];
+GBitmap* m_clack[2];
 #endif
 
 GBitmap* m_spriteMap;
@@ -63,7 +64,8 @@ GBitmap* getSprite(int _x, int _y, int _w, int _h) {
 }
 
 GBitmap* getClutter(bool _broken) {
-  return m_clutterSprite[ rand() % (_broken == true ? 3 :MAX_CLUTTER) ];
+  // return m_clutterSprite[ rand() % (_broken == true ? 3 : MAX_CLUTTER) ];
+  return m_clutterSprite[ _broken == true ? 2 : rand() % MAX_CLUTTER ];
 }
 
 GBitmap* getOuterWall(int _d) {
@@ -212,6 +214,9 @@ void initSprite() {
   m_parchment[0] = getSprite(24, 13, 1, 3);
   m_parchment[1] = getSprite(25, 13, 1, 3);
 
+  m_clack[0] = getSprite(28, 6, 2, 2);
+  m_clack[1] = getSprite(28, 8, 2, 2);
+
   for (uint8_t _i = 0; _i < kNOptionTypes; ++_i) {
     m_floorArrow[_i] = getSprite(30, 2*_i, 2, 2);
   }
@@ -280,6 +285,7 @@ void deinitSprite() {
     for (int _i = 1; _i < 3; ++_i) gbitmap_destroy(m_fuse[_i]);
     for (int _i = 1; _i < kNOptionTypes; ++_i) gbitmap_destroy(m_floorArrow[_i]);
     for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_parchment[_i]);
+    for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_clack[_i]);
   #endif
 
   // Actual bitmaps

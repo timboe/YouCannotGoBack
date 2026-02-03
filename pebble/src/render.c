@@ -15,10 +15,14 @@ void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
 }
 
 void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd) {
-  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
-    drawBitmap(_ctx, m_arrow, _x, _yStart);
-    drawBitmap(_ctx, m_arrow, _x, _yStart + _yAdd);
-    drawBitmap(_ctx, m_arrow, _x, _yStart + _yAdd + _yAdd);
+  renderArrowsDetailed(_ctx, _x, _yStart, _yAdd, 1, 1, 1, false);
+}
+
+void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2, bool _force) {
+  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && (_force || getFrameCount() < ANIM_FPS/2)) {
+    if (_0) drawBitmap(_ctx, m_arrow, _x, _yStart);
+    if (_1) drawBitmap(_ctx, m_arrow, _x, _yStart + _yAdd);
+    if (_2) drawBitmap(_ctx, m_arrow, _x, _yStart + _yAdd + _yAdd);
   }
 }
 
@@ -34,7 +38,11 @@ void renderClutter(GContext* _ctx) {
   for (int _c = 0; _c < m_clutter.m_nClutter; ++_c) {
     if (_c == 0 && _hint == kGreekLetter) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
-      GPoint _p = GPoint((m_clutter.m_position[_c].x * SIZE) + 4, (m_clutter.m_position[_c].y * SIZE) + 2);
+      #ifdef HIGH_RES
+        GPoint _p = GPoint((m_clutter.m_position[_c].x * SIZE) + 5, (m_clutter.m_position[_c].y * SIZE) + 3);
+      #else
+        GPoint _p = GPoint((m_clutter.m_position[_c].x * SIZE) + 4, (m_clutter.m_position[_c].y * SIZE) + 2);
+      #endif
       if (!getFlash(false)) drawBitmapAbs(_ctx, m_greek[ _hintValue ], _p);
     } else if (_c == 0 && _hint == kNumber) {
       drawBitmap(_ctx, getClutter(true), m_clutter.m_position[_c].x, m_clutter.m_position[_c].y);
@@ -692,6 +700,122 @@ void renderGreekFrames(GContext* _ctx, uint8_t _a[TOTAL_LETTERS], uint8_t _b[TOT
   renderGreekText(_ctx, _b, 1, _lettersThisLevel);
   renderGreekText(_ctx, _c, 2, _lettersThisLevel);
 
+}
+
+void renderPi(GContext* _ctx, GPoint _centre, GRect _r, uint32_t _start, uint32_t _stop, uint16_t _angle, GColor _fill, bool _evil, char _c) {
+  #ifdef PBL_BW
+    _fill = _evil ? GColorBlack : GColorWhite;
+  #endif
+  graphics_context_set_stroke_color(_ctx, GColorBlack);
+  graphics_context_set_fill_color(_ctx, _fill);
+
+  #ifdef PBL_BW
+    const bool _special = (_start == DEG_TO_TRIGANGLE(30));
+  #else
+    const bool _special = false;
+  #endif
+
+  _start += _angle;
+  _stop += _angle;
+
+  if (_start > TRIG_MAX_ANGLE) _start -= TRIG_MAX_ANGLE;
+  if (_stop > TRIG_MAX_ANGLE) _stop -= TRIG_MAX_ANGLE;
+
+  // Fill
+  if (_stop > _start) {
+    graphics_fill_radial(_ctx, _r, GOvalScaleModeFillCircle, SIZE*4, _start, _stop);
+  } else {
+    graphics_fill_radial(_ctx, _r, GOvalScaleModeFillCircle, SIZE*4, _start, TRIG_MAX_ANGLE);
+    graphics_fill_radial(_ctx, _r, GOvalScaleModeFillCircle, SIZE*4, 0, _stop);
+
+  }
+
+  // Lines
+  uint8_t _len = _r.size.w / 2;
+  const GPoint _p1 = GPoint(_centre.x + (sin_lookup(_start) * _len / TRIG_MAX_RATIO),
+                            _centre.y - (cos_lookup(_start) * _len / TRIG_MAX_RATIO));
+  const GPoint _p2 = GPoint(_centre.x + (sin_lookup(_stop) * _len / TRIG_MAX_RATIO),
+                            _centre.y - (cos_lookup(_stop) * _len / TRIG_MAX_RATIO)); 
+  graphics_draw_line(_ctx, _centre, _p2);
+  if (_special) graphics_context_set_stroke_color(_ctx, GColorWhite);
+  graphics_draw_line(_ctx, _centre, _p1);
+
+  // Text
+  int32_t _half = _stop - _start;
+  if (_half < 0) _half += TRIG_MAX_ANGLE;
+  int32_t _halfAngle = _start + (_half / 2);
+  if (_halfAngle > TRIG_MAX_ANGLE) _halfAngle -= TRIG_MAX_ANGLE;
+  _len = (_len * 2) / 3;
+  const GPoint _pHalf = GPoint(_centre.x + (sin_lookup(_halfAngle) * _len / TRIG_MAX_RATIO),
+                               _centre.y - (cos_lookup(_halfAngle) * _len / TRIG_MAX_RATIO));
+  //
+  #ifdef HIGH_RES
+    GRect _rHalf = GRect(_pHalf.x - SIZE, _pHalf.y - 2*SIZE + 4, 2*SIZE, 2*SIZE);
+  #else
+    GRect _rHalf = GRect(_pHalf.x - SIZE, _pHalf.y - 18, 2*SIZE, 2*SIZE);
+  #endif
+  //
+  _fill = _evil ? GColorWhite : GColorBlack;
+  //
+  #ifdef PBL_COLOR
+    _fill = GColorWhite;
+  #endif
+  graphics_context_set_text_color(_ctx, _fill);
+  char _txt[2] = {0};
+  _txt[0] = _c;
+  graphics_draw_text(_ctx, _txt, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _rHalf, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+
+}
+
+void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clack) {
+
+  #ifdef HIGH_RES
+    uint8_t _w = 2;
+  #else
+    uint8_t _w = 1;
+  #endif
+
+  GPoint _centre = GPoint(SIZE*10, SIZE*9);
+  GRect _r = GRect(SIZE*5 + _w*2, SIZE*4 + _w*2, SIZE*10 - _w*4, SIZE*10 - _w*4);
+  
+  #ifdef PBL_ROUND
+    _centre.x += ROUND_OFFSET_X;
+    _centre.y += ROUND_OFFSET_Y;
+    _r.origin.x += ROUND_OFFSET_X;
+    _r.origin.y += ROUND_OFFSET_Y;
+  #elif defined HIGH_RES
+    _centre.x += EMERY_OFFSET_X;
+    _centre.y += EMERY_OFFSET_Y;
+    _r.origin.x += EMERY_OFFSET_X;
+    _r.origin.y += EMERY_OFFSET_Y;
+  #endif
+
+  // Centre
+  graphics_context_set_fill_color(_ctx, GColorBlack);
+  graphics_fill_rect(_ctx, GRect(_centre.x - SIZE, _centre.y - SIZE, 2*SIZE, 2*SIZE), 0, 0);
+
+  graphics_context_set_stroke_width(_ctx, _w*2);
+  if (!_wheel) {
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(330), DEG_TO_TRIGANGLE(30), _angle, GColorRed, true, 'D');
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(30), DEG_TO_TRIGANGLE(90), _angle, GColorRed, true, 'B');
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(90), DEG_TO_TRIGANGLE(210), _angle, GColorBlue, false, 'S');
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(210), DEG_TO_TRIGANGLE(330), _angle, GColorGreen, false, 'L');
+  } else {
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(330), DEG_TO_TRIGANGLE(90), _angle, GColorRed, true, _wheel == 1 ? 'B' : 'W');
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(90), DEG_TO_TRIGANGLE(210), _angle, GColorBlue, false, 'S');
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(210), DEG_TO_TRIGANGLE(330), _angle,  _wheel == 1 ? GColorGreen : GColorPurple, false, _wheel == 1 ? 'L' : 'C');
+  }
+
+  // Outer 
+  graphics_context_set_stroke_width(_ctx, _w);
+  graphics_context_set_stroke_color(_ctx, GColorWhite);
+  graphics_draw_circle(_ctx, _centre, SIZE*5);
+
+  graphics_context_set_stroke_width(_ctx, _w*2);
+  graphics_context_set_stroke_color(_ctx, GColorBlack);
+  graphics_draw_circle(_ctx, _centre, SIZE*5 - _w*2);
+
+  drawBitmapAbs(_ctx, m_clack[_clack > 0 ? 1 : 0], GPoint(SIZE*9, SIZE*3));
 }
 
 #endif // YCGBv2

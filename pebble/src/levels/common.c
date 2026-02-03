@@ -139,3 +139,24 @@ void renderStonesCommonFire(GContext* _ctx, int8_t* _correct, int8_t _fire, int1
   else if (_state == 9) _off = 8;
   renderArrows(_ctx, 6 + _off, 5, 4);
 }
+
+
+char* txtEvilWind0(void) { return "AN EVIL WIND!"; };
+char* txtEvilWind1(void) { return "YOU FEEL BAD"; };
+char* txtEvilBell0(void) { return "AN EVIL BELL!"; };
+char* txtEvilBell1(void) { return "YOU FEEL HEAVY"; };
+char* txtGoodFaerie0(void) { return "A GOOD FAERIE!"; };
+char* txtGoodFaerie1(void) { return "FEELING LUCKY"; };
+char* txtShortcut0(void) { return "AN AGED SIGN"; };
+char* txtShortcut1(void) { return "SHORTCUT FOUND"; };
+char* txtQuietVoice0(void) { return "A QUIET VOICE"; };
+char* txtQuietVoice1(void) { 
+  static char _reminderTxt[16];
+  const Hints_t _hint = m_dungeon.m_roomNeedHint[m_dungeon.m_level][m_dungeon.m_room];
+  if ( _hint == kSpell) {
+    snprintf(_reminderTxt, 16, "REMEMBER %s", m_spellNames[ m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room] ]);
+  } else if (_hint == kNumber) {
+    snprintf(_reminderTxt, 16, "REMEMBER %i", m_dungeon.m_roomNeedHintValue[m_dungeon.m_level][m_dungeon.m_room]);
+  }
+  return _reminderTxt;
+};

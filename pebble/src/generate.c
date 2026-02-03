@@ -16,7 +16,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kDark].m_minL     = 0, [kDark].m_giveHint   = 0, [kDark].m_reqHint       = {0, 0, 0, 0, 0, 0},
  [kSaw].m_minL      = 0, [kSaw].m_giveHint    = 0, [kSaw].m_reqHint        = {0, 0, 0, 0, 0, 0},
  #ifdef YCGBv2
- // [kGamble].m_minL   = 0, [kGamble].m_giveHint   = 1, [kGamble].m_reqHint   = {0, 0, 0, 0, 0, 0},
+ [kGamble].m_minL   = 0, [kGamble].m_giveHint   = 1, [kGamble].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kShortcut].m_minL = 9, [kShortcut].m_giveHint = 0, [kShortcut].m_reqHint = {0, 0, 0, 0, 0, 0},
  [kGreek].m_minL    = 0, [kGreek].m_giveHint    = 1, [kGreek].m_reqHint    = {0, 0, 0, 0, 0, 1},
  // [kPattern].m_minL  = 0, [kPattern].m_giveHint  = 0, [kPattern].m_reqHint  = {0, 0, 0, 0, 0, 0},
@@ -50,7 +50,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       TESTING_ROOM_HINT = kGreekLetter; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
       #ifdef YCGBv2
-      _newRoom = kGreek; // TESTING
+      _newRoom = kGamble; // TESTING
       #else
       _newRoom = kMaths;
       #endif

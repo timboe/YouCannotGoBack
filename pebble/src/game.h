@@ -39,7 +39,7 @@ typedef enum {
   kChest,     // Misc 0
   kEmpty,     // Misc 1
   #ifdef YCGBv2
-    // kGamble,  // Misc 2
+    kGamble,  // Misc 2
   #endif
   //
   kPword,     // Recall 0
@@ -147,6 +147,16 @@ typedef enum {
   kNW,
   kNOptionTypes
 } Options_t;
+
+typedef enum {
+  kClover,
+  kUnlockShortcut,
+  kGiveClue,
+  kDifficultyUp,
+  kEvilWind,
+  kInstantDeath,
+  kNGambleTypes
+} GambleOutcomes_t;
 
 #define MAX_LEVELS 3
 #define MIN_ROOMS 5
