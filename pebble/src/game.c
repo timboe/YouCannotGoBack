@@ -21,6 +21,7 @@
 #include "levels/boxes.h"
 #include "levels/arrows.h"
 #include "levels/shortcut.h"
+#include "levels/greek.h"
 #endif
 
 static int s_frameCount = 0;
@@ -145,6 +146,7 @@ void gameLoop(void* data) {
         case kBoxes: requestRedraw = tickBoxes(_doInit); break;
         case kArrows: requestRedraw = tickArrows(_doInit); break;
         case kShortcut: requestRedraw = tickShortcut(_doInit); break;
+        case kGreek: requestRedraw = tickGreek(_doInit); break;
       #endif
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
@@ -195,6 +197,7 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
       case kBoxes: updateProcBoxes(_ctx); break;
       case kArrows: updateProcArrows(_ctx); break;
       case kShortcut: updateProcShortcut(_ctx); break;
+      case kGreek: updateProcGreek(_ctx); break;
     #endif
     case kDeath: updateProcDeath(_ctx); break;
     case kFinal: updateProcFinal(_ctx); break;

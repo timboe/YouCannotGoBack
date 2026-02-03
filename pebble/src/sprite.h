@@ -26,6 +26,7 @@ extern GBitmap* m_ycgb;
 
 extern GBitmap* m_fuse[3];
 extern GBitmap* m_floorArrow[kNOptionTypes];
+extern GBitmap* m_parchment[2];
 #endif
 
 extern GBitmap* m_UOuterWall[3];
