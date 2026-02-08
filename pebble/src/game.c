@@ -23,6 +23,7 @@
 #include "levels/shortcut.h"
 #include "levels/greek.h"
 #include "levels/gamble.h"
+#include "levels/patterns.h"
 #endif
 
 static int s_frameCount = 0;
@@ -149,6 +150,7 @@ void gameLoop(void* data) {
         case kShortcut: requestRedraw = tickShortcut(_doInit); break;
         case kGreek: requestRedraw = tickGreek(_doInit); break;
         case kGamble: requestRedraw = tickGamble(_doInit); break;
+        case kPattern: requestRedraw = tickPattern(_doInit); break;
       #endif
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
@@ -201,6 +203,7 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
       case kShortcut: updateProcShortcut(_ctx); break;
       case kGreek: updateProcGreek(_ctx); break;
       case kGamble: updateProcGamble(_ctx); break;
+      case kPattern: updateProcPattern(_ctx); break;
     #endif
     case kDeath: updateProcDeath(_ctx); break;
     case kFinal: updateProcFinal(_ctx); break;

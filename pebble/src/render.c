@@ -1,5 +1,26 @@
 #include "render.h"
 
+static const GPathInfo TRIANGLE_PATH_INFO_T1 = {
+  .num_points = 3,
+  .points = (GPoint []) {{SIZE, 0}, {SIZE*2, SIZE*2}, {0, SIZE*2}}
+};
+static const GPathInfo TRIANGLE_PATH_INFO_T2 = {
+  .num_points = 3,
+  .points = (GPoint []) {{SIZE, 4}, {SIZE*2 - 2, SIZE*2 - 2}, {2, SIZE*2 - 2}}
+};
+static const GPathInfo TRIANGLE_PATH_INFO_T3 = {
+  .num_points = 3,
+  .points = (GPoint []) {{SIZE, 6}, {SIZE*2 - 4, SIZE*2 - 4}, {4, SIZE*2 - 4}}
+};
+
+static GPath* s_trigPath[3];
+
+void initRender(void) {
+  s_trigPath[0] = gpath_create(&TRIANGLE_PATH_INFO_T1);
+  s_trigPath[1] = gpath_create(&TRIANGLE_PATH_INFO_T2);
+  s_trigPath[2] = gpath_create(&TRIANGLE_PATH_INFO_T3);
+}
+
 void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
   GRect _r = gbitmap_get_bounds(_bitmap);
   _r.origin.x = _x * SIZE;
@@ -124,18 +145,37 @@ void renderStandingStoneFloor(GContext* _ctx) {
 
 void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _correct, int16_t _state, bool _isPattern) {
 
-  renderStandingStone(_ctx, 4, 10, GColorLightGray);
+  StoneTypes_t _st = kCircle;
+
+  renderStandingStone(_ctx, GPoint(SIZE*4, SIZE*10), GColorLightGray, _st);
 
   if (_isPattern) {
+#ifdef YCGBv2
+    //x:7,11,15
+    //y:6,10,14
+    _st = _coloursA[ _correct[0] ];
 
-    // TODO
+    renderStandingStone(_ctx, GPoint(SIZE*7, SIZE*6), GColorLightGray, _coloursA[0]); // Left col
+    renderStandingStone(_ctx, GPoint(SIZE*7, SIZE*10), GColorLightGray, _coloursA[1]); // Middle col
+    renderStandingStone(_ctx, GPoint(SIZE*7, SIZE*14), GColorLightGray, _coloursA[2]); // Right col
 
+    if (_state > 6) {
+      renderStandingStone(_ctx, GPoint(SIZE*11, SIZE*6), GColorLightGray, _st);
+      renderStandingStone(_ctx, GPoint(SIZE*11, SIZE*10), GColorLightGray, _st);
+      renderStandingStone(_ctx, GPoint(SIZE*11, SIZE*14), GColorLightGray, _st);
+    }
+    if (_state > 8) {
+      renderStandingStone(_ctx, GPoint(SIZE*15, SIZE*6), GColorLightGray, _st);
+      renderStandingStone(_ctx, GPoint(SIZE*15, SIZE*10), GColorLightGray, _st);
+      renderStandingStone(_ctx, GPoint(SIZE*15, SIZE*14), GColorLightGray, _st);
+    }
+#endif
   } else {
 
     for (int _s = 0; _s < 3; ++_s) {
-      renderStandingStone(_ctx, 7, 6 + (4 * _s), getShieldColor(_coloursA[_s])); // Top row
-      renderStandingStone(_ctx, 11, 6 + (4 * _s), getShieldColor(_coloursB[_s])); // Middle row
-      renderStandingStone(_ctx, 15, 6 + (4 * _s), getShieldColor(_coloursC[_s])); // Bottom row
+      renderStandingStone(_ctx, GPoint(SIZE*7, SIZE*(6 + (4 * _s))), getShieldColor(_coloursA[_s]), _st); // Top row
+      renderStandingStone(_ctx, GPoint(SIZE*11, SIZE*(6 + (4 * _s))), getShieldColor(_coloursB[_s]), _st); // Middle row
+      renderStandingStone(_ctx, GPoint(SIZE*15, SIZE*(6 + (4 * _s))), getShieldColor(_coloursC[_s]), _st); // Bottom row
     }
 
   }
@@ -168,21 +208,44 @@ void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
   graphics_draw_line(_ctx, _p1, _p2);
 }
 
-void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c) {
-  GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
-#ifdef PBL_ROUND
-  _p1.x += ROUND_OFFSET_X;
-  _p1.y += ROUND_OFFSET_Y;
-#elif defined HIGH_RES
-  _p1.x += EMERY_OFFSET_X;
-  _p1.y += EMERY_OFFSET_Y;
+void renderStandingStone(GContext* _ctx, GPoint _p, GColor _c, StoneTypes_t _st) {
+  #ifdef PBL_ROUND
+    _p.x += ROUND_OFFSET_X;
+    _p.y += ROUND_OFFSET_Y;
+  #elif defined HIGH_RES
+    _p.x += EMERY_OFFSET_X;
+    _p.y += EMERY_OFFSET_Y;
+  #endif
+
+  if (_st == kCircle) {
+    graphics_context_set_fill_color(_ctx, GColorLightGray);
+    graphics_fill_circle(_ctx, _p, SIZE);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    graphics_fill_circle(_ctx, _p, SIZE - 2);
+    graphics_context_set_fill_color(_ctx, _c);
+    graphics_fill_circle(_ctx, _p, SIZE - 4);
+#ifdef YCGBv2
+  } else if (_st == kSquare) {
+    graphics_context_set_fill_color(_ctx, GColorLightGray);
+    graphics_fill_rect(_ctx, GRect(_p.x - SIZE+0, _p.y - SIZE+0, (SIZE*2)-0, (SIZE*2)-0), 0, 0);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    graphics_fill_rect(_ctx, GRect(_p.x - SIZE+1, _p.y - SIZE+1, (SIZE*2)-2, (SIZE*2)-2), 0, 0);
+    graphics_context_set_fill_color(_ctx, _c);
+    graphics_fill_rect(_ctx, GRect(_p.x - SIZE+2, _p.y - SIZE+2, (SIZE*2)-4, (SIZE*2)-4), 0, 0);
+  } else if (_st == kTriangle) {
+    _p.x -= SIZE;
+    _p.y -= SIZE;
+    gpath_move_to(s_trigPath[0], _p);
+    gpath_move_to(s_trigPath[1], _p);
+    gpath_move_to(s_trigPath[2], _p);
+    graphics_context_set_fill_color(_ctx, GColorWhite);
+    gpath_draw_filled(_ctx, s_trigPath[0]);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    gpath_draw_filled(_ctx, s_trigPath[1]);
+    graphics_context_set_fill_color(_ctx, _c);
+    gpath_draw_filled(_ctx, s_trigPath[2]);
 #endif
-  graphics_context_set_fill_color(_ctx, GColorLightGray);
-  graphics_fill_circle(_ctx, _p1, SIZE);
-  graphics_context_set_fill_color(_ctx, GColorBlack);
-  graphics_fill_circle(_ctx, _p1, SIZE - 2);
-  graphics_context_set_fill_color(_ctx, _c);
-  graphics_fill_circle(_ctx, _p1, SIZE - 4);
+  }
 }
 
 void renderFrame(GContext* _ctx, GRect _b) {
@@ -817,6 +880,96 @@ void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clac
 
   drawBitmapAbs(_ctx, m_clack[_clack > 0 ? 1 : 0], GPoint(SIZE*9, SIZE*3));
 }
+
+void renderPatternUnder(GContext* _ctx, GPoint _p, uint8_t _id1, uint8_t _id2) {
+
+  #ifdef PBL_ROUND
+    _p.x += ROUND_OFFSET_X;
+    _p.y += ROUND_OFFSET_Y;
+  #elif defined HIGH_RES
+    _p.x += EMERY_OFFSET_X;
+    _p.y += EMERY_OFFSET_Y;
+  #endif
+
+  switch (_id2) {
+    case 0: _p.y -= SIZE; break;
+    case 1: _p.y += SIZE; _p.x -= SIZE; break;
+    case 2: _p.y += SIZE; _p.x += SIZE; break;
+  }
+
+  if (_id1 == kTriangle) {
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    graphics_fill_circle(_ctx, _p, SIZE);
+    graphics_context_set_fill_color(_ctx, GColorWhite);
+    graphics_fill_circle(_ctx, _p, SIZE - 2);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    graphics_fill_circle(_ctx, _p, SIZE - 4);
+  } else if (_id1 == kCircle) {
+    // switch (_id2) {
+    //    case 1: _p.x += SIZE/2; _p.y -= SIZE/2; break;
+    //    case 2: _p.x -= SIZE/2; _p.y -= SIZE/2; break;
+    // }
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    graphics_fill_rect(_ctx, GRect(_p.x - SIZE+0, _p.y - SIZE+0, (SIZE*2)-0, (SIZE*2)-0), 0, 0);
+    graphics_context_set_fill_color(_ctx, GColorWhite);
+    graphics_fill_rect(_ctx, GRect(_p.x - SIZE+1, _p.y - SIZE+1, (SIZE*2)-2, (SIZE*2)-2), 0, 0);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    graphics_fill_rect(_ctx, GRect(_p.x - SIZE+2, _p.y - SIZE+2, (SIZE*2)-4, (SIZE*2)-4), 0, 0);
+  } else if (_id1 == kSquare) {
+    //  switch (_id2) {
+    //    case 0: _p.y -= SIZE; break;
+    //    case 1: _p.y -= SIZE; _p.x -= SIZE; break;
+    //    case 2: _p.y -= SIZE; _p.x += SIZE; break;
+    // }
+    // Why two blocks...?
+    // if (_id2 == 0) { // Top
+    //   _p.y -= SIZE;
+    // } else if (_id2 == 1) { // Bottom left
+    //   _p.
+    // } else if (_id2 == 2) { // Bottom right
+    gpath_move_to(s_trigPath[0], _p);
+    gpath_move_to(s_trigPath[1], _p);
+    gpath_move_to(s_trigPath[2], _p);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    gpath_draw_filled(_ctx, s_trigPath[0]);
+    graphics_context_set_fill_color(_ctx, GColorWhite);
+    gpath_draw_filled(_ctx, s_trigPath[1]);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    gpath_draw_filled(_ctx, s_trigPath[2]);
+  }
+}
+
+void renderPatternLine(GContext* _ctx, GPoint _p, uint16_t _a, GColor _c1, GColor _c2, uint8_t _w1, uint8_t _w2) {
+
+  #ifdef PBL_ROUND
+    _p.x += ROUND_OFFSET_X;
+    _p.y += ROUND_OFFSET_Y;
+  #elif defined HIGH_RES
+    _p.x += EMERY_OFFSET_X;
+    _p.y += EMERY_OFFSET_Y;
+  #endif
+
+  #define L_W ((SIZE*3)/2)
+  GPoint _p1 = GPoint(_p.x + (sin_lookup(_a) * L_W / TRIG_MAX_RATIO),
+    _p.y + (cos_lookup(_a) * L_W / TRIG_MAX_RATIO));
+  GPoint _p2 = GPoint(_p.x + (sin_lookup(_a + TRIG_MAX_ANGLE/2) * L_W / TRIG_MAX_RATIO),
+    _p.y + (cos_lookup(_a + TRIG_MAX_ANGLE/2) * L_W / TRIG_MAX_RATIO));
+  // const int _x1 = _x*SIZE + (float)(L_W*sin(_a));
+  // const int _y1 = _y*SIZE + (float)(L_W*cos(_a));
+  // const int _x2 = _x*SIZE + (float)(L_W*sin(_a + (float)M_PI));
+  // const int _y2 = _y*SIZE + (float)(L_W*cos(_a + (float)M_PI));
+
+  graphics_context_set_stroke_color(_ctx, GColorBlack);
+  graphics_context_set_stroke_width(_ctx, _w1);
+  graphics_draw_line(_ctx, _p1, _p2);
+  graphics_context_set_stroke_color(_ctx, GColorWhite);
+  graphics_context_set_stroke_width(_ctx, _w2);
+  graphics_draw_line(_ctx, _p1, _p2);
+
+  // _pd->graphics->drawLine(_x1, _y1, _x2, _y2, /*width=*/ _w1, _c1);
+  // _pd->graphics->drawLine(_x1, _y1, _x2, _y2, /*width=*/ _w2, _c2); /// xxx
+}
+
 
 #endif // YCGBv2
 

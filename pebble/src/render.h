@@ -3,6 +3,8 @@
 #include "game.h"
 #include "sprite.h"
 
+void initRender(void);
+
 void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y);
 void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p);
 void drawBitmapAbsNoCorrection(GContext* _ctx, GBitmap* _bitmap, GPoint _p);
@@ -25,7 +27,7 @@ void renderFrame(GContext* _ctx, GRect _b);
 void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2);
 void renderStandingStoneFloor(GContext* _ctx);
 void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _coloursB, int8_t* _coloursC, int8_t* _correct, int16_t _state, bool _isPattern);
-void renderStandingStone(GContext* _ctx, int _x1, int _y1, GColor _c);
+void renderStandingStone(GContext* _ctx, GPoint _p, GColor _c, StoneTypes_t _st);
 void renderProgressBar(Layer* _thisLayer, GContext* _ctx);
 void renderSawFloor(GContext* _ctx, int8_t _offset);
 void renderSawWalls(GContext* _ctx, int8_t _offset);
@@ -40,6 +42,8 @@ void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAd
   void renderShortcutWalls(GContext* _ctx);
   void renderGreekFrames(GContext* _ctx, uint8_t _a[TOTAL_LETTERS], uint8_t _b[TOTAL_LETTERS], uint8_t _c[TOTAL_LETTERS], uint8_t _lettersThisLevel);
   void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clack);
+  void renderPatternUnder(GContext* _ctx, GPoint _p, uint8_t _id1, uint8_t _id2);
+  void renderPatternLine(GContext* _ctx, GPoint _p, uint16_t _a, GColor _c1, GColor _c2, uint8_t _w1, uint8_t _w2);
 
 #endif
 

@@ -54,7 +54,7 @@ typedef enum {
   kMaths,      // Puzzle 1
   #ifdef YCGBv2
     // kShapes,   // Puzzle 2
-    // kPattern,  // Puzzle 3
+    kPattern,  // Puzzle 3
     kArrows,   // Puzzle 4
   #endif
   //
@@ -111,6 +111,13 @@ typedef enum {
   kDoInit = 9,
   kLevelSpecificWButtons = 10
 } GameState_t;
+
+typedef enum {
+  kCircle,
+  kSquare,
+  kTriangle,
+  kNStoneTypes
+} StoneTypes_t;
 
 #ifdef PBL_BW
   typedef enum {

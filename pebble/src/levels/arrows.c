@@ -20,7 +20,7 @@ static Options_t s_mazeDisp1[5][7] = {{kN},{kN},{kN},{kN},{kN}};
 
 void updateProcArrows(GContext* _ctx) {
   renderFloor(_ctx, 0);
-  renderStandingStone(_ctx, 5, 6 + s_start*4, GColorBlack); //, kCircle);
+  renderStandingStone(_ctx, GPoint(SIZE*5, SIZE*(6 + s_start*4)), GColorBlack, kCircle);
   renderClutter(_ctx);
   renderPlayer(_ctx);
   renderFloorArrows(_ctx, s_mazeDisp0, s_maze0, s_mazeDisp1, s_maze1, s_tickB);

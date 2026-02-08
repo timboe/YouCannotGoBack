@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "game.h"
 #include "sprite.h"
+#include "render.h"
 
 static Window* s_gameWindow;
 
@@ -13,6 +14,7 @@ void tapHandle(AccelAxisType _axis, int32_t _direction) {
 
 static void init(void) {
   initSprite();
+  initRender();
 
   s_gameWindow = window_create();
   window_set_click_config_provider(s_gameWindow, (ClickConfigProvider) gameClickConfigProvider);
