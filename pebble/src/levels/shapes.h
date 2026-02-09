@@ -4,4 +4,7 @@
 #include "common.h"
 #ifdef YCGBv2
 
+void updateProcShapes(GContext* _ctx);
+bool tickShapes(bool _doInit);
+
 #endif

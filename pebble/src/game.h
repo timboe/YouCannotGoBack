@@ -53,7 +53,7 @@ typedef enum {
   kMaze,       // Puzzle 0
   kMaths,      // Puzzle 1
   #ifdef YCGBv2
-    // kShapes,   // Puzzle 2
+    kShapes,   // Puzzle 2
     kPattern,  // Puzzle 3
     kArrows,   // Puzzle 4
   #endif
