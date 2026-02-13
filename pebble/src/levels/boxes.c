@@ -9,7 +9,7 @@ static int8_t s_coloursC[3] = {0}; // bottom row
 static int8_t s_offset[9] = {0};
 
 void updateProcBoxes(GContext* _ctx) {
-  renderFloor(_ctx, 0);
+  renderFloor(_ctx, 0, -1, -1);
   renderBoxGrid(_ctx, s_coloursA, s_coloursB, s_coloursC, s_offset);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);

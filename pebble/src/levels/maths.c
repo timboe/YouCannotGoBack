@@ -20,7 +20,7 @@ void updateProcMaths(GContext* _ctx) {
     _xoff = 4;
   #endif
 
-  renderFloor(_ctx, 0);
+  renderFloor(_ctx, 0, -1, -1);
 
   drawBitmap(_ctx, m_block, 5, 9);
   drawBitmap(_ctx, m_block, 13, 9);

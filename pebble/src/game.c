@@ -25,6 +25,7 @@
 #include "levels/gamble.h"
 #include "levels/patterns.h"
 #include "levels/shapes.h"
+#include "levels/spikes.h"
 #endif
 
 static int s_frameCount = 0;
@@ -47,11 +48,13 @@ static int s_lastSecondFPS = 0;
 void FPSTimer(void* data);
 #endif
 
-int getFrameCount() { return s_frameCount; }
-GameState_t getGameState() { return s_gameState; }
+int getFrameCount(void) { return s_frameCount; }
+GameState_t getGameState(void) { return s_gameState; }
 void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; }
 void setGameState(GameState_t _state) { s_gameState = _state; }
-int getPlayerChoice() { return s_playerChoice; }
+int getPlayerChoice(void) { return s_playerChoice; }
+void resetPlayerChoice(void) { s_playerChoice = -1; }
+
 
 bool getFlash(bool _constant) {
   bool _value = (s_gameState != kFadeIn && s_gameState != kFadeOut
@@ -153,6 +156,7 @@ void gameLoop(void* data) {
         case kGamble: requestRedraw = tickGamble(_doInit); break;
         case kPattern: requestRedraw = tickPattern(_doInit); break;
         case kShapes: requestRedraw = tickShapes(_doInit); break;
+        case kSpikes: requestRedraw = tickSpikes(_doInit); break;
       #endif
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
@@ -207,6 +211,7 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
       case kGamble: updateProcGamble(_ctx); break;
       case kPattern: updateProcPattern(_ctx); break;
       case kShapes: updateProcShapes(_ctx); break;
+      case kSpikes: updateProcSpikes(_ctx); break;
     #endif
     case kDeath: updateProcDeath(_ctx); break;
     case kFinal: updateProcFinal(_ctx); break;

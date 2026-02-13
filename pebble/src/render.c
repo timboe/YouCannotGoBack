@@ -300,12 +300,25 @@ void renderMessage(GContext* _ctx, const char* _msg) {
   app_timer_register(1500, endRenderMsg, NULL);
 }
 
+void renderBottomWall(GContext* _ctx) {
+  graphics_context_set_fill_color(_ctx, GColorBlack);
+  graphics_fill_rect(_ctx, GRect(0, PBL_DISPLAY_HEIGHT - SIZE, PBL_DISPLAY_WIDTH, SIZE), 0, 0);
+  bool _torches = (m_dungeon.m_level % 2 == 0);
+  for (int _x = 3; _x < 15; _x += 2) {  //Draw top and bottom wall
+    if (_torches && (_x == 5 || _x == 11)) {
+      drawBitmap(_ctx, m_torchWall[2], _x, 18);
+    } else {
+      drawBitmap(_ctx, getOuterWall(2), _x, 18);
+    }
+  }
+}
+
 void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
   drawBitmap(_ctx, m_outerCorner[0], 1, 0);
   drawBitmap(_ctx, m_outerCorner[1], 15, 0);
   drawBitmap(_ctx, m_outerCorner[2], 1, 18);
   drawBitmap(_ctx, m_outerCorner[3], 15, 18);
-  bool _torches = (rand() % 2 == 0);
+  bool _torches = (m_dungeon.m_level % 2 == 0);
   for (int _x = 3; _x < 15; _x += 2) {  //Draw top and bottom wall
     if (_torches && (_x == 5 || _x == 11)) {
       drawBitmap(_ctx, m_torchWall[0], _x, 0);
@@ -315,7 +328,7 @@ void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
       drawBitmap(_ctx, getOuterWall(2), _x, 18);
     }
   }
-  _torches = (rand() % 2 == 0);
+  // _torches = (rand() % 2 == 0);
   for (int _y = 2; _y < 18; _y += 2) { // Draw left wall
     if (_y == 8 && _l == true) {
       drawBitmap(_ctx, m_LOpenDoor, 0,  _y);
@@ -326,7 +339,7 @@ void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
       drawBitmap(_ctx, getOuterWall(1), 1,  _y);
     }
   }
-  _torches = (rand() % 2 == 0);
+  // _torches = (rand() % 2 == 0);
   for (int _y = 2; _y < 18; _y += 2) { // draw right wall
     int _open = rand() % 2; // zero=wall, 1=closed door, 2=open door
     switch (_y) {
@@ -400,7 +413,7 @@ void renderWallClutter(GContext* _ctx) {
 void renderSawFloor(GContext* _ctx, int8_t _offset) {
   for (int _x = 0; _x < 20; _x += 2) {
     for (int _y = 6; _y < 12; _y += 2) {
-      drawBitmapAbs(_ctx, getFloor(false), GPoint((_x*SIZE) - _offset, _y*SIZE));
+      drawBitmapAbs(_ctx, getFloor(false, m_dungeon.m_level), GPoint((_x*SIZE) - _offset, _y*SIZE));
     }
     drawBitmapAbs(_ctx, m_halfUpperWall[0], GPoint((_x*SIZE) - _offset, 5*SIZE));
     drawBitmapAbs(_ctx, m_halfLowerWall[0], GPoint((_x*SIZE) - _offset, 12*SIZE));
@@ -417,11 +430,15 @@ void renderSawWalls(GContext* _ctx, int8_t _offset) {
   }
 }
 
-void renderFloor(GContext* _ctx, int _mode) {
+void renderFloor(GContext* _ctx, int _mode, int8_t _from, int8_t _to) {
+  if (_from == -1) _from = 2;
+  if (_to == -1) _to = 18;
+  const int8_t _level = m_dungeon.m_level;
   for (int _x = 3; _x < 15; _x += 2) {
     if (_mode == 1 && !(_x == 3 || _x == 13)) continue; // Pit
-    for (int _y = 2; _y < 18; _y += 2) {
-      drawBitmap(_ctx, getFloor(true), _x, _y);
+    const int8_t _l = (_mode == 2 && (_x == 5 || _x == 9 || _x == 13)) ? (_level + 1) % 3 : _level; // spikes
+    for (int _y = _from; _y < _to; _y += 2) {
+      drawBitmap(_ctx, getFloor(true, _l), _x, _y);
     }
   }
   if (_mode == 1) { // Pit with one space on either side
@@ -439,10 +456,12 @@ void renderFloor(GContext* _ctx, int _mode) {
     drawBitmap(_ctx, m_innerWall[3], 9, 16);
   }
   // Extra bits where the doors can go
-  drawBitmap(_ctx, m_LDoorstep, 2, 8); // TODO this on its own call
-  drawBitmap(_ctx, m_RDoorstep, 15, 4);
-  drawBitmap(_ctx, m_RDoorstep, 15, 8);
-  drawBitmap(_ctx, m_RDoorstep, 15, 12);
+  if (_to == 18) {
+    drawBitmap(_ctx, m_LDoorstep, 2, 8); // TODO this on its own call
+    drawBitmap(_ctx, m_RDoorstep, 15, 4);
+    drawBitmap(_ctx, m_RDoorstep, 15, 8);
+    drawBitmap(_ctx, m_RDoorstep, 15, 12);
+  }
 }
 
 void renderPit(GContext* _ctx) {
@@ -684,7 +703,7 @@ void renderFloorArrows(GContext* _ctx, Options_t maze0[3][3], uint8_t mwin0[3][3
 void renderShortcutFloor(GContext* _ctx) {
   const int8_t _level = m_dungeon.m_level;
   for (int _x = 0; _x < 20; _x += 2) {
-    drawBitmapAbs(_ctx, getFloor(true), GPoint(_x*SIZE, 8*SIZE));
+    drawBitmapAbs(_ctx, getFloor(true, m_dungeon.m_level), GPoint(_x*SIZE, 8*SIZE));
     drawBitmapAbs(_ctx, m_halfUpperWall[0], GPoint(_x*SIZE, 7*SIZE));
     drawBitmapAbs(_ctx, m_halfLowerWall[0], GPoint(_x*SIZE, 10*SIZE));
   }
@@ -1065,6 +1084,26 @@ void renderFloorPuzzleShape(GContext* _ctx, GPoint _p, uint8_t _inner[4], uint8_
   graphics_draw_round_rect(_ctx, _rAll, SIZE);
 
 }
+
+void renderSpikes(GContext* _ctx, int8_t _off[3], uint8_t _layer) {
+  const int8_t _y = (SIZE*4*_layer) - SIZE*2;
+  const int8_t _yHole = (SIZE*4*_layer) + SIZE*4;
+  for (int _i = 0; _i < 3; ++_i) {
+    const uint8_t _x = (SIZE*5) + (SIZE*4*_i);
+    drawBitmapAbs(_ctx, m_spearHole[0], GPoint(_x, _yHole - SIZE));
+    drawBitmapAbs(_ctx, m_spear, GPoint(_x, _y + _off[_i]));
+    drawBitmapAbs(_ctx, m_spearHole[1], GPoint(_x, _yHole));
+  }
+}
+
+void renderSpikeHoleBottom(GContext* _ctx, uint8_t _layer) {
+  const int8_t _yHole = (SIZE*4*_layer) + SIZE*4;
+  for (int _i = 0; _i < 3; ++_i) {
+    const uint8_t _x = (SIZE*5) + (SIZE*4*_i);
+    drawBitmapAbs(_ctx, m_spearHole[1], GPoint(_x, _yHole));
+  }
+}
+
 
 #endif // YCGBv2
 

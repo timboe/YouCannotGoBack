@@ -3,7 +3,7 @@
 static uint16_t s_state = 0;
 
 void updateProcEmpty(GContext* _ctx) {
-  renderFloor(_ctx, 0);
+  renderFloor(_ctx, 0, -1, -1);
   renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);

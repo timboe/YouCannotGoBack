@@ -18,7 +18,7 @@ void initSprite();
 void deinitSprite();
 
 GBitmap* getOuterWall(int _d);
-GBitmap* getFloor(bool _random);
+GBitmap* getFloor(bool _random, int8_t _level);
 GBitmap* getClutter(bool _broken);
 
 #ifdef YCGBv2
@@ -28,6 +28,8 @@ extern GBitmap* m_fuse[3];
 extern GBitmap* m_floorArrow[kNOptionTypes];
 extern GBitmap* m_parchment[2];
 extern GBitmap* m_clack[2];
+extern GBitmap* m_spear;
+extern GBitmap* m_spearHole[2];
 #endif
 
 extern GBitmap* m_UOuterWall[3];

@@ -5,7 +5,7 @@ static GPoint s_fire[2];
 
 void updateProcFinal(GContext* _ctx) {
 
-  renderFloor(_ctx, 0);
+  renderFloor(_ctx, 0, -1, -1);
 
   for (int _i = 0; _i < 3; ++_i) {
     drawBitmap(_ctx, m_flagstone[_i], 5, 5 + (_i * 4));
@@ -18,10 +18,10 @@ void updateProcFinal(GContext* _ctx) {
     drawBitmap(_ctx, m_innerCorner[0], 7, 12);
     drawBitmap(_ctx, m_innerWall[3], 9, 6);
     drawBitmap(_ctx, m_innerWall[2], 9, 12);
-    drawBitmap(_ctx, getFloor(true), 7, 8);
-    drawBitmap(_ctx, getFloor(true), 7, 10);
-    drawBitmap(_ctx, getFloor(true), 9, 8);
-    drawBitmap(_ctx, getFloor(true), 9, 10);
+    drawBitmap(_ctx, getFloor(true, m_dungeon.m_level), 7, 8);
+    drawBitmap(_ctx, getFloor(true, m_dungeon.m_level), 7, 10);
+    drawBitmap(_ctx, getFloor(true, m_dungeon.m_level), 9, 8);
+    drawBitmap(_ctx, getFloor(true, m_dungeon.m_level), 9, 10);
   } else {
     for (int _i = 0; _i < 4; ++_i) rand(); // keep the wall the same
   }

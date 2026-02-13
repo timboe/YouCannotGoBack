@@ -10,7 +10,7 @@ const uint8_t s_ticks[3] = {80, 60, 40};
 // #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
 void updateProcBomb(GContext* _ctx) {
-  renderFloor(_ctx, 0);
+  renderFloor(_ctx, 0, -1, -1);
   renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);

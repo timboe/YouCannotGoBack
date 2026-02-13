@@ -42,7 +42,7 @@ GambleOutcomes_t getGambleOutcome(void) {
 }
 
 void updateProcGamble(GContext* _ctx) {
-  renderFloor(_ctx, 0);
+  renderFloor(_ctx, 0, -1, -1);
   renderClutter(_ctx);
   renderPlayer(_ctx);
 
@@ -50,6 +50,8 @@ void updateProcGamble(GContext* _ctx) {
   if (s_doClack) --s_doClack;
 
   if (s_state < 10) renderPlayer(_ctx); // In front
+
+  // TODO - render base of wheel 
 
   renderWalls(_ctx, true, true, false, true);
   renderWallClutter(_ctx);

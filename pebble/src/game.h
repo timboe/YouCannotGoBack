@@ -62,7 +62,7 @@ typedef enum {
   kSaw,      // Skill 1
   #ifdef YCGBv2
     kBomb,   // Skill 2
-    // kSpikes, // Skill 3
+    kSpikes, // Skill 3
     // kSBall,  // Skill 4
   #endif
   //
@@ -207,8 +207,9 @@ extern Dungeon_t m_dungeon;
 extern Player_t m_player;
 extern Clutter_t m_clutter;
 
-int getFrameCount();
-int getPlayerChoice();
+int getFrameCount(void);
+int getPlayerChoice(void);
+void resetPlayerChoice(void);
 GameState_t getGameState();
 void setGameState(GameState_t _state);
 void setDisplayMsg(const char* _msg);

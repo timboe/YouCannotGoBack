@@ -4,16 +4,16 @@ static uint16_t s_state = 0;
 
 void updateProcStairs(GContext* _ctx) {
 
-  renderFloor(_ctx, 0);
+  renderFloor(_ctx, 0, -1, -1);
   drawBitmap(_ctx, m_stairs, 9, 8);
   drawBitmap(_ctx, m_stairs, 9, 10);
   renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, false, false, false);
   renderWallClutter(_ctx);
-  drawBitmap(_ctx, getFloor(true), 11, 10); //Draw some more floor to cover the player
-  drawBitmap(_ctx, getFloor(true), 11, 12);
-  drawBitmap(_ctx, getFloor(true), 9, 12);
+  drawBitmap(_ctx, getFloor(true, m_dungeon.m_level), 11, 10); //Draw some more floor to cover the player
+  drawBitmap(_ctx, getFloor(true, m_dungeon.m_level), 11, 12);
+  drawBitmap(_ctx, getFloor(true, m_dungeon.m_level), 9, 12);
 
   if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
     drawBitmap(_ctx, m_arrow, 9, 8);

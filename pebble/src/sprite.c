@@ -7,6 +7,8 @@ GBitmap* m_fuse[3];
 GBitmap* m_floorArrow[8];
 GBitmap* m_parchment[2];
 GBitmap* m_clack[2];
+GBitmap* m_spear;
+GBitmap* m_spearHole[2];
 #endif
 
 GBitmap* m_spriteMap;
@@ -78,10 +80,10 @@ GBitmap* getOuterWall(int _d) {
   }
 }
 
-GBitmap* getFloor(bool _random) {
+GBitmap* getFloor(bool _random, int8_t _level) {
   int _r = rand() % MAX_FLOOR;
   if (_random == false) _r = 0;
-  switch (m_dungeon.m_level) {
+  switch (_level) {
     case 0:  return m_floorA[_r];
     case 1:  return m_floorB[_r];
     default: return m_floorC[_r];
@@ -207,19 +209,23 @@ void initSprite() {
   m_treasure[2] = getSprite(23, 12, 1, 1);
 
   #ifdef YCGBv2
-  m_fuse[0] = getSprite(28, 0, 2, 2);
-  m_fuse[1] = getSprite(28, 2, 2, 2);
-  m_fuse[2] = getSprite(28, 4, 2, 2);
+    m_fuse[0] = getSprite(28, 0, 2, 2);
+    m_fuse[1] = getSprite(28, 2, 2, 2);
+    m_fuse[2] = getSprite(28, 4, 2, 2);
 
-  m_parchment[0] = getSprite(24, 13, 1, 3);
-  m_parchment[1] = getSprite(25, 13, 1, 3);
+    m_parchment[0] = getSprite(24, 13, 1, 3);
+    m_parchment[1] = getSprite(25, 13, 1, 3);
 
-  m_clack[0] = getSprite(28, 6, 2, 2);
-  m_clack[1] = getSprite(28, 8, 2, 2);
+    m_clack[0] = getSprite(28, 6, 2, 2);
+    m_clack[1] = getSprite(28, 8, 2, 2);
 
-  for (uint8_t _i = 0; _i < kNOptionTypes; ++_i) {
-    m_floorArrow[_i] = getSprite(30, 2*_i, 2, 2);
-  }
+    for (uint8_t _i = 0; _i < kNOptionTypes; ++_i) {
+      m_floorArrow[_i] = getSprite(30, 2*_i, 2, 2);
+    }
+
+    m_spear = getSprite(28, 10, 2, 6);
+    m_spearHole[0] = getSprite(26, 13, 2, 1);
+    m_spearHole[1] = getSprite(26, 14, 2, 1);    
   #endif
 
 }
@@ -286,6 +292,8 @@ void deinitSprite() {
     for (int _i = 1; _i < kNOptionTypes; ++_i) gbitmap_destroy(m_floorArrow[_i]);
     for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_parchment[_i]);
     for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_clack[_i]);
+    for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_spearHole[_i]);
+    gbitmap_destroy(m_spear);
   #endif
 
   // Actual bitmaps

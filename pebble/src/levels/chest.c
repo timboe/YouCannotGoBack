@@ -5,7 +5,7 @@ static int8_t s_bad = 0;
 
 void updateProcChest(GContext* _ctx) {
 
-  renderFloor(_ctx, 0);
+  renderFloor(_ctx, 0, -1, -1);
 
   // repeat on a 8s loop
   const uint16_t _t = m_dungeon.m_ticksInLevel % (ANIM_FPS * 8);
