@@ -50,7 +50,7 @@ void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAd
 void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert) {
   static char _hintText[3];
   snprintf(_hintText, 3, "%i", _value);
-  renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_SMALL), _hintText, 1, GTextAlignmentCenter, _invert);
+  renderBorderText(_ctx, _r,  fonts_get_system_font(FONT_KEY_SMALL), _hintText, 2, GTextAlignmentCenter, _invert);
 }
 
 void renderClutter(GContext* _ctx) {
@@ -249,8 +249,8 @@ void renderStandingStone(GContext* _ctx, GPoint _p, GColor _c, StoneTypes_t _st)
 }
 
 void renderFrame(GContext* _ctx, GRect _b) {
-  graphics_context_set_fill_color(_ctx, GColorDarkGray);
-  graphics_context_set_stroke_color(_ctx, GColorWhite);
+  graphics_context_set_fill_color(_ctx, GColorBlack);
+  graphics_context_set_stroke_color(_ctx, GColorDarkGray);
   graphics_context_set_stroke_width(_ctx, 2);
 #ifdef PBL_ROUND
   _b.origin.x += ROUND_OFFSET_X;
@@ -970,6 +970,101 @@ void renderPatternLine(GContext* _ctx, GPoint _p, uint16_t _a, GColor _c1, GColo
   // _pd->graphics->drawLine(_x1, _y1, _x2, _y2, /*width=*/ _w2, _c2); /// xxx
 }
 
+void renderFloorPuzzleShape(GContext* _ctx, GPoint _p, uint8_t _inner[4], uint8_t _outer[4], uint8_t _rot, uint8_t _flip) {
+  
+  const uint8_t _w = 3*SIZE; 
+  const uint8_t _h = 2*SIZE;
+
+  #ifdef HIGH_RES
+    const uint8_t _sw = 3;
+  #else
+    const uint8_t _sw = 2;
+  #endif
+
+  #ifdef PBL_ROUND
+    _p.x += ROUND_OFFSET_X;
+    _p.y += ROUND_OFFSET_Y;
+  #elif defined HIGH_RES
+    _p.x += EMERY_OFFSET_X;
+    _p.y += EMERY_OFFSET_Y;
+  #endif
+
+  GColor _colours[3];
+  #ifdef PBL_BW
+    _colours[0] = GColorBlack;
+    _colours[1] = GColorWhite;
+    _colours[2] = GColorDarkGray;
+    GColor _border = GColorDarkGray;
+  #else 
+    if (m_dungeon.m_level == 0) {
+      _colours[0] = GColorGreen;
+      _colours[1] = GColorYellow;
+      _colours[2] = GColorRed;
+    } else if (m_dungeon.m_level == 1) {
+      _colours[0] = GColorGreen;
+      _colours[1] = GColorWhite;
+      _colours[2] = GColorBlack;
+    } else {
+      _colours[0] = GColorGreen;
+      _colours[1] = GColorWhite;
+      _colours[2] = GColorBlack;
+    }
+    GColor _border = GColorBlack;
+  #endif
+
+  uint8_t _innerFlip[4] = {_inner[0], _inner[1], _inner[2], _inner[3]};
+  uint8_t _outerFlip[4] = {_outer[0], _outer[1], _outer[2], _outer[3]};
+
+  if (_flip == 1) { // horizontal
+    _innerFlip[0] = _inner[1];
+    _innerFlip[1] = _inner[0];
+    _innerFlip[2] = _inner[3];
+    _innerFlip[3] = _inner[2]; 
+    _outerFlip[0] = _outer[1];
+    _outerFlip[1] = _outer[0];
+    _outerFlip[2] = _outer[3];
+    _outerFlip[3] = _outer[2]; 
+  } else if (_flip == 2) { //vertical
+    _innerFlip[0] = _inner[3];
+    _innerFlip[1] = _inner[2];
+    _innerFlip[2] = _inner[1];
+    _innerFlip[3] = _inner[0]; 
+    _outerFlip[0] = _outer[3];
+    _outerFlip[1] = _outer[2];
+    _outerFlip[2] = _outer[1];
+    _outerFlip[3] = _outer[0]; 
+  }
+
+  const GRect _r1 = GRect(_p.x +  0, _p.y +  0, _w, _h);
+  const GRect _r2 = GRect(_p.x + _w, _p.y +  0, _w, _h);
+  const GRect _r3 = GRect(_p.x + _w, _p.y + _h, _w, _h);
+  const GRect _r4 = GRect(_p.x +  0, _p.y + _h, _w, _h);
+  const GRect _rAll = GRect(_p.x, _p.y, _w*2, _h*2);
+
+  graphics_context_set_fill_color(_ctx, _colours[_outerFlip[(0 + _rot) % 4]] );
+  graphics_fill_rect(_ctx, _r1, SIZE, GCornerTopLeft);
+  graphics_context_set_fill_color(_ctx, _colours[_outerFlip[(1 + _rot) % 4]] );
+  graphics_fill_rect(_ctx, _r2, SIZE, GCornerTopRight);
+  graphics_context_set_fill_color(_ctx, _colours[_outerFlip[(2 + _rot) % 4]] );
+  graphics_fill_rect(_ctx, _r3, SIZE, GCornerBottomLeft);
+  graphics_context_set_fill_color(_ctx, _colours[_outerFlip[(3 + _rot) % 4]] );
+  graphics_fill_rect(_ctx, _r4, SIZE, GCornerBottomRight);
+
+  const uint16_t _rightAngle = (TRIG_MAX_ANGLE / 4);
+  graphics_context_set_fill_color(_ctx, _colours[_innerFlip[(0 + _rot) % 4]] );
+  graphics_fill_radial(_ctx, _r1, GOvalScaleModeFitCircle, _h, -2*_rightAngle, _rightAngle);
+  graphics_context_set_fill_color(_ctx, _colours[_innerFlip[(1 + _rot) % 4]] );
+  graphics_fill_radial(_ctx, _r2, GOvalScaleModeFitCircle, _h, -1*_rightAngle, 2*_rightAngle);
+  graphics_context_set_fill_color(_ctx, _colours[_innerFlip[(2 + _rot) % 4]] );
+  graphics_fill_radial(_ctx, _r3, GOvalScaleModeFitCircle, _h, 0, 3*_rightAngle);
+  graphics_context_set_fill_color(_ctx, _colours[_innerFlip[(3 + _rot) % 4]] );
+  graphics_fill_radial(_ctx, _r4, GOvalScaleModeFitCircle, _h, 1*_rightAngle, 4*_rightAngle);
+
+  graphics_context_set_stroke_color(_ctx, _border);
+  graphics_context_set_stroke_width(_ctx, _sw);
+  graphics_draw_round_rect(_ctx, _rAll, SIZE);
+
+}
 
 #endif // YCGBv2
 

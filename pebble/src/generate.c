@@ -54,7 +54,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       #else
       _newRoom = kMaths;
       #endif
-      m_dungeon.m_difficulty = 0; // TESTING
+      m_dungeon.m_difficulty = 2; // TESTING
       // m_dungeon.m_gameOver = 2; // TESTING
       APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
@@ -103,6 +103,9 @@ Hints_t getHint(int _level, Rooms_t _roomType) {
   }
 
   if (_roomType == kMaths && _hint == kNumber) return kNoHint; // This is just confusing otherwise
+  #ifdef YCGBv2
+    if (_roomType == kShapes && _hint == kShield) return kNoHint; // As is this
+  #endif
   return _hint;
 }
 
@@ -126,6 +129,8 @@ void generate() {
   #ifdef DEV
   APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
   #endif
+
+  // TODO port new n rooms per level formula
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
     int8_t _roomsInLevel = MIN_ROOMS + _level + (rand() % (MAX_ROOMS - MIN_ROOMS - _level));

@@ -45,6 +45,8 @@ void updateProcEnd(GContext* _ctx) {
   }
 }
 
+// TODO - port best time feature, display this info here too
+
 bool tickEnd(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
