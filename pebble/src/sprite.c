@@ -4,12 +4,13 @@
 GBitmap* m_ycgb;
 
 GBitmap* m_fuse[3];
-GBitmap* m_floorArrow[8];
+GBitmap* m_floorArrow[kNOptionTypes];
 GBitmap* m_parchment[2];
 GBitmap* m_clack[2];
 GBitmap* m_spear;
 GBitmap* m_spearHole[2];
 GBitmap* m_wheelFrame;
+GBitmap* m_wheelIcon[kNWheelIcons];
 #endif
 
 GBitmap* m_spriteMap;
@@ -225,6 +226,10 @@ void initSprite() {
       m_floorArrow[_i] = getSprite(30, 2*_i, 2, 2);
     }
 
+    for (uint8_t _i = 0; _i < kNWheelIcons; ++_i) {
+      m_wheelIcon[_i] = getSprite(32, 2*_i, 2, 2);
+    }
+
     m_spear = getSprite(28, 10, 2, 6);
     m_spearHole[0] = getSprite(26, 13, 2, 1);
     m_spearHole[1] = getSprite(26, 14, 2, 1);
@@ -259,16 +264,16 @@ void deinitSprite() {
     gbitmap_destroy(m_halfLowerWall[_i]);
   }
 
-  for (int _i = 1; _i < MAX_FLOOR; ++_i) {
+  for (uint8_t _i = 1; _i < MAX_FLOOR; ++_i) {
     gbitmap_destroy(m_floorA[_i]);
     gbitmap_destroy(m_floorB[_i]);
     gbitmap_destroy(m_floorC[_i]);
   }
 
-  for (int _i = 1; _i < MAX_GREEK; ++_i) gbitmap_destroy(m_greek[_i]);
-  for (int _i = 1; _i < MAX_CLUTTER; ++_i) gbitmap_destroy(m_clutterSprite[_i]);
-  for (int _i = 1; _i < MAX_FRAMES; ++_i) gbitmap_destroy(m_playerSprite[_i]);
-  for (int _i = 1; _i < MAX_SYMBOL; ++_i) gbitmap_destroy(m_symbol[_i]);
+  for (uint8_t _i = 1; _i < MAX_GREEK; ++_i) gbitmap_destroy(m_greek[_i]);
+  for (uint8_t _i = 1; _i < MAX_CLUTTER; ++_i) gbitmap_destroy(m_clutterSprite[_i]);
+  for (uint8_t _i = 1; _i < MAX_FRAMES; ++_i) gbitmap_destroy(m_playerSprite[_i]);
+  for (uint8_t _i = 1; _i < MAX_SYMBOL; ++_i) gbitmap_destroy(m_symbol[_i]);
 
   gbitmap_destroy(m_sawA);
   gbitmap_destroy(m_sawB);
@@ -290,11 +295,12 @@ void deinitSprite() {
   gbitmap_destroy(m_black);
 
   #ifdef YCGBv2
-    for (int _i = 1; _i < 3; ++_i) gbitmap_destroy(m_fuse[_i]);
-    for (int _i = 1; _i < kNOptionTypes; ++_i) gbitmap_destroy(m_floorArrow[_i]);
-    for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_parchment[_i]);
-    for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_clack[_i]);
-    for (int _i = 1; _i < 2; ++_i) gbitmap_destroy(m_spearHole[_i]);
+    for (uint8_t _i = 1; _i < 3; ++_i) gbitmap_destroy(m_fuse[_i]);
+    for (uint8_t _i = 1; _i < kNOptionTypes; ++_i) gbitmap_destroy(m_floorArrow[_i]);
+    for (uint8_t _i = 0; _i < kNWheelIcons; ++_i) gbitmap_destroy(m_wheelIcon[_i]);
+    for (uint8_t _i = 1; _i < 2; ++_i) gbitmap_destroy(m_parchment[_i]);
+    for (uint8_t _i = 1; _i < 2; ++_i) gbitmap_destroy(m_clack[_i]);
+    for (uint8_t _i = 1; _i < 2; ++_i) gbitmap_destroy(m_spearHole[_i]);
     gbitmap_destroy(m_spear);
   #endif
 

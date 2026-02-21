@@ -785,7 +785,7 @@ void renderGreekFrames(GContext* _ctx, uint8_t _a[TOTAL_LETTERS], uint8_t _b[TOT
 
 }
 
-void renderPi(GContext* _ctx, GPoint _centre, GRect _r, uint32_t _start, uint32_t _stop, uint16_t _angle, GColor _fill, bool _evil, char _c) {
+void renderPi(GContext* _ctx, GPoint _centre, GRect _r, uint32_t _start, uint32_t _stop, uint16_t _angle, GColor _fill, bool _evil, uint8_t _icon) {
   #ifdef PBL_BW
     _fill = _evil ? GColorBlack : GColorWhite;
   #endif
@@ -823,31 +823,15 @@ void renderPi(GContext* _ctx, GPoint _centre, GRect _r, uint32_t _start, uint32_
   if (_special) graphics_context_set_stroke_color(_ctx, GColorWhite);
   graphics_draw_line(_ctx, _centre, _p1);
 
-  // Text
+  // Icon
   int32_t _half = _stop - _start;
   if (_half < 0) _half += TRIG_MAX_ANGLE;
   int32_t _halfAngle = _start + (_half / 2);
   if (_halfAngle > TRIG_MAX_ANGLE) _halfAngle -= TRIG_MAX_ANGLE;
-  _len = (_len * 2) / 3;
-  const GPoint _pHalf = GPoint(_centre.x + (sin_lookup(_halfAngle) * _len / TRIG_MAX_RATIO),
-                               _centre.y - (cos_lookup(_halfAngle) * _len / TRIG_MAX_RATIO));
-  //
-  #ifdef HIGH_RES
-    GRect _rHalf = GRect(_pHalf.x - SIZE, _pHalf.y - 2*SIZE + 4, 2*SIZE, 2*SIZE);
-  #else
-    GRect _rHalf = GRect(_pHalf.x - SIZE, _pHalf.y - 18, 2*SIZE, 2*SIZE);
-  #endif
-  //
-  _fill = _evil ? GColorWhite : GColorBlack;
-  //
-  #ifdef PBL_COLOR
-    _fill = GColorWhite;
-  #endif
-  graphics_context_set_text_color(_ctx, _fill);
-  char _txt[2] = {0};
-  _txt[0] = _c;
-  graphics_draw_text(_ctx, _txt, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), _rHalf, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
-
+  _len = SIZE * 3;
+  const GPoint _pHalf = GPoint((_centre.x + (sin_lookup(_halfAngle) * _len / TRIG_MAX_RATIO) - SIZE),
+                               (_centre.y - (cos_lookup(_halfAngle) * _len / TRIG_MAX_RATIO) - SIZE));
+  drawBitmapAbs(_ctx, m_wheelIcon[_icon], _pHalf);
 }
 
 void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clack) {
@@ -879,19 +863,23 @@ void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clac
 
   graphics_context_set_stroke_width(_ctx, _w*2);
   if (!_wheel) {
-    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(330), DEG_TO_TRIGANGLE(30), _angle, GColorRed, true, 'D');
-    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(30), DEG_TO_TRIGANGLE(90), _angle, GColorRed, true, 'B');
-    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(90), DEG_TO_TRIGANGLE(210), _angle, GColorBlue, false, 'S');
-    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(210), DEG_TO_TRIGANGLE(330), _angle, GColorGreen, false, 'L');
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(330), DEG_TO_TRIGANGLE(30), _angle, GColorRed, true, kIconSkull);
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(30), DEG_TO_TRIGANGLE(90), _angle, GColorRed, true, kIconBell);
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(90), DEG_TO_TRIGANGLE(210), _angle, GColorBlue, false, kIconSign);
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(210), DEG_TO_TRIGANGLE(330), _angle, GColorGreen, false, kIconClover);
   } else {
-    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(330), DEG_TO_TRIGANGLE(90), _angle, GColorRed, true, _wheel == 1 ? 'B' : 'W');
-    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(90), DEG_TO_TRIGANGLE(210), _angle, GColorBlue, false, 'S');
-    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(210), DEG_TO_TRIGANGLE(330), _angle,  _wheel == 1 ? GColorGreen : GColorPurple, false, _wheel == 1 ? 'L' : 'C');
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(330), DEG_TO_TRIGANGLE(90), _angle, GColorRed, true, _wheel == 1 ? kIconBell : kIconWind);
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(90), DEG_TO_TRIGANGLE(210), _angle, GColorBlue, false, kIconSign);
+    renderPi(_ctx, _centre, _r, DEG_TO_TRIGANGLE(210), DEG_TO_TRIGANGLE(330), _angle,  _wheel == 1 ? GColorGreen : GColorPurple, false, _wheel == 1 ? kIconClover : kIconSpyglass);
   }
 
   // Outer 
   graphics_context_set_stroke_width(_ctx, _w);
-  graphics_context_set_stroke_color(_ctx, GColorWhite);
+  #ifdef PBL_BW
+    graphics_context_set_stroke_color(_ctx, GColorWhite);
+  #else
+    graphics_context_set_stroke_color(_ctx, GColorRoseVale);
+  #endif
   graphics_draw_circle(_ctx, _centre, SIZE*5);
 
   graphics_context_set_stroke_width(_ctx, _w*2);
@@ -899,6 +887,11 @@ void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clac
   graphics_draw_circle(_ctx, _centre, SIZE*5 - _w*2);
 
   drawBitmapAbs(_ctx, m_clack[_clack > 0 ? 1 : 0], GPoint(SIZE*9, SIZE*3));
+  #ifdef HIGH_RES
+    drawBitmapAbs(_ctx, m_wheelFrame, GPoint(SIZE*6 + SIZE/2, SIZE*14 - SIZE/2));
+  #else
+    drawBitmapAbs(_ctx, m_wheelFrame, GPoint(SIZE*6 + SIZE/2, SIZE*14 - SIZE/2));
+  #endif
 }
 
 void renderPatternUnder(GContext* _ctx, GPoint _p, uint8_t _id1, uint8_t _id2) {

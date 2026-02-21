@@ -37,6 +37,16 @@
 #define SPIKE_MULTIPLIER 128
 
 typedef enum {
+  kIconSign,
+  kIconSpyglass,
+  kIconClover,
+  kIconBell,
+  kIconSkull,
+  kIconWind,
+  kNWheelIcons
+} WheelIcon_t;
+
+typedef enum {
   kStart,     // Special
   kStairs,    // Special
   kChest,     // Misc 0
