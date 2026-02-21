@@ -26,6 +26,7 @@
 #include "levels/patterns.h"
 #include "levels/shapes.h"
 #include "levels/spikes.h"
+#include "levels/unstable.h"
 #endif
 
 static int s_frameCount = 0;
@@ -157,6 +158,7 @@ void gameLoop(void* data) {
         case kPattern: requestRedraw = tickPattern(_doInit); break;
         case kShapes: requestRedraw = tickShapes(_doInit); break;
         case kSpikes: requestRedraw = tickSpikes(_doInit); break;
+        case kUnstable: requestRedraw = tickUnstable(_doInit); break;
       #endif
       case kDeath: requestRedraw = tickDeath(_doInit); break;
       case kFinal: requestRedraw = tickFinal(_doInit); break;
@@ -212,6 +214,7 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
       case kPattern: updateProcPattern(_ctx); break;
       case kShapes: updateProcShapes(_ctx); break;
       case kSpikes: updateProcSpikes(_ctx); break;
+      case kUnstable: updateProcUnstable(_ctx); break;
     #endif
     case kDeath: updateProcDeath(_ctx); break;
     case kFinal: updateProcFinal(_ctx); break;

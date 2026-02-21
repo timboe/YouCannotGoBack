@@ -7,7 +7,7 @@ static uint16_t s_breakPoint = 0;
 
 void updateProcBridge(GContext* _ctx) {
 
-  renderFloor(_ctx, 1, -1, -1);
+  renderFloor(_ctx, kBridge, -1, -1, NULL, NULL);
 
   for (int _i = 0; _i < 3; ++_i) {
     drawBitmap(_ctx, m_bridge[0], 4,  5 + (_i * 4));

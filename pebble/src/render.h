@@ -13,7 +13,7 @@ void renderHintNumber(GContext* _ctx, GRect _r, int _value, bool _invert);
 void renderBottomWall(GContext* _ctx);
 void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC);
 void renderWallClutter(GContext* _ctx);
-void renderFloor(GContext* _ctx, int mode, int8_t _from, int8_t _to);
+void renderFloor(GContext* _ctx, Rooms_t _room, int8_t _from, int8_t _to, int8_t _offsetX[6][8], int8_t _offsetY[6][8]);
 void renderPlayer(GContext* _ctx);
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in);
 void renderBorderText(GContext* _ctx, GRect _loc, GFont _f, const char* _buffer, uint8_t _offset, GTextAlignment _al, bool _invert);
@@ -48,6 +48,7 @@ void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAd
   void renderFloorPuzzleShape(GContext* _ctx, GPoint _p, uint8_t _inner[4], uint8_t _outer[4], uint8_t _rot, uint8_t _flip);
   void renderSpikes(GContext* _ctx, int16_t _off[3], uint8_t _layer);
   void renderSpikeHoleBottom(GContext* _ctx, uint8_t _layer);
+  void rednerUnstableMarkers(GContext* _ctx);
 #endif
 
 GColor getShieldColor(int8_t _value);

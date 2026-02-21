@@ -7,7 +7,6 @@ static char s_victories[16];
 
 void updateProcEnd(GContext* _ctx) {
 
-
   if (m_dungeon.m_gameOver == 1) {
     uint8_t _height = 43;
     #ifdef HIGH_RES

@@ -4,7 +4,7 @@ static uint16_t s_state = 0;
 
 void updateProcStairs(GContext* _ctx) {
 
-  renderFloor(_ctx, 0, -1, -1);
+  renderFloor(_ctx, kEmpty, -1, -1, NULL, NULL);
   drawBitmap(_ctx, m_stairs, 9, 8);
   drawBitmap(_ctx, m_stairs, 9, 10);
   renderClutter(_ctx);

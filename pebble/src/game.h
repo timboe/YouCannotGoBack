@@ -71,12 +71,12 @@ typedef enum {
     kArrows,   // Puzzle 4
   #endif
   //
-  kDark,     // Skill 0
-  kSaw,      // Skill 1
+  kDark,       // Skill 0
+  kSaw,        // Skill 1
   #ifdef YCGBv2
-    kBomb,   // Skill 2
-    kSpikes, // Skill 3
-    // kSBall,  // Skill 4
+    kBomb,     // Skill 2
+    kSpikes,   // Skill 3
+    kUnstable, // Skill 4
   #endif
   //
   #ifdef YCGBv2

@@ -14,10 +14,10 @@ void updateProcSpikes(GContext* _ctx) {
 
   renderWalls(_ctx, true, false, true, false);
 
-  renderFloor(_ctx, 2 /*mode spikes*/, 2, 4); // 2 - 18
+  renderFloor(_ctx, kSpikes, 2, 4, NULL, NULL); // 2 - 18
   renderSpikes(_ctx, s_off, 0);
 
-  renderFloor(_ctx, 2 /*mode spikes*/, 4, 8); // 2 - 18
+  renderFloor(_ctx, kSpikes, 4, 8, NULL, NULL); // 2 - 18
   renderSpikeHoleBottom(_ctx, 0);
   renderSpikes(_ctx, s_off, 1);
 
@@ -26,17 +26,17 @@ void updateProcSpikes(GContext* _ctx) {
   //   renderWalls(_ctx, true, false, true, false);
   // }
 
-  renderFloor(_ctx, 2 /*mode spikes*/, 8, 12); // 2 - 18
+  renderFloor(_ctx, kSpikes, 8, 12, NULL, NULL); // 2 - 18
   renderSpikeHoleBottom(_ctx, 1);
 
   renderPlayer(_ctx);
   renderSpikes(_ctx, s_off, 2);
 
-  renderFloor(_ctx, 2 /*mode spikes*/, 12, 16); // 2 - 18
+  renderFloor(_ctx, kSpikes, 12, 16, NULL, NULL); // 2 - 18
   renderSpikeHoleBottom(_ctx, 2);
   renderSpikes(_ctx, s_off, 3);
 
-  renderFloor(_ctx, 2 /*mode spikes*/, 16, 18); // 2 - 18
+  renderFloor(_ctx, kSpikes, 16, 18, NULL, NULL); // 2 - 18
   renderSpikeHoleBottom(_ctx, 3);
   renderBottomWall(_ctx);
   renderWallClutter(_ctx);

@@ -6,7 +6,7 @@ static uint16_t s_correct = 0;
 
 void updateProcPword(GContext* _ctx) {
 
-  renderFloor(_ctx, 0, -1, -1);
+  renderFloor(_ctx, kEmpty, -1, -1, NULL, NULL);
   renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, false, true, false);

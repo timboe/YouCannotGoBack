@@ -21,7 +21,7 @@ RoomDescriptor_t m_roomDescriptor[kNRoomTypes] = {
  [kGreek].m_minL    = 0, [kGreek].m_giveHint    = 1, [kGreek].m_reqHint    = {0, 0, 0, 0, 0, 1},
  [kPattern].m_minL  = 0, [kPattern].m_giveHint  = 0, [kPattern].m_reqHint  = {0, 0, 0, 0, 0, 0},
  [kSpikes].m_minL   = 0, [kSpikes].m_giveHint   = 0, [kSpikes].m_reqHint   = {0, 0, 0, 0, 0, 0},
- // [kSBall].m_minL    = 0, [kSBall].m_giveHint    = 0, [kSBall].m_reqHint    = {0, 0, 0, 0, 0, 0},
+ [kUnstable].m_minL = 0, [kUnstable].m_giveHint = 0, [kUnstable].m_reqHint = {0, 0, 0, 0, 0, 0},
  [kShapes].m_minL   = 0, [kShapes].m_giveHint   = 1, [kShapes].m_reqHint   = {0, 0, 0, 0, 0, 0},
  [kBomb].m_minL     = 0, [kBomb].m_giveHint     = 1, [kBomb].m_reqHint     = {0, 0, 0, 0, 0, 0},
  [kBoxes].m_minL    = 0, [kBoxes].m_giveHint    = 0, [kBoxes].m_reqHint    = {0, 0, 0, 1, 0, 0},
@@ -50,7 +50,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       TESTING_ROOM_HINT = kGreekLetter; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
       #ifdef YCGBv2
-      _newRoom = kGamble; // TESTING
+      _newRoom = kUnstable; // TESTING
       #else
       _newRoom = kMaths;
       #endif

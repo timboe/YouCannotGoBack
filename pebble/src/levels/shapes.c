@@ -12,7 +12,7 @@ static uint8_t s_flip = 0;
 
 
 void updateProcShapes(GContext* _ctx) {
-  renderFloor(_ctx, 0, -1, -1);
+  renderFloor(_ctx, kEmpty, -1, -1, NULL, NULL);
   renderClutter(_ctx);
 
   renderFloorPuzzleShape(_ctx, GPoint(3*SIZE, 8*SIZE), s_inner[s_win], s_outer[s_win], 0, 0);

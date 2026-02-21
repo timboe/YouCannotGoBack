@@ -80,7 +80,7 @@ void lines(GContext* _ctx, GColor _c, int _w) {
 
 void updateProcMaze(GContext* _ctx) {
 
-  renderFloor(_ctx, 0, -1, -1);
+  renderFloor(_ctx, kEmpty, -1, -1, NULL, NULL);
 
   GColor _c1 = GColorWhite;
   GColor _c2 = GColorBlack;

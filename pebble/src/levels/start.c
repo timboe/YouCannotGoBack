@@ -4,7 +4,7 @@ static uint16_t s_state = 0;
 
 void updateProcStart(GContext* _ctx) {
 
-  renderFloor(_ctx, 0, -1, -1);
+  renderFloor(_ctx, kEmpty, -1, -1, NULL, NULL);
 
 #ifdef YCGBv2
   drawBitmap(_ctx, m_ycgb, 6, 4);

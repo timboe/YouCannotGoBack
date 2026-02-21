@@ -11,7 +11,7 @@ static uint8_t s_strB[TOTAL_LETTERS] = {0};
 static uint8_t s_strC[TOTAL_LETTERS] = {0};
 
 void updateProcGreek(GContext* _ctx) {
-  renderFloor(_ctx, 0, -1, -1);
+  renderFloor(_ctx, kEmpty, -1, -1, NULL, NULL);
   renderClutter(_ctx);
   renderGreekFrames(_ctx, s_strA, s_strB, s_strC, s_lettersThisLevel);
   renderPlayer(_ctx);

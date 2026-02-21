@@ -5,7 +5,7 @@ static GPoint s_fire[2];
 
 void updateProcFinal(GContext* _ctx) {
 
-  renderFloor(_ctx, 0, -1, -1);
+  renderFloor(_ctx, kEmpty, -1, -1, NULL, NULL);
 
   for (int _i = 0; _i < 3; ++_i) {
     drawBitmap(_ctx, m_flagstone[_i], 5, 5 + (_i * 4));

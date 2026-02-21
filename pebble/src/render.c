@@ -431,37 +431,50 @@ void renderSawWalls(GContext* _ctx, int8_t _offset) {
   }
 }
 
-void renderFloor(GContext* _ctx, int _mode, int8_t _from, int8_t _to) {
+void renderFloor(GContext* _ctx, Rooms_t _room, int8_t _from, int8_t _to, int8_t _offsetX[6][8], int8_t _offsetY[6][8]) { // TODO pass in level enum instead of int for mode
+
   if (_from == -1) _from = 2;
   if (_to == -1) _to = 18;
   const int8_t _level = m_dungeon.m_level;
-  for (int _x = 3; _x < 15; _x += 2) {
-    if (_mode == 1 && !(_x == 3 || _x == 13)) continue; // Pit
-    const int8_t _l = (_mode == 2 && (_x == 5 || _x == 9 || _x == 13)) ? (_level + 1) % 3 : _level; // spikes
-    for (int _y = _from; _y < _to; _y += 2) {
-      drawBitmap(_ctx, getFloor(true, _l), _x, _y);
+  for (uint16_t _x = SIZE*3; _x < SIZE*15; _x += SIZE*2) {
+    if (_room == kBridge && !(_x == SIZE*3 || _x == SIZE*13)) continue; // Pit
+    int8_t _l = _level;
+    #ifdef YCGBv2
+      if (_room == kSpikes && (_x == SIZE*5 || _x == SIZE*9 || _x == SIZE*13)) _l = (_level + 1) % 3; // spikes
+    #endif
+    for (uint16_t _y = SIZE*_from; _y < SIZE*_to; _y += SIZE*2) {
+      #ifdef YCGBv2
+        if (_room == kUnstable) { // Unstable
+          GPoint _loc = GPoint(_x/(2*SIZE) - 1, _y/(2*SIZE) - 1);
+          drawBitmapAbs(_ctx, getFloor(true, _l), GPoint(_x + _offsetX[_loc.x][_loc.y], _y + _offsetY[_loc.x][_loc.y]));
+        } else {
+          drawBitmapAbs(_ctx, getFloor(true, _l), GPoint(_x,  _y));
+        }
+      #else
+        drawBitmapAbs(_ctx, getFloor(true, _l), GPoint(_x,  _y));
+      #endif
     }
   }
-  if (_mode == 1) { // Pit with one space on either side
-    for (int _y = 4; _y < 16; _y += 2) {
-      drawBitmap(_ctx, m_innerWall[0], 5,  _y);
-      drawBitmap(_ctx, m_innerWall[1], 11, _y);
+  if (_room == kBridge) { // Pit with one space on either side
+    for (uint16_t _y = 4*SIZE; _y < 16*SIZE; _y += 2*SIZE) {
+      drawBitmapAbs(_ctx, m_innerWall[0], GPoint(SIZE*5,  _y));
+      drawBitmapAbs(_ctx, m_innerWall[1], GPoint(SIZE*11, _y));
     }
-    drawBitmap(_ctx, m_innerCorner[0], 5,  2);
-    drawBitmap(_ctx, m_innerCorner[1], 11, 2);
-    drawBitmap(_ctx, m_innerCorner[2], 11, 16);
-    drawBitmap(_ctx, m_innerCorner[3], 5,  16);
-    drawBitmap(_ctx, m_innerWall[2], 7, 2);
-    drawBitmap(_ctx, m_innerWall[2], 9, 2);
-    drawBitmap(_ctx, m_innerWall[3], 7, 16);
-    drawBitmap(_ctx, m_innerWall[3], 9, 16);
+    drawBitmapAbs(_ctx, m_innerCorner[0], GPoint(SIZE*5,  SIZE*2));
+    drawBitmapAbs(_ctx, m_innerCorner[1], GPoint(SIZE*11, SIZE*2));
+    drawBitmapAbs(_ctx, m_innerCorner[2], GPoint(SIZE*11, SIZE*16));
+    drawBitmapAbs(_ctx, m_innerCorner[3], GPoint(SIZE*5,  SIZE*16));
+    drawBitmapAbs(_ctx, m_innerWall[2], GPoint(SIZE*7, SIZE*2));
+    drawBitmapAbs(_ctx, m_innerWall[2], GPoint(SIZE*9, SIZE*2));
+    drawBitmapAbs(_ctx, m_innerWall[3], GPoint(SIZE*7, SIZE*16));
+    drawBitmapAbs(_ctx, m_innerWall[3], GPoint(SIZE*9, SIZE*16));
   }
   // Extra bits where the doors can go
   if (_to == 18) {
-    drawBitmap(_ctx, m_LDoorstep, 2, 8); // TODO this on its own call
-    drawBitmap(_ctx, m_RDoorstep, 15, 4);
-    drawBitmap(_ctx, m_RDoorstep, 15, 8);
-    drawBitmap(_ctx, m_RDoorstep, 15, 12);
+    drawBitmapAbs(_ctx, m_LDoorstep, GPoint(SIZE*2, SIZE*8)); // TODO this on its own call
+    drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*4));
+    drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*8));
+    drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*12));
   }
 }
 
@@ -1095,6 +1108,13 @@ void renderSpikeHoleBottom(GContext* _ctx, uint8_t _layer) {
     const uint8_t _x = (SIZE*5) + (SIZE*4*_i);
     drawBitmapAbs(_ctx, m_spearHole[1], GPoint(_x, _yHole));
   }
+}
+
+void rednerUnstableMarkers(GContext* _ctx) {
+  drawBitmapAbs(_ctx, m_block, GPoint(SIZE*9, SIZE*6));
+  drawBitmapAbs(_ctx, m_block, GPoint(SIZE*7, SIZE*8));
+  drawBitmapAbs(_ctx, m_block, GPoint(SIZE*7, SIZE*10));
+  drawBitmapAbs(_ctx, m_block, GPoint(SIZE*9, SIZE*12));
 }
 
 
