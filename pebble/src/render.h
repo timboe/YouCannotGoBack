@@ -46,7 +46,7 @@ void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAd
   void renderPatternUnder(GContext* _ctx, GPoint _p, uint8_t _id1, uint8_t _id2);
   void renderPatternLine(GContext* _ctx, GPoint _p, uint16_t _a, GColor _c1, GColor _c2, uint8_t _w1, uint8_t _w2);
   void renderFloorPuzzleShape(GContext* _ctx, GPoint _p, uint8_t _inner[4], uint8_t _outer[4], uint8_t _rot, uint8_t _flip);
-  void renderSpikes(GContext* _ctx, int8_t _off[3], uint8_t _layer);
+  void renderSpikes(GContext* _ctx, int16_t _off[3], uint8_t _layer);
   void renderSpikeHoleBottom(GContext* _ctx, uint8_t _layer);
 #endif
 

@@ -32,6 +32,9 @@
 #define EMERY_OFFSET_Y 0
 
 #define PERSIST_KEY_VICTORY 0
+#define PERSIST_KEY_BESTTIME 1
+
+#define SPIKE_MULTIPLIER 128
 
 typedef enum {
   kStart,     // Special

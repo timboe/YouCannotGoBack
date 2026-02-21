@@ -9,6 +9,7 @@ GBitmap* m_parchment[2];
 GBitmap* m_clack[2];
 GBitmap* m_spear;
 GBitmap* m_spearHole[2];
+GBitmap* m_wheelFrame;
 #endif
 
 GBitmap* m_spriteMap;
@@ -93,6 +94,7 @@ GBitmap* getFloor(bool _random, int8_t _level) {
 void initSprite() {
   #ifdef YCGBv2
   m_ycgb = gbitmap_create_with_resource(RESOURCE_ID_YCGB);
+  m_wheelFrame = gbitmap_create_with_resource(RESOURCE_ID_WHEELFRAME);
   #endif
 
   m_spriteMap = gbitmap_create_with_resource(RESOURCE_ID_SPRITESHEET);
@@ -225,7 +227,7 @@ void initSprite() {
 
     m_spear = getSprite(28, 10, 2, 6);
     m_spearHole[0] = getSprite(26, 13, 2, 1);
-    m_spearHole[1] = getSprite(26, 14, 2, 1);    
+    m_spearHole[1] = getSprite(26, 14, 2, 1);
   #endif
 
 }
@@ -304,5 +306,6 @@ void deinitSprite() {
 
   #ifdef YCGBv2
     gbitmap_destroy(m_ycgb);
+    gbitmap_destroy(m_wheelFrame);
   #endif
 }

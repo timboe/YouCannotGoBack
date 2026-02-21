@@ -3,8 +3,8 @@
 
 static uint16_t s_state = 0;
 
-static int8_t s_off[3] = {0};
-static int8_t s_scale[3] = {0};
+static int16_t s_off[3] = {0};
+static int16_t s_scale[3] = {0};
 
 static uint8_t s_countdown[3] = {0};
 static uint8_t s_ctotal = 0;
@@ -14,7 +14,6 @@ void updateProcSpikes(GContext* _ctx) {
 
   renderWalls(_ctx, true, false, true, false);
 
-
   renderFloor(_ctx, 2 /*mode spikes*/, 2, 4); // 2 - 18
   renderSpikes(_ctx, s_off, 0);
 
@@ -22,11 +21,9 @@ void updateProcSpikes(GContext* _ctx) {
   renderSpikeHoleBottom(_ctx, 0);
   renderSpikes(_ctx, s_off, 1);
 
-
   // renderClutter(_pd);
   // if (s_state < 9) {
   //   renderWalls(_ctx, true, false, true, false);
-  //   renderWallClutter(_ctx);
   // }
 
   renderFloor(_ctx, 2 /*mode spikes*/, 8, 12); // 2 - 18
@@ -45,18 +42,17 @@ void updateProcSpikes(GContext* _ctx) {
   renderWallClutter(_ctx);
 
   // Player should go under
-  // if (s_state >= 9) {
-  //   renderWalls(_ctx, true, false, true, false);
-  //   renderWallClutter(_ctx);
-  // }
+  if (s_state >= 9) {
+    renderWalls(_ctx, true, false, true, false);
+  }
 
-  // if (getFrameCount() < ANIM_FPS/2) {
-  //   switch (s_state) {
-  //     case 2: drawCBitmap(_pd, &m_arrow_r,  7, 9); break;
-  //     case 4: drawCBitmap(_pd, &m_arrow_r, 11, 9); break;
-  //     case 6: drawCBitmap(_pd, &m_arrow_r, 15, 9); break;
-  //   }
-  // }
+  if (getFrameCount() < ANIM_FPS/2) {
+    switch (s_state) {
+      case 2: drawBitmap(_ctx, m_arrow, 7, 9); break;
+      case 4: drawBitmap(_ctx, m_arrow, 11, 9); break;
+      case 6: drawBitmap(_ctx, m_arrow, 15, 9); break;
+    } 
+  }
 }
 
 bool tickSpikes(bool _doInit) {
@@ -73,35 +69,41 @@ bool tickSpikes(bool _doInit) {
     switch (m_dungeon.m_difficulty) {
       case 0: s_ctotal = 32; s_countdown[0] = 22; s_countdown[1] = 11; s_countdown[2] = 1; break;
       case 1: s_ctotal = 16; s_countdown[0] = 1; s_countdown[1] = 1; s_countdown[2] = 1; break;
-      default: s_ctotal = 1; s_countdown[0] = rand() % 16 + 1; s_countdown[1] = rand() % 16 + 1; s_countdown[2] = rand() % 16 + 1; break;
+      default: s_ctotal = 8; s_countdown[0] = rand() % 16 + 1; s_countdown[1] = rand() % 16 + 1; s_countdown[2] = rand() % 16 + 1; break;
     }
     return false;
   }
 
-  // Spears
-  // for (int _i = 0; _i < 3; ++_i) {
-  //   if (s_scale[_i] < 0.01f && (--s_countdown[_i] == 0)) {
-  //     s_countdown[_i] = s_ctotal;
-  //     s_off[_i] = 1.0f;
-  //     s_scale[_i] = 1.2f;
-  //   }
-
-  //   s_off[_i] *= s_scale[_i];
-
-  //   if (s_off[_i] > S_OFF) {
-  //     s_scale[_i] = 0.5f;
-  //     s_off[_i] = 32.0f;
-  //   } else if (s_off[_i] < 1.0f && s_scale[_i] < 1.0f) {
-  //     s_scale[_i] = 0.0f;
-  //     s_off[_i] = 0.0f;
-  //   }
-  // }
+  #ifdef HIGH_RES
+    #define UP_SCALE 22
+    #define DOWN_SCALE -6
+    #define SLOWDOWN 22
+    #define DEATH_WIDTH 22
+  #else
+    #define UP_SCALE 16
+    #define DOWN_SCALE -4
+    #define SLOWDOWN 16
+    #define DEATH_WIDTH 16
+  #endif
 
   for (int _i = 0; _i < 3; ++_i) {
-    if (s_off[_i] < SIZE*6) ++s_off[_i];
-    else s_off[_i] = 0;
-  }  
+    if (s_off[_i] == 0 && --s_countdown[_i] == 0) {
+      s_countdown[_i] = s_ctotal;
+      s_off[_i] = 0;
+      s_scale[_i] = UP_SCALE * SPIKE_MULTIPLIER;
+    }
 
+    s_off[_i] += s_scale[_i];
+    if (s_scale[_i] < 0) s_scale[_i] += SLOWDOWN; // Reduce fall speed 
+
+    if (s_off[_i] >= (SIZE * 6) * SPIKE_MULTIPLIER) {
+      s_scale[_i] = DOWN_SCALE * SPIKE_MULTIPLIER;
+      s_off[_i] = (SIZE * 6) * SPIKE_MULTIPLIER;
+    } else if (s_off[_i] < 0) {
+      s_scale[_i] = 0;
+      s_off[_i] = 0;
+    }
+  }
 
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
@@ -120,7 +122,7 @@ bool tickSpikes(bool _doInit) {
     }
 
     // Check for death, up to 48 pixels in each spear
-    #define DEATH_PIXELS 16
+    #define DEATH_PIXELS (DEATH_WIDTH * SPIKE_MULTIPLIER)
     for (int _i = 0; _i < 3; ++_i) {
       int _x = abs((SIZE*5) + (SIZE*4*_i) - m_player.m_position.x);
       if (_x < SIZE && s_off[_i] > DEATH_PIXELS) {

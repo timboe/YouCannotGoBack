@@ -318,7 +318,8 @@ void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
   drawBitmap(_ctx, m_outerCorner[1], 15, 0);
   drawBitmap(_ctx, m_outerCorner[2], 1, 18);
   drawBitmap(_ctx, m_outerCorner[3], 15, 18);
-  bool _torches = (m_dungeon.m_level % 2 == 0);
+  srand(m_dungeon.m_seed);
+  bool _torches = _torches = (rand() % 2 == 0);
   for (int _x = 3; _x < 15; _x += 2) {  //Draw top and bottom wall
     if (_torches && (_x == 5 || _x == 11)) {
       drawBitmap(_ctx, m_torchWall[0], _x, 0);
@@ -328,7 +329,7 @@ void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
       drawBitmap(_ctx, getOuterWall(2), _x, 18);
     }
   }
-  // _torches = (rand() % 2 == 0);
+  _torches = (rand() % 2 == 0);
   for (int _y = 2; _y < 18; _y += 2) { // Draw left wall
     if (_y == 8 && _l == true) {
       drawBitmap(_ctx, m_LOpenDoor, 0,  _y);
@@ -339,7 +340,7 @@ void renderWalls(GContext* _ctx, bool _l, bool _rA, bool _rB, bool _rC) {
       drawBitmap(_ctx, getOuterWall(1), 1,  _y);
     }
   }
-  // _torches = (rand() % 2 == 0);
+  _torches = (rand() % 2 == 0);
   for (int _y = 2; _y < 18; _y += 2) { // draw right wall
     int _open = rand() % 2; // zero=wall, 1=closed door, 2=open door
     switch (_y) {
@@ -1085,19 +1086,18 @@ void renderFloorPuzzleShape(GContext* _ctx, GPoint _p, uint8_t _inner[4], uint8_
 
 }
 
-void renderSpikes(GContext* _ctx, int8_t _off[3], uint8_t _layer) {
-  const int8_t _y = (SIZE*4*_layer) - SIZE*2;
-  const int8_t _yHole = (SIZE*4*_layer) + SIZE*4;
+void renderSpikes(GContext* _ctx, int16_t _off[3], uint8_t _layer) {
+  const int16_t _y = (SIZE*4*_layer) - SIZE*2 + SIZE*6;
+  const int16_t _yHole = (SIZE*4*_layer) + SIZE*4;
   for (int _i = 0; _i < 3; ++_i) {
     const uint8_t _x = (SIZE*5) + (SIZE*4*_i);
     drawBitmapAbs(_ctx, m_spearHole[0], GPoint(_x, _yHole - SIZE));
-    drawBitmapAbs(_ctx, m_spear, GPoint(_x, _y + _off[_i]));
-    drawBitmapAbs(_ctx, m_spearHole[1], GPoint(_x, _yHole));
+    drawBitmapAbs(_ctx, m_spear, GPoint(_x, _y - (_off[_i] / SPIKE_MULTIPLIER) ));
   }
 }
 
 void renderSpikeHoleBottom(GContext* _ctx, uint8_t _layer) {
-  const int8_t _yHole = (SIZE*4*_layer) + SIZE*4;
+  const int16_t _yHole = (SIZE*4*_layer) + SIZE*4;
   for (int _i = 0; _i < 3; ++_i) {
     const uint8_t _x = (SIZE*5) + (SIZE*4*_i);
     drawBitmapAbs(_ctx, m_spearHole[1], GPoint(_x, _yHole));
