@@ -260,6 +260,10 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
   #endif
 }
 
+bool atDestination(void) {
+  return (m_player.m_target.x == m_player.m_position.x && m_player.m_target.y == m_player.m_position.y);
+}
+
 bool movePlayer() {
   APP_LOG(APP_LOG_LEVEL_INFO,"movePlayer target:%i,%i current:%i,%i",m_player.m_target.x, m_player.m_target.y, m_player.m_position.x, m_player.m_position.y); 
   if (s_frameCount % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
@@ -267,7 +271,7 @@ bool movePlayer() {
     if      (m_player.m_target.x > m_player.m_position.x) ++m_player.m_position.x;
     if      (m_player.m_target.y > m_player.m_position.y) ++m_player.m_position.y;
     else if (m_player.m_target.y < m_player.m_position.y) --m_player.m_position.y;
-    if (m_player.m_target.x == m_player.m_position.x && m_player.m_target.y == m_player.m_position.y) {
+    if (atDestination()) {
       m_player.m_playerFrame = 0;
       s_gameState = kLevelSpecific;
       return true;

@@ -229,6 +229,9 @@ void setDisplayMsg(const char* _msg);
 
 bool getFlash(bool _constant);
 
+bool atDestination(void);
+bool movePlayer(void);
+
 extern const char* const m_spellNames[MAX_SPELLS];
 int getHintValueMax(Hints_t hint);
 
