@@ -11,6 +11,9 @@ static int8_t s_count = 0; // how many blades dodged
 void updateProcSaw(GContext* _ctx) {
 
   renderSawFloor(_ctx, s_offset);
+  #ifdef YCGBv2
+    renderWarning(_ctx);
+  #endif
   renderPlayer(_ctx);
 
   if (s_count < 4 + m_dungeon.m_difficulty) {

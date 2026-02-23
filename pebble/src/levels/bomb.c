@@ -14,6 +14,7 @@ void updateProcBomb(GContext* _ctx) {
   renderClutter(_ctx);
   renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);
+  renderWarning(_ctx);
   renderWallClutter(_ctx);
   renderBomb(_ctx, s_tick/s_ticks[ MIN(2, m_dungeon.m_difficulty) ], s_bomb);
 

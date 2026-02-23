@@ -21,7 +21,7 @@ void updateProcUnstable(GContext* _ctx) {
   rednerUnstableMarkers(_ctx);
   if (s_state < 8) renderPlayer(_ctx);
   renderWalls(_ctx, true, true, true, true);
-  renderWallClutter(_ctx);
+  renderWarning(_ctx);
   if (s_state == 2) {
     renderArrows(_ctx, 9, 3, 12);
   } else if (s_state == 5 && s_playerChoice == 2) {
@@ -202,7 +202,7 @@ bool tickUnstable(bool _doInit) {
   }
 
   const GPoint _player = GPoint((m_player.m_position.x - 3*SIZE)/(2*SIZE), (m_player.m_position.y - 2*SIZE)/(2*SIZE) + 1);
-  if (s_timer[_player.x][_player.y] > FLOOR_FALLS && s_state < 8) {
+  if (_player.x >= 0 && _player.x < 6 && s_timer[_player.x][_player.y] > FLOOR_FALLS && s_state < 8) {
     if      (_player.x == 0 && _player.y == 5) {}
     else if (_player.x == 1 && _player.y == 6) {}
     else if (_player.x == 2 && _player.y == 7) {}

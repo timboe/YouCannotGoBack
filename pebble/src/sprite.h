@@ -32,6 +32,7 @@ extern GBitmap* m_spear;
 extern GBitmap* m_spearHole[2];
 extern GBitmap* m_wheelFrame;
 extern GBitmap* m_wheelIcon[kNWheelIcons];
+extern GBitmap* m_warning;
 #endif
 
 extern GBitmap* m_UOuterWall[3];

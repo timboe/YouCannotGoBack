@@ -25,13 +25,8 @@ void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y) {
   GRect _r = gbitmap_get_bounds(_bitmap);
   _r.origin.x = _x * SIZE;
   _r.origin.y = _y * SIZE;
-#ifdef PBL_ROUND
-  _r.origin.x += ROUND_OFFSET_X;
-  _r.origin.y += ROUND_OFFSET_Y;
-#elif defined HIGH_RES
-  _r.origin.x += EMERY_OFFSET_X;
-  _r.origin.y += EMERY_OFFSET_Y;
-#endif
+  _r.origin.x += GLOBAL_OFFSET_X;
+  _r.origin.y += GLOBAL_OFFSET_Y;
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
 
@@ -84,6 +79,9 @@ void renderProgressBar(Layer* _thisLayer, GContext* _ctx) {
 #endif
   int _x2 = ( _w * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
   int _h = _b.size.h - (SIZE/2);
+#ifdef PBL_PLATFORM_GABBRO
+  _h -= SIZE;
+#endif
   GPoint _s = GPoint(_x1, _h);
   GPoint _e = GPoint(_x1 + _x2, _h);
   graphics_context_set_stroke_width(_ctx, 3);
@@ -99,13 +97,8 @@ void drawBitmapAbsInternal(GContext* _ctx, GBitmap* _bitmap, GPoint _p, bool _co
   GRect _r = gbitmap_get_bounds(_bitmap);
   _r.origin = _p;
   if (_correction) {
-    #ifdef PBL_ROUND
-      _r.origin.x += ROUND_OFFSET_X;
-      _r.origin.y += ROUND_OFFSET_Y;
-    #elif defined HIGH_RES
-      _r.origin.x += EMERY_OFFSET_X;
-      _r.origin.y += EMERY_OFFSET_Y;
-    #endif
+    _r.origin.x += GLOBAL_OFFSET_X;
+    _r.origin.y += GLOBAL_OFFSET_Y;
   }
   graphics_draw_bitmap_in_rect(_ctx, _bitmap, _r);
 }
@@ -183,23 +176,15 @@ void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _colours
 }
 
 void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
-  GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
-  GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
-  uint8_t _w1 = 3;
-  uint8_t _w2 = 7;
-#ifdef PBL_ROUND
-  _p1.x += ROUND_OFFSET_X;
-  _p1.y += ROUND_OFFSET_Y;
-  _p2.x += ROUND_OFFSET_X;
-  _p2.y += ROUND_OFFSET_Y;
-#elif defined HIGH_RES
-  _p1.x += EMERY_OFFSET_X;
-  _p1.y += EMERY_OFFSET_Y;
-  _p2.x += EMERY_OFFSET_X;
-  _p2.y += EMERY_OFFSET_Y;
-  _w1 = 5;
-  _w2 = 9;
-#endif
+  GPoint _p1 = GPoint(_x1*SIZE + GLOBAL_OFFSET_X, _y1*SIZE + GLOBAL_OFFSET_Y);
+  GPoint _p2 = GPoint(_x2*SIZE + GLOBAL_OFFSET_X, _y2*SIZE + GLOBAL_OFFSET_Y);
+  #ifdef HIGH_RES
+    const uint8_t _w1 = 5;
+    const uint8_t _w2 = 9;
+  #else
+    const uint8_t _w1 = 3;
+    const uint8_t _w2 = 7;
+  #endif
   graphics_context_set_stroke_width(_ctx, _w2);
   graphics_context_set_stroke_color(_ctx, GColorDarkGray);
   graphics_draw_line(_ctx, _p1, _p2);
@@ -209,13 +194,8 @@ void renderLinePath(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
 }
 
 void renderStandingStone(GContext* _ctx, GPoint _p, GColor _c, StoneTypes_t _st) {
-  #ifdef PBL_ROUND
-    _p.x += ROUND_OFFSET_X;
-    _p.y += ROUND_OFFSET_Y;
-  #elif defined HIGH_RES
-    _p.x += EMERY_OFFSET_X;
-    _p.y += EMERY_OFFSET_Y;
-  #endif
+  _p.x += GLOBAL_OFFSET_X;
+  _p.y += GLOBAL_OFFSET_Y;
 
   if (_st == kCircle) {
     graphics_context_set_fill_color(_ctx, GColorLightGray);
@@ -252,13 +232,8 @@ void renderFrame(GContext* _ctx, GRect _b) {
   graphics_context_set_fill_color(_ctx, GColorBlack);
   graphics_context_set_stroke_color(_ctx, GColorDarkGray);
   graphics_context_set_stroke_width(_ctx, 2);
-#ifdef PBL_ROUND
-  _b.origin.x += ROUND_OFFSET_X;
-  _b.origin.y += ROUND_OFFSET_Y;
-#elif defined HIGH_RES
-  _b.origin.x += EMERY_OFFSET_X;
-  _b.origin.y += EMERY_OFFSET_Y;
-#endif
+  _b.origin.x += GLOBAL_OFFSET_X;
+  _b.origin.y += GLOBAL_OFFSET_Y;
   graphics_fill_rect(_ctx, _b, 0, 0);
   graphics_draw_rect(_ctx, GRect(_b.origin.x+2, _b.origin.y+2, _b.size.w-4, _b.size.h-4));
 }
@@ -266,10 +241,8 @@ void renderFrame(GContext* _ctx, GRect _b) {
 
 void renderTextInFrameInternal(GContext* _ctx, const char* _msg, GRect _b, bool _correction) {
   if (_correction) {
-    #ifdef PBL_ROUND
-      _b.origin.x += ROUND_OFFSET_X;
-      _b.origin.y += ROUND_OFFSET_Y;
-    #endif
+    _b.origin.x += GLOBAL_OFFSET_X;
+    _b.origin.y += GLOBAL_OFFSET_Y;
   }
   uint8_t _offset = 4;
   #ifdef HIGH_RES
@@ -368,17 +341,13 @@ void renderWallClutter(GContext* _ctx) {
     int _hintValue = m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room];
     int _r = 4 + (rand()%6);
     if (_hint == kShield && !getFlash(false)) {   // Check shield
-      GPoint _p = GPoint((_r + 1) * SIZE, SIZE);
-      uint8_t _radius = 3;
-      uint8_t _border = 1;
-      #ifdef PBL_ROUND
-        _p.x += ROUND_OFFSET_X;
-        _p.y += ROUND_OFFSET_Y;
-      #elif defined HIGH_RES
-        _p.x += EMERY_OFFSET_X;
-        _p.y += EMERY_OFFSET_X;
-        _radius = 5;
-        _border = 2;
+      GPoint _p = GPoint((_r + 1) * SIZE + GLOBAL_OFFSET_X, SIZE + GLOBAL_OFFSET_Y);
+      #ifdef HIGH_RES
+        const uint8_t _radius = 5;
+        const uint8_t _border = 2;
+      #else
+        const uint8_t _radius = 3;
+        const uint8_t _border = 1;
       #endif
       drawBitmap(_ctx, m_shieldSprite, _r, 0);
       graphics_context_set_fill_color(_ctx, GColorBlack);
@@ -554,13 +523,8 @@ void renderBorderTextInternal(GContext* _ctx, GRect _loc, GFont _f, const char* 
   if (_invert == true) graphics_context_set_text_color(_ctx, GColorWhite);
 
   if (_correction) {
-    #ifdef PBL_ROUND
-      _loc.origin.x += ROUND_OFFSET_X;
-      _loc.origin.y += ROUND_OFFSET_Y;
-    #elif defined HIGH_RES
-      _loc.origin.x += EMERY_OFFSET_X;
-      _loc.origin.y += EMERY_OFFSET_Y;
-    #endif
+    _loc.origin.x += GLOBAL_OFFSET_X;
+    _loc.origin.y += GLOBAL_OFFSET_Y;
   }
 
   _loc.origin.y += _offset; // CU
@@ -721,7 +685,7 @@ void renderFloorArrows(GContext* _ctx, Options_t maze0[3][3], uint8_t mwin0[3][3
 void renderShortcutFloor(GContext* _ctx) {
   const int8_t _level = m_dungeon.m_level;
   for (int _x = 0; _x < 20; _x += 2) {
-    drawBitmapAbs(_ctx, getFloor(true, m_dungeon.m_level), GPoint(_x*SIZE, 8*SIZE));
+    drawBitmapAbs(_ctx, getFloor(true, _level), GPoint(_x*SIZE, 8*SIZE));
     drawBitmapAbs(_ctx, m_halfUpperWall[0], GPoint(_x*SIZE, 7*SIZE));
     drawBitmapAbs(_ctx, m_halfLowerWall[0], GPoint(_x*SIZE, 10*SIZE));
   }
@@ -740,19 +704,12 @@ void renderShortcutWalls(GContext* _ctx) {
 }
 
 void renderGreekText(GContext* _ctx, uint8_t _msg[TOTAL_LETTERS], uint8_t _i, uint8_t _lettersThisLevel) {
-  GPoint _p = GPoint(9*SIZE - SIZE/4, 5*SIZE + _i*4*SIZE + SIZE/2);
+  GPoint _p = GPoint(9*SIZE - SIZE/4 + GLOBAL_OFFSET_X, 5*SIZE + _i*4*SIZE + SIZE/2 + GLOBAL_OFFSET_Y);
   switch (_lettersThisLevel) {
     case 4: _p.x += SIZE/2; break;
     case 3: _p.x += SIZE; break;
     default: break;
   }
-  #ifdef PBL_ROUND
-    _p.x += ROUND_OFFSET_X;
-    _p.y += ROUND_OFFSET_Y;
-  #elif defined HIGH_RES
-    _p.x += EMERY_OFFSET_X;
-    _p.y += EMERY_OFFSET_Y;
-  #endif
   for (uint8_t _i = 0; _i < _lettersThisLevel; ++_i) {
     drawBitmapAbs(_ctx, m_greek[_msg[_i]], _p);
     _p.x += SIZE;
@@ -777,14 +734,7 @@ void renderGreekFrames(GContext* _ctx, uint8_t _a[TOTAL_LETTERS], uint8_t _b[TOT
   #endif
   //
   for (int _i = 0; _i < 3; ++_i) {
-    GRect _rect = GRect(8*SIZE, 5*SIZE + _i*4*SIZE, 6*SIZE, 2*SIZE);
-    #ifdef PBL_ROUND
-      _rect.origin.x += ROUND_OFFSET_X;
-      _rect.origin.y += ROUND_OFFSET_Y;
-    #elif defined HIGH_RES
-      _rect.origin.x += EMERY_OFFSET_X;
-      _rect.origin.y += EMERY_OFFSET_Y;
-    #endif
+    GRect _rect = GRect(8*SIZE + GLOBAL_OFFSET_X, 5*SIZE + _i*4*SIZE + GLOBAL_OFFSET_Y, 6*SIZE, 2*SIZE);
     graphics_fill_rect(_ctx, _rect, 0, 0);
     graphics_draw_rect(_ctx, GRect(_rect.origin.x-_w, _rect.origin.y-_w, _rect.size.w+(2*_w), _rect.size.h+(2*_w)));
 
@@ -854,25 +804,13 @@ void renderPi(GContext* _ctx, GPoint _centre, GRect _r, uint32_t _start, uint32_
 void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clack) {
 
   #ifdef HIGH_RES
-    uint8_t _w = 2;
+    const uint8_t _w = 2;
   #else
-    uint8_t _w = 1;
+    const uint8_t _w = 1;
   #endif
 
-  GPoint _centre = GPoint(SIZE*10, SIZE*9);
-  GRect _r = GRect(SIZE*5 + _w*2, SIZE*4 + _w*2, SIZE*10 - _w*4, SIZE*10 - _w*4);
-  
-  #ifdef PBL_ROUND
-    _centre.x += ROUND_OFFSET_X;
-    _centre.y += ROUND_OFFSET_Y;
-    _r.origin.x += ROUND_OFFSET_X;
-    _r.origin.y += ROUND_OFFSET_Y;
-  #elif defined HIGH_RES
-    _centre.x += EMERY_OFFSET_X;
-    _centre.y += EMERY_OFFSET_Y;
-    _r.origin.x += EMERY_OFFSET_X;
-    _r.origin.y += EMERY_OFFSET_Y;
-  #endif
+  GPoint _centre = GPoint(SIZE*10 + GLOBAL_OFFSET_X, SIZE*9 + GLOBAL_OFFSET_Y);
+  GRect _r = GRect(SIZE*5 + _w*2 + GLOBAL_OFFSET_X, SIZE*4 + _w*2 + GLOBAL_OFFSET_Y, SIZE*10 - _w*4, SIZE*10 - _w*4);
 
   // Centre
   graphics_context_set_fill_color(_ctx, GColorBlack);
@@ -913,13 +851,8 @@ void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clac
 
 void renderPatternUnder(GContext* _ctx, GPoint _p, uint8_t _id1, uint8_t _id2) {
 
-  #ifdef PBL_ROUND
-    _p.x += ROUND_OFFSET_X;
-    _p.y += ROUND_OFFSET_Y;
-  #elif defined HIGH_RES
-    _p.x += EMERY_OFFSET_X;
-    _p.y += EMERY_OFFSET_Y;
-  #endif
+  _p.x += GLOBAL_OFFSET_X;
+  _p.y += GLOBAL_OFFSET_Y;
 
   switch (_id2) {
     case 0: _p.y -= SIZE; break;
@@ -971,13 +904,8 @@ void renderPatternUnder(GContext* _ctx, GPoint _p, uint8_t _id1, uint8_t _id2) {
 
 void renderPatternLine(GContext* _ctx, GPoint _p, uint16_t _a, GColor _c1, GColor _c2, uint8_t _w1, uint8_t _w2) {
 
-  #ifdef PBL_ROUND
-    _p.x += ROUND_OFFSET_X;
-    _p.y += ROUND_OFFSET_Y;
-  #elif defined HIGH_RES
-    _p.x += EMERY_OFFSET_X;
-    _p.y += EMERY_OFFSET_Y;
-  #endif
+  _p.x += GLOBAL_OFFSET_X;
+  _p.y += GLOBAL_OFFSET_Y;
 
   #define L_W ((SIZE*3)/2)
   GPoint _p1 = GPoint(_p.x + (sin_lookup(_a) * L_W / TRIG_MAX_RATIO),
@@ -1011,13 +939,8 @@ void renderFloorPuzzleShape(GContext* _ctx, GPoint _p, uint8_t _inner[4], uint8_
     const uint8_t _sw = 2;
   #endif
 
-  #ifdef PBL_ROUND
-    _p.x += ROUND_OFFSET_X;
-    _p.y += ROUND_OFFSET_Y;
-  #elif defined HIGH_RES
-    _p.x += EMERY_OFFSET_X;
-    _p.y += EMERY_OFFSET_Y;
-  #endif
+  _p.x += GLOBAL_OFFSET_X;
+  _p.y += GLOBAL_OFFSET_Y;
 
   GColor _colours[3];
   #ifdef PBL_BW
@@ -1121,6 +1044,9 @@ void rednerUnstableMarkers(GContext* _ctx) {
   drawBitmapAbs(_ctx, m_block, GPoint(SIZE*9, SIZE*12));
 }
 
+void renderWarning(GContext* _ctx) {
+  drawBitmapAbs(_ctx, m_warning, GPoint(SIZE, 0));
+}
 
 #endif // YCGBv2
 

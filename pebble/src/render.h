@@ -49,6 +49,7 @@ void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAd
   void renderSpikes(GContext* _ctx, int16_t _off[3], uint8_t _layer);
   void renderSpikeHoleBottom(GContext* _ctx, uint8_t _layer);
   void rednerUnstableMarkers(GContext* _ctx);
+  void renderWarning(GContext* _ctx);
 #endif
 
 GColor getShieldColor(int8_t _value);

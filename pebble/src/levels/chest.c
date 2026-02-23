@@ -35,9 +35,7 @@ bool tickChest(bool _doInit) {
     s_bad = rand() % 3;
     return false;
   }
-
-  static char _reminderTxt[16];
-
+  
   Hints_t _hint = m_dungeon.m_roomNeedHint[m_dungeon.m_level][m_dungeon.m_room];
 
   if (s_state == 0) { // start initial move

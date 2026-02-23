@@ -53,14 +53,8 @@ static const Maze_t s_mazes[N_MAZES] = {
 
 void drawLine(GContext* _ctx, int _x1, int _y1, int _x2, int _y2) {
   if (_x1 == 0 || _x2 == 0) return;
-  GPoint _p1 = GPoint(_x1*SIZE, _y1*SIZE);
-  GPoint _p2 = GPoint(_x2*SIZE, _y2*SIZE);
-#ifdef PBL_ROUND
-  _p1.x += ROUND_OFFSET_X;
-  _p1.y += ROUND_OFFSET_Y;
-  _p2.x += ROUND_OFFSET_X;
-  _p2.y += ROUND_OFFSET_Y;
-#endif
+  GPoint _p1 = GPoint(_x1*SIZE + GLOBAL_OFFSET_X, _y1*SIZE + GLOBAL_OFFSET_Y);
+  GPoint _p2 = GPoint(_x2*SIZE + GLOBAL_OFFSET_X, _y2*SIZE + GLOBAL_OFFSET_Y);
   graphics_draw_line(_ctx, _p1, _p2);
 }
 

@@ -129,13 +129,15 @@ void gameLoop(void* data) {
     case kIdle: break;
     case kNewRoom: requestRedraw = newRoom(); break;
     case kMovePlayer: requestRedraw = movePlayer(); break;
-    case kAwaitInput: requestRedraw = true; //(s_frameCount == 0 || s_frameCount % ANIM_FPS/4 == 0 ? true : false); break; // TODO fix this with flashing intro objects
-    case kFadeIn: case kFadeOut: requestRedraw = true; break;
+    case kAwaitInput: requestRedraw = true; break; //(s_frameCount == 0 || s_frameCount % ANIM_FPS/4 == 0 ? true : false); break; // TODO fix this with flashing intro objects
+    case kFadeIn:
+    case kFadeOut: requestRedraw = true; break;
     case kDisplayMsg: requestRedraw = true; break;
     case kDisplayingMsg: requestRedraw = false; break; // Wait for timer to expire or button click
     // For the init level case, we call the tick fn with a boolean flag, but we then need to wait until we fade in before we tick propper
-    case kDoInit: _doInit = true; s_gameState = kFadeIn; // FALL THROUGH
-    case kLevelSpecific: case kLevelSpecificWButtons:
+    case kDoInit: _doInit = true; s_gameState = kFadeIn; // fallthrough
+    case kLevelSpecific: 
+    case kLevelSpecificWButtons:
     switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
       case kStart: requestRedraw = tickStart(_doInit); break;
       case kStairs: requestRedraw = tickStairs(_doInit); break;
@@ -236,14 +238,14 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
 
   // On round and high res we need some masking borders
   #ifdef PBL_ROUND
-  graphics_context_set_fill_color(_ctx, GColorBlack);
-  GRect _b = layer_get_bounds(_thisLayer);
-  graphics_fill_rect(_ctx, GRect(0,                        0, ROUND_OFFSET_X, _b.size.h), 0, GCornerNone);
-  graphics_fill_rect(_ctx, GRect(_b.size.w-ROUND_OFFSET_X, 0, ROUND_OFFSET_X, _b.size.h), 0, GCornerNone);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    GRect _b = layer_get_bounds(_thisLayer);
+    graphics_fill_rect(_ctx, GRect(0,                         0, GLOBAL_OFFSET_X, _b.size.h), 0, GCornerNone);
+    graphics_fill_rect(_ctx, GRect(_b.size.w-GLOBAL_OFFSET_X, 0, GLOBAL_OFFSET_X, _b.size.h), 0, GCornerNone);
   #elif defined HIGH_RES
-  graphics_context_set_fill_color(_ctx, GColorBlack);
-  GRect _b = layer_get_bounds(_thisLayer);
-  graphics_fill_rect(_ctx, GRect(_b.size.w - 1, 0, 1, _b.size.h), 0, GCornerNone);
+    graphics_context_set_fill_color(_ctx, GColorBlack);
+    GRect _b = layer_get_bounds(_thisLayer);
+    graphics_fill_rect(_ctx, GRect(_b.size.w - 1, 0, 1, _b.size.h), 0, GCornerNone);
   #endif
 
   // Draw FPS indicator (dbg only)

@@ -3,7 +3,7 @@
 
 static uint16_t s_state = 0;
 static uint16_t s_wincount = 0;
-static char s_victories[16];
+static char s_victories[20];
 
 void updateProcEnd(GContext* _ctx) {
 
@@ -52,7 +52,7 @@ bool tickEnd(bool _doInit) {
     if (m_dungeon.m_gameOver == 2) {
       if (persist_exists(PERSIST_KEY_VICTORY)) s_wincount = persist_read_int(PERSIST_KEY_VICTORY);
       persist_write_int(PERSIST_KEY_VICTORY, ++s_wincount);
-      snprintf(s_victories, 16, "VICTORIES: %i", s_wincount);
+      snprintf(s_victories, 20, "VICTORIES: %i", s_wincount);
     }
     return false;
   }

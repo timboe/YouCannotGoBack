@@ -11,25 +11,33 @@
   #define FONT_KEY_SMALL FONT_KEY_GOTHIC_18_BOLD
   #define FONT_KEY_LARGE FONT_KEY_GOTHIC_28_BOLD
   #define PLAYER_SPEED 3
-#else
+  #ifdef PBL_ROUND
+    #define GLOBAL_OFFSET_X 30
+    #define GLOBAL_OFFSET_Y 16
+  #else
+    #define GLOBAL_OFFSET_X 1
+    #define GLOBAL_OFFSET_Y 0
+  #endif
+#else // Not HIGH_RES
   #define FONT_KEY_SMALL FONT_KEY_GOTHIC_14_BOLD
   #define FONT_KEY_LARGE FONT_KEY_GOTHIC_24_BOLD
   #define PLAYER_SPEED 2
+  #ifdef PBL_ROUND
+    #define GLOBAL_OFFSET_X 18
+    #define GLOBAL_OFFSET_Y 10
+  #else
+    #define GLOBAL_OFFSET_X 0
+    #define GLOBAL_OFFSET_Y 0
+  #endif
 #endif
 
 // B&W graphics save enough memory for more levels! Or double the RAM, that helps too
-#if defined(PBL_PLATFORM_FLINT) || defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_DIORITE)
+#if defined(PBL_PLATFORM_FLINT) || defined(PBL_PLATFORM_DIORITE) || defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_GABBRO)
   #define YCGBv2 1
 #endif
 
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
-
-#define ROUND_OFFSET_X 18
-#define ROUND_OFFSET_Y 10
-
-#define EMERY_OFFSET_X 1
-#define EMERY_OFFSET_Y 0
 
 #define PERSIST_KEY_VICTORY 0
 #define PERSIST_KEY_BESTTIME 1

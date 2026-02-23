@@ -10,14 +10,12 @@ void updateProcDark(GContext* _ctx) {
 
   //APP_LOG(APP_LOG_LEVEL_INFO,"   !!! RS: %i", (int) s_state);
 
-  if (s_state < 4) { // Render hint
+  if (s_state < 4) { // Render hint // TODO - move to render file
     graphics_context_set_stroke_color(_ctx, GColorWhite);
     graphics_context_set_stroke_width(_ctx, 3);
     GPoint _p = GPoint((7 + 4*s_state)*SIZE, (6 + 4*s_correct[s_state])*SIZE);
-#ifdef PBL_ROUND
-    _p.x += ROUND_OFFSET_X;
-    _p.y += ROUND_OFFSET_Y;
-#endif
+    _p.x += GLOBAL_OFFSET_X;
+    _p.y += GLOBAL_OFFSET_Y;
     graphics_draw_circle(_ctx, _p, s_ringSize);
     return;
   }

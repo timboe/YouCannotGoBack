@@ -11,6 +11,7 @@ GBitmap* m_spear;
 GBitmap* m_spearHole[2];
 GBitmap* m_wheelFrame;
 GBitmap* m_wheelIcon[kNWheelIcons];
+GBitmap* m_warning;
 #endif
 
 GBitmap* m_spriteMap;
@@ -68,7 +69,6 @@ GBitmap* getSprite(int _x, int _y, int _w, int _h) {
 }
 
 GBitmap* getClutter(bool _broken) {
-  // return m_clutterSprite[ rand() % (_broken == true ? 3 : MAX_CLUTTER) ];
   return m_clutterSprite[ _broken == true ? 2 : rand() % MAX_CLUTTER ];
 }
 
@@ -96,6 +96,7 @@ void initSprite() {
   #ifdef YCGBv2
   m_ycgb = gbitmap_create_with_resource(RESOURCE_ID_YCGB);
   m_wheelFrame = gbitmap_create_with_resource(RESOURCE_ID_WHEELFRAME);
+  m_warning = gbitmap_create_with_resource(RESOURCE_ID_WARNING);
   #endif
 
   m_spriteMap = gbitmap_create_with_resource(RESOURCE_ID_SPRITESHEET);
@@ -313,5 +314,6 @@ void deinitSprite() {
   #ifdef YCGBv2
     gbitmap_destroy(m_ycgb);
     gbitmap_destroy(m_wheelFrame);
+    gbitmap_destroy(m_warning);
   #endif
 }
