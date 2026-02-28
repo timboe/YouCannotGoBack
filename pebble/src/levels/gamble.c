@@ -51,8 +51,6 @@ void updateProcGamble(GContext* _ctx) {
 
   if (s_state < 10) renderPlayer(_ctx); // In front
 
-  // TODO - render base of wheel 
-
   renderWalls(_ctx, true, true, false, true);
   renderWallClutter(_ctx);
   renderArrowsDetailed(_ctx, 15, 5, 4, 1, 0, 0, false);

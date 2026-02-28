@@ -50,7 +50,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       TESTING_ROOM_HINT = kGreekLetter; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
       #ifdef YCGBv2
-      _newRoom = kUnstable; // TESTING
+      _newRoom = kPattern; // TESTING
       #else
       _newRoom = kMaths;
       #endif
@@ -130,14 +130,20 @@ void generate() {
   APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
   #endif
 
-  // TODO port new n rooms per level formula
+  // Keep the total number of rooms consistent
+  #define TOT_ROOMS 35
+  #define ROOM_MIN 11
+  #define ROOM_VAR 3
+  // Level 0, 1: 10-12 rooms
+  // Level 2: 11-15 (deliberate skew)
+  m_dungeon.m_totalRooms = TOT_ROOMS;
+  m_dungeon.m_roomsPerLevel[0] = ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
+  m_dungeon.m_roomsPerLevel[1] = ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
+  m_dungeon.m_roomsPerLevel[2] = TOT_ROOMS - m_dungeon.m_roomsPerLevel[1] - m_dungeon.m_roomsPerLevel[0];
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
-    int8_t _roomsInLevel = MIN_ROOMS + _level + (rand() % (MAX_ROOMS - MIN_ROOMS - _level));
-    m_dungeon.m_totalRooms += _roomsInLevel;
-    m_dungeon.m_roomsPerLevel[_level] = _roomsInLevel;
-    APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, _roomsInLevel);
-    for (int _room = 0; _room < _roomsInLevel; ++_room) {
+    APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
+    for (int _room = 0; _room < m_dungeon.m_roomsPerLevel[_level]; ++_room) {
 
       Hints_t _consumeHint = kNoHint;
       bool _consumeItem = false;

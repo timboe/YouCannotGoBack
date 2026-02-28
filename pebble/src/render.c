@@ -140,6 +140,8 @@ void renderStandingStoneGrid(GContext* _ctx, int8_t* _coloursA, int8_t* _colours
 
   StoneTypes_t _st = kCircle;
 
+  // TODO - update triangle stone to be from spritesheet
+
   renderStandingStone(_ctx, GPoint(SIZE*4, SIZE*10), GColorLightGray, _st);
 
   if (_isPattern) {
@@ -400,7 +402,7 @@ void renderSawWalls(GContext* _ctx, int8_t _offset) {
   }
 }
 
-void renderFloor(GContext* _ctx, Rooms_t _room, int8_t _from, int8_t _to, int8_t _offsetX[6][8], int8_t _offsetY[6][8]) { // TODO pass in level enum instead of int for mode
+void renderFloor(GContext* _ctx, Rooms_t _room, int8_t _from, int8_t _to, int8_t _offsetX[6][8], int8_t _offsetY[6][8]) {
 
   if (_from == -1) _from = 2;
   if (_to == -1) _to = 18;

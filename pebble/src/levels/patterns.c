@@ -19,7 +19,7 @@ static uint16_t s_angles[3] = {0};
 void updateProcPattern(GContext* _ctx) {
 
   renderPit(_ctx);
-  renderStandingStoneFloor(_ctx);
+  // renderStandingStoneFloor(_ctx);
 
   if (s_state < 12) renderWalls(_ctx, true, true, true, true);
 
