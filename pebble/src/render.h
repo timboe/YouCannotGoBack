@@ -3,8 +3,6 @@
 #include "game.h"
 #include "sprite.h"
 
-void initRender(void);
-
 void drawBitmap(GContext* _ctx, GBitmap* _bitmap, int _x, int _y);
 void drawBitmapAbs(GContext* _ctx, GBitmap* _bitmap, GPoint _p);
 void drawBitmapAbsNoCorrection(GContext* _ctx, GBitmap* _bitmap, GPoint _p);
@@ -45,6 +43,7 @@ void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAd
   void renderGamble(GContext* _ctx, uint8_t _wheel, uint16_t _angle, uint8_t _clack);
   void renderPatternUnder(GContext* _ctx, GPoint _p, uint8_t _id1, uint8_t _id2);
   void renderPatternLine(GContext* _ctx, GPoint _p, uint16_t _a, GColor _c1, GColor _c2, uint8_t _w1, uint8_t _w2);
+  void renderPatternAnswerBox(GContext* _ctx, GPoint _aPoint);
   void renderFloorPuzzleShape(GContext* _ctx, GPoint _p, uint8_t _inner[4], uint8_t _outer[4], uint8_t _rot, uint8_t _flip);
   void renderSpikes(GContext* _ctx, int16_t _off[3], uint8_t _layer);
   void renderSpikeHoleBottom(GContext* _ctx, uint8_t _layer);

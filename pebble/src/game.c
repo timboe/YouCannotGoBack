@@ -240,8 +240,13 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
   #ifdef PBL_ROUND
     graphics_context_set_fill_color(_ctx, GColorBlack);
     GRect _b = layer_get_bounds(_thisLayer);
-    graphics_fill_rect(_ctx, GRect(0,                         0, GLOBAL_OFFSET_X, _b.size.h), 0, GCornerNone);
-    graphics_fill_rect(_ctx, GRect(_b.size.w-GLOBAL_OFFSET_X, 0, GLOBAL_OFFSET_X, _b.size.h), 0, GCornerNone);
+    #if defined(PBL_PLATFORM_GABBRO)
+      const uint16_t _blankingWidth = GLOBAL_OFFSET_X + 2;
+    #else
+      const uint16_t _blankingWidth = GLOBAL_OFFSET_X;
+    #endif
+    graphics_fill_rect(_ctx, GRect(0,                        0, _blankingWidth, _b.size.h), 0, GCornerNone);
+    graphics_fill_rect(_ctx, GRect(_b.size.w-_blankingWidth, 0, _blankingWidth, _b.size.h), 0, GCornerNone);
   #elif defined HIGH_RES
     graphics_context_set_fill_color(_ctx, GColorBlack);
     GRect _b = layer_get_bounds(_thisLayer);

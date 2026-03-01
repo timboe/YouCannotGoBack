@@ -11,15 +11,13 @@ static int8_t s_id2[3] = {0};
 
 static uint16_t s_angles[3] = {0};
 
-// TODO - technically just about working, tidy this up though!
-
 #define L_1 4
 #define L_2 1
 
 void updateProcPattern(GContext* _ctx) {
 
   renderPit(_ctx);
-  // renderStandingStoneFloor(_ctx);
+  renderStandingStoneFloor(_ctx);
 
   if (s_state < 12) renderWalls(_ctx, true, true, true, true);
 
@@ -47,20 +45,16 @@ void updateProcPattern(GContext* _ctx) {
   if (s_state >= 12) renderWalls(_ctx, true, true, true, true);
 
   // Answer box
-  GPoint _aPoint = GPoint(3*SIZE + SIZE/2, 2*SIZE + SIZE/2);
-  graphics_context_set_fill_color(_ctx, GColorLightGray);
-  graphics_fill_circle(_ctx, _aPoint, SIZE*2 + SIZE/2);
-  graphics_context_set_fill_color(_ctx, GColorBlack);
-  graphics_fill_circle(_ctx, _aPoint, SIZE*2 + SIZE/2 - 2);
-  graphics_context_set_fill_color(_ctx, GColorWhite);
-  graphics_fill_circle(_ctx, _aPoint, SIZE*2 + SIZE/2 - 4);
-  // _pd->graphics->fillEllipse(3*SIZE + 0, 0, (SIZE*5) - 0, (SIZE*5) - 0, 0, 0, GColorBlack);
-  // _pd->graphics->fillEllipse(3*SIZE + 1, 1, (SIZE*5) - 2, (SIZE*5) - 2, 0, 0, GColorWhite);
-  // _pd->graphics->fillEllipse(3*SIZE + 2, 2, (SIZE*5) - 4, (SIZE*5) - 4, 0, 0, GColorBlack);
+  #ifdef PBL_ROUND
+    const GPoint _aPoint = GPoint(4*SIZE, 3*SIZE);
+  #else
+    const GPoint _aPoint = GPoint(3*SIZE + SIZE/2, 2*SIZE + SIZE/2);
+  #endif
 
+  renderPatternAnswerBox(_ctx, _aPoint);
   // Answer
   renderPatternUnder(_ctx, _aPoint, s_id0[s_correct[0]], s_id1[s_correct[1]]);
-  renderStandingStone(_ctx, _aPoint, GColorWhite, s_id0[s_correct[0]]);
+  renderStandingStone(_ctx, _aPoint, GColorLightGray, s_id0[s_correct[0]]);
   renderPatternLine(_ctx, _aPoint, s_angles[s_correct[2]], GColorWhite, GColorBlack, L_1, L_2);
 
 }

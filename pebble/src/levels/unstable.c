@@ -195,6 +195,7 @@ bool tickUnstable(bool _doInit) {
             const int8_t _range = (s_timer[_x][_y] > INCREASE_WOBBLE ? 4 : 2);
             s_offsetX[_x][_y] = rand() % _range - (_range/2);
             s_offsetY[_x][_y] = rand() % _range - (_range/2);
+            if (!s_offsetX[_x][_y]) ++s_offsetX[_x][_y]; // != 0 used to draw cracks
           }
         }
       }
