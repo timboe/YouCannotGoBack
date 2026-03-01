@@ -417,8 +417,13 @@ void renderFloor(GContext* _ctx, Rooms_t _room, int8_t _from, int8_t _to, int8_t
       #ifdef YCGBv2
         if (_room == kUnstable) { // Unstable
           const GPoint _loc = GPoint(_x/(2*SIZE) - 1, _y/(2*SIZE) - 1);
-          if (_offsetX[_loc.x][_loc.y] != 64) {
-            drawBitmapAbs(_ctx, getFloor(true, _l), GPoint(_x + _offsetX[_loc.x][_loc.y], _y + _offsetY[_loc.x][_loc.y]));
+          const int8_t _oX = _offsetX[_loc.x][_loc.y];
+          const int8_t _oY = _offsetY[_loc.x][_loc.y];
+          if (_oX != 64) {
+            drawBitmapAbs(_ctx, getFloor(true, _l), GPoint(_x + _oX, _y + _oY));
+            if (_oX) {
+              drawBitmapAbs(_ctx, m_crack, GPoint(_x + _oX, _y + _oY));
+            }
           } else {
             getFloor(true, _l); // Keeps the floor rng in sycn
           }

@@ -50,7 +50,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
       TESTING_ROOM_HINT = kGreekLetter; // TESTING
     } else if (_level == 0 && _room == 1) { // TESTING
       #ifdef YCGBv2
-      _newRoom = kPattern; // TESTING
+      _newRoom = kUnstable; // TESTING kPattern
       #else
       _newRoom = kMaths;
       #endif

@@ -12,6 +12,8 @@ GBitmap* m_spearHole[2];
 GBitmap* m_wheelFrame;
 GBitmap* m_wheelIcon[kNWheelIcons];
 GBitmap* m_warning;
+GBitmap* m_crack;
+GBitmap* m_octagon;
 #endif
 
 GBitmap* m_spriteMap;
@@ -234,6 +236,9 @@ void initSprite() {
     m_spear = getSprite(28, 10, 2, 6);
     m_spearHole[0] = getSprite(26, 13, 2, 1);
     m_spearHole[1] = getSprite(26, 14, 2, 1);
+
+    m_octagon = getSprite(32, 12, 2, 2);
+    m_crack = getSprite(32, 14, 2, 2);
   #endif
 
 }
@@ -303,6 +308,8 @@ void deinitSprite() {
     for (uint8_t _i = 1; _i < 2; ++_i) gbitmap_destroy(m_clack[_i]);
     for (uint8_t _i = 1; _i < 2; ++_i) gbitmap_destroy(m_spearHole[_i]);
     gbitmap_destroy(m_spear);
+    gbitmap_destroy(m_crack);
+    gbitmap_destroy(m_octagon);
   #endif
 
   // Actual bitmaps
