@@ -345,7 +345,7 @@ void renderWallClutter(GContext* _ctx) {
       drawBitmap(_ctx, m_tapestrySprite[2], _r+5, 0);
       int8_t _xoffset = 0;
       #ifdef HIGH_RES
-      _xoffset = 1; // TODO reduce?
+      _xoffset = 1; // TODO_ROUND2 reduce?
       #endif
       if (!getFlash(false)) renderBorderText(_ctx, GRect((_r+_xoffset) * SIZE, -2, 48, 16), fonts_get_system_font(FONT_KEY_SMALL), m_spellNames[_hintValue], 1, GTextAlignmentCenter, false);
     } else if (_hint == kSymbol && !getFlash(false)) { // Check symbol
@@ -371,6 +371,13 @@ void renderSawWalls(GContext* _ctx, int8_t _offset) {
     drawBitmapAbs(_ctx, m_black, GPoint((_x*SIZE) - _offset, 14*SIZE));
 
   }
+}
+
+void renderExtraDoorSteps(GContext* _ctx) {
+  drawBitmapAbs(_ctx, m_LDoorstep, GPoint(SIZE*2, SIZE*8));
+  drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*4));
+  drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*8));
+  drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*12));
 }
 
 void renderFloor(GContext* _ctx, Rooms_t _room, int8_t _from, int8_t _to, int8_t _offsetX[6][8], int8_t _offsetY[6][8]) {
@@ -421,12 +428,7 @@ void renderFloor(GContext* _ctx, Rooms_t _room, int8_t _from, int8_t _to, int8_t
     drawBitmapAbs(_ctx, m_innerWall[3], GPoint(SIZE*9, SIZE*16));
   }
   // Extra bits where the doors can go
-  if (_to == 18) {
-    drawBitmapAbs(_ctx, m_LDoorstep, GPoint(SIZE*2, SIZE*8)); // TODO this on its own call
-    drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*4));
-    drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*8));
-    drawBitmapAbs(_ctx, m_RDoorstep, GPoint(SIZE*15, SIZE*12));
-  }
+  if (_to == 18) renderExtraDoorSteps(_ctx);
 }
 
 void renderPit(GContext* _ctx) {
@@ -444,10 +446,7 @@ void renderPit(GContext* _ctx) {
   drawBitmap(_ctx, m_innerCorner[3], 3,  16);
 
   // Extra bits where the doors can go
-  drawBitmap(_ctx, m_LDoorstep, 2, 8); // TODO this on its own call
-  drawBitmap(_ctx, m_RDoorstep, 15, 4);
-  drawBitmap(_ctx, m_RDoorstep, 15, 8);
-  drawBitmap(_ctx, m_RDoorstep, 15, 12);
+  renderExtraDoorSteps(_ctx);
 }
 
 void renderFinalPit(GContext* _ctx) {
@@ -532,6 +531,10 @@ void renderBorderTextNoCorrection(GContext* _ctx, GRect _loc, GFont _f, const ch
   renderBorderTextInternal(_ctx, _loc, _f, _buffer, _offset, _al, _invert, false);
 }
 
+void byte_set_bit(uint8_t *byte, uint8_t bit, uint8_t value) {
+  *byte ^= (-value ^ *byte) & (1 << bit);
+}
+
 #define FADE_LEVELS 8
 void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position.y += PLAYER_SPEED;
@@ -539,23 +542,33 @@ void renderFade(Layer* _thisLayer, GContext* _ctx, bool _in) {
   GRect _b = layer_get_bounds(_thisLayer);
   GBitmap* _fBuffer = graphics_capture_frame_buffer(_ctx);
   int _flag = (_in == true ? s_progress : FADE_LEVELS - s_progress );
-  // Have to do a funny iterating for round screens
-  // TODO - fix this for B&W
-  #ifdef PBL_COLOR
-    for (int _y = 0; _y < _b.size.h; ++_y) {
-      GBitmapDataRowInfo _rowInfo = gbitmap_get_data_row_info(_fBuffer, _y);
-      for (int _x = _rowInfo.min_x; _x < _rowInfo.max_x; ++_x) {
+  for (int _y = 0; _y < _b.size.h; ++_y) {
+    GBitmapDataRowInfo _rowInfo = gbitmap_get_data_row_info(_fBuffer, _y);
+    for (int _x = _rowInfo.min_x; _x < _rowInfo.max_x; ++_x) {
+      #ifdef PBL_COLOR
         uint8_t* _pixelAddr = _rowInfo.data + _x;
         if (rand() % _flag == 0) (*_pixelAddr) = GColorBlack.argb;
-       }
+      #else
+        const uint8_t _byte = _x / 8;
+        const uint8_t _bit = _x % 8; 
+        uint8_t* _pixelAddr = _rowInfo.data + _byte;
+        if (rand() % _flag == 0) byte_set_bit(_pixelAddr, _bit, 0);
+      #endif
     }
-  #endif
+  }
   graphics_release_frame_buffer(_ctx, _fBuffer);
   if (++s_progress == FADE_LEVELS) {
     s_progress = 1;
     if (_in == true) setGameState(kLevelSpecific); // Done fade in, let level choose what next
     else setGameState(kNewRoom);
   }
+}
+
+void renderDarkHints(GContext* _ctx, uint16_t _state, int8_t _correct[3], int8_t _ringSize) {
+  graphics_context_set_stroke_color(_ctx, GColorWhite);
+  graphics_context_set_stroke_width(_ctx, 3);
+  GPoint _p = GPoint((7 + 4*_state)*SIZE + GLOBAL_OFFSET_X, (6 + 4*_correct[_state])*SIZE + GLOBAL_OFFSET_Y);
+  graphics_draw_circle(_ctx, _p, _ringSize);
 }
 
 #ifdef YCGBv2
@@ -848,7 +861,7 @@ void renderPatternUnder(GContext* _ctx, GPoint _p, uint8_t _id1, uint8_t _id2) {
   #endif
   graphics_fill_circle(_ctx, _p, SIZE);
   #ifdef PBL_COLOR
-    graphics_context_set_fill_color(_ctx, GColorGreen);
+    graphics_context_set_fill_color(_ctx, GColorYellow);
   #else
     graphics_context_set_fill_color(_ctx, GColorBlack);
   #endif
@@ -1006,7 +1019,7 @@ void rednerUnstableMarkers(GContext* _ctx) {
 }
 
 void renderWarning(GContext* _ctx) {
-  if (getFrameCount() < ANIM_FPS/2) {
+  if (!getFlash(/*constant*/true)) { // Invert
     drawBitmapAbs(_ctx, m_warning, GPoint(SIZE, 0));
   }
 }

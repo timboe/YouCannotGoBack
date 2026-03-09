@@ -7,19 +7,10 @@ static int8_t s_colours[3] = {32,32,32}; // Defaults to gray
 static int8_t s_ringSize = 0;
 
 void updateProcDark(GContext* _ctx) {
-
-  //APP_LOG(APP_LOG_LEVEL_INFO,"   !!! RS: %i", (int) s_state);
-
-  if (s_state < 4) { // Render hint // TODO - move to render file
-    graphics_context_set_stroke_color(_ctx, GColorWhite);
-    graphics_context_set_stroke_width(_ctx, 3);
-    GPoint _p = GPoint((7 + 4*s_state)*SIZE, (6 + 4*s_correct[s_state])*SIZE);
-    _p.x += GLOBAL_OFFSET_X;
-    _p.y += GLOBAL_OFFSET_Y;
-    graphics_draw_circle(_ctx, _p, s_ringSize);
+  if (s_state < 4) {
+    renderDarkHints(_ctx, s_state, s_correct, s_ringSize);
     return;
   }
-
   renderPit(_ctx);
   renderStandingStoneFloor(_ctx);
   renderStandingStoneGrid(_ctx, s_colours, s_colours, s_colours, s_correct, s_state, false); // s_correct & s_state not used
@@ -37,6 +28,7 @@ bool tickDark(bool _doInit) {
     for (int _i = 0; _i < 3; ++_i) {
       s_correct[_i] = rand() % 3;
     }
+    // TODO - prevent going from bottom to top
     setGameState(kLevelSpecific); // Overwrite "fade in"
     return false;
   }

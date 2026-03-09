@@ -58,10 +58,7 @@ void resetPlayerChoice(void) { s_playerChoice = -1; }
 
 
 bool getFlash(bool _constant) {
-  bool _value = (s_gameState != kFadeIn && s_gameState != kFadeOut
-    && s_frameCount % (ANIM_FPS/2) < ANIM_FPS/4
-    && (m_dungeon.m_ticksInLevel < ANIM_FPS*2 || _constant));
-  // if (_value && !_constant && s_frameCount % ANIM_FPS/2 == 0) vibes_short_pulse(); // TODO check this on device
+  bool _value = (s_gameState != kFadeIn && s_gameState != kFadeOut && s_frameCount < ANIM_FPS/2 && (m_dungeon.m_ticksInLevel < ANIM_FPS*4 || _constant));
   return _value;
 }
 
@@ -113,7 +110,7 @@ void gameLoop(void* data) {
 
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
   bool requestRedraw = false;
-  ++m_dungeon.m_ticksInLevel;
+  if (s_gameState != kFadeIn && s_gameState != kFadeOut) ++m_dungeon.m_ticksInLevel;
   #ifdef DEV
   if (s_frameCount == 0)  APP_LOG(APP_LOG_LEVEL_INFO,"f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
   #endif
@@ -129,7 +126,7 @@ void gameLoop(void* data) {
     case kIdle: break;
     case kNewRoom: requestRedraw = newRoom(); break;
     case kMovePlayer: requestRedraw = movePlayer(); break;
-    case kAwaitInput: requestRedraw = true; break; //(s_frameCount == 0 || s_frameCount % ANIM_FPS/4 == 0 ? true : false); break; // TODO fix this with flashing intro objects
+    case kAwaitInput: requestRedraw = (s_frameCount == 0 || s_frameCount == ANIM_FPS/2 ? true : false); break; // TODO fix this with flashing intro objects
     case kFadeIn:
     case kFadeOut: requestRedraw = true; break;
     case kDisplayMsg: requestRedraw = true; break;
@@ -237,9 +234,9 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
   else if (s_gameState == kFadeOut) renderFade(_thisLayer, _ctx, false);
 
   // On round and high res we need some masking borders
+  GRect _b = layer_get_bounds(_thisLayer);
   #ifdef PBL_ROUND
     graphics_context_set_fill_color(_ctx, GColorBlack);
-    GRect _b = layer_get_bounds(_thisLayer);
     #if defined(PBL_PLATFORM_GABBRO)
       const uint16_t _blankingWidth = GLOBAL_OFFSET_X + 2;
     #else
@@ -249,9 +246,13 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     graphics_fill_rect(_ctx, GRect(_b.size.w-_blankingWidth, 0, _blankingWidth, _b.size.h), 0, GCornerNone);
   #elif defined HIGH_RES
     graphics_context_set_fill_color(_ctx, GColorBlack);
-    GRect _b = layer_get_bounds(_thisLayer);
     graphics_fill_rect(_ctx, GRect(_b.size.w - 1, 0, 1, _b.size.h), 0, GCornerNone);
   #endif
+
+  // Frame debug TODO mark debug
+  graphics_context_set_fill_color(_ctx, GColorYellow);
+  static uint32_t _frameTick = 0;
+  graphics_fill_circle(_ctx, GPoint(_b.size.w/2 + (++_frameTick%8 * SIZE/2), _b.size.h - (SIZE/2)), SIZE/4);
 
   // Draw FPS indicator (dbg only)
   #ifdef DEBUG_MODE
