@@ -59,7 +59,6 @@ void updateProcPattern(GContext* _ctx) {
 
 }
 
-// use randomiseChoices ?? TODO
 void randAssign(int8_t* _id) {
   _id[0] = rand() % 3;
   int8_t _r = rand() % 3;
@@ -83,7 +82,7 @@ bool tickPattern(bool _doInit) {
 
     // Choose angles
     {
-      const int8_t _angleCorrect = s_correct[2]; // TODO
+      const int8_t _angleCorrect = s_correct[2];
       const uint16_t _a = 20 * (rand() % 9);
       s_angles[_angleCorrect] = DEG_TO_TRIGANGLE(_a);
       const uint16_t _aMod = 60 / (m_dungeon.m_difficulty + 1);

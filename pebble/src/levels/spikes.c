@@ -86,22 +86,24 @@ bool tickSpikes(bool _doInit) {
     #define DEATH_WIDTH 16
   #endif
 
-  for (int _i = 0; _i < 3; ++_i) {
-    if (s_off[_i] == 0 && --s_countdown[_i] == 0) {
-      s_countdown[_i] = s_ctotal;
-      s_off[_i] = 0;
-      s_scale[_i] = UP_SCALE * SPIKE_MULTIPLIER;
-    }
+  if (getGameState() != kFadeOut && getGameState() != kFadeIn) {
+    for (int _i = 0; _i < 3; ++_i) {
+      if (s_off[_i] == 0 && --s_countdown[_i] == 0) {
+        s_countdown[_i] = s_ctotal;
+        s_off[_i] = 0;
+        s_scale[_i] = UP_SCALE * SPIKE_MULTIPLIER;
+      }
 
-    s_off[_i] += s_scale[_i];
-    if (s_scale[_i] < 0) s_scale[_i] += SLOWDOWN; // Reduce fall speed 
+      s_off[_i] += s_scale[_i];
+      if (s_scale[_i] < 0) s_scale[_i] += SLOWDOWN; // Reduce fall speed 
 
-    if (s_off[_i] >= (SIZE * 6) * SPIKE_MULTIPLIER) {
-      s_scale[_i] = DOWN_SCALE * SPIKE_MULTIPLIER;
-      s_off[_i] = (SIZE * 6) * SPIKE_MULTIPLIER;
-    } else if (s_off[_i] < 0) {
-      s_scale[_i] = 0;
-      s_off[_i] = 0;
+      if (s_off[_i] >= (SIZE * 6) * SPIKE_MULTIPLIER) {
+        s_scale[_i] = DOWN_SCALE * SPIKE_MULTIPLIER;
+        s_off[_i] = (SIZE * 6) * SPIKE_MULTIPLIER;
+      } else if (s_off[_i] < 0) {
+        s_scale[_i] = 0;
+        s_off[_i] = 0;
+      }
     }
   }
 

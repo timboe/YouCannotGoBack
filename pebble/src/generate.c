@@ -191,7 +191,7 @@ void generate() {
       // will get an extra life once they have been given a hint (chest only)
       bool canGiveHint = m_hintIsActive[kSpell] || m_hintIsActive[kNumber];
       #ifdef YCGBv2
-        canGiveHint &= (_roomType == kChest && rand() % 6); // TODO || _roomType == kGamble;
+        canGiveHint &= (_roomType == kChest && rand() % 6) || _roomType == kGamble;
       #else
         canGiveHint &= (_roomType == kChest && rand() % 6);
       #endif

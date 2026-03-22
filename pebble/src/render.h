@@ -32,6 +32,7 @@ void renderSawFloor(GContext* _ctx, int8_t _offset);
 void renderSawWalls(GContext* _ctx, int8_t _offset);
 void renderArrows(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd);
 void renderArrowsDetailed(GContext* _ctx, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2, bool _force);
+void renderDarkHints(GContext* _ctx, uint16_t _state, int8_t _correct[3], int8_t _ringSize);
 
 #ifdef YCGBv2
   void renderBomb(GContext* _ctx, uint8_t _bombStage, int8_t _location);
