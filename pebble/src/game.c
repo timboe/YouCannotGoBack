@@ -273,7 +273,6 @@ bool atDestination(void) {
 }
 
 bool movePlayer() {
-  APP_LOG(APP_LOG_LEVEL_INFO,"movePlayer target:%i,%i current:%i,%i",m_player.m_target.x, m_player.m_target.y, m_player.m_position.x, m_player.m_position.y); 
   if (s_frameCount % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
   for (uint8_t _step = 0; _step < PLAYER_SPEED; ++_step) {
     if      (m_player.m_target.x > m_player.m_position.x) ++m_player.m_position.x;

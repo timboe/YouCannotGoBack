@@ -39,18 +39,17 @@ bool tickStart(bool _doInit) {
   }
 
   static bool _first = true;
-  #ifdef DEV
-  _first = false;
-  #endif
-  static const char _msgA[] = "SHAKE TO TURN...";
-  static const char _msgB[] = "ON BACKLIGHT";
+  _first = false; // disable message
+
+  // static const char _msgA[] = "SHAKE TO TURN...";
+  // static const char _msgB[] = "ON BACKLIGHT";
 
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
     if (_first == true) {
-      setDisplayMsg(_msgA);
-      setGameState(kDisplayMsg);
+      // setDisplayMsg(_msgA);
+      // setGameState(kDisplayMsg);
       s_state = 2;
       _first = false;
     } else {
@@ -58,8 +57,8 @@ bool tickStart(bool _doInit) {
       s_state = 4;
     }
   } else if (s_state == 2) {
-    setDisplayMsg(_msgB);
-    setGameState(kDisplayMsg);
+    // setDisplayMsg(_msgB);
+    // setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 3) {
     setGameState(kAwaitInput);

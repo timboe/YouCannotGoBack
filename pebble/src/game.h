@@ -2,7 +2,7 @@
 #include <pebble.h>
 
 // #define DEBUG_MODE
-#define DEV
+// #define DEV
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 

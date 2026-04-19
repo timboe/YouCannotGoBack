@@ -47,16 +47,17 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     Rooms_t _newRoom;
     if (_level == 0 && _room == 0) { // First room
       _newRoom = kStart;
+    /////////////////////////////////
     //   TESTING_ROOM_HINT = kGreekLetter; // TESTING
     // } else if (_level == 0 && _room == 1) { // TESTING
     //   #ifdef YCGBv2
-    //   _newRoom = kPattern; // TESTING kPattern
+    //   _newRoom = kFinal; // TESTING kPattern
     //   #else
-    //   _newRoom = kMaths;
+    //   _newRoom = kFinal;
     //   #endif
     //   m_dungeon.m_difficulty = 0; // TESTING
     //   // m_dungeon.m_gameOver = 2; // TESTING
-    //   APP_LOG(APP_LOG_LEVEL_INFO,"TESTING MODE - forcing room to %i", _newRoom);
+    ////////////////////////////////
     } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor
@@ -147,7 +148,9 @@ void generate() {
       return;
     }
 
+    #ifdef DEV
     APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
+    #endif
     for (int _room = 0; _room < m_dungeon.m_roomsPerLevel[_level]; ++_room) {
 
       Hints_t _consumeHint = kNoHint;
