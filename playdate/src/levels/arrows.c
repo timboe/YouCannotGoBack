@@ -135,7 +135,6 @@ void gen(PlaydateAPI* _pd) {
   memset(&s_maze1, 0, sizeof(uint8_t)*5*7);
   memset(&s_stack, 0, sizeof(uint8_t)*5*7*2);
   const int8_t MAX_X = (m_dungeon.m_difficulty == 0 ? 3 : 5);
-  const int8_t MAX_Y = (m_dungeon.m_difficulty == 0 ? 3 : 7);
   uint8_t _begin, _end;
   // Modify entry and exit points for the larger maze
   if (m_dungeon.m_difficulty == 0) {

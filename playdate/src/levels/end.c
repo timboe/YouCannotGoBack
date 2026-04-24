@@ -8,8 +8,8 @@ static char s_scoreDisplay[64];
 static char s_bestDisplay[64];
 static char s_rankDisplay[64];
 static int s_score = 0;
-static int s_pb = 0;
-static int s_rank = 0;
+static int s_pb [[maybe_unused]] = 0;
+static int s_rank [[maybe_unused]] = 0;
 static PlaydateAPI* s_cachedPtr;
 
 #define SCORE_MAX 10000

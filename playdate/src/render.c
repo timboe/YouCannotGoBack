@@ -153,15 +153,15 @@ void renderClutter(PlaydateAPI* _pd) {
 void renderProgressBar(PlaydateAPI* _pd, bool isRotated) {
   _pd->graphics->setLineCapStyle(kLineCapStyleRound);
   if (isRotated) {
-    const static PDRect _b = {.x = 0, .y = 0, .width = 400/2, .height = 240/2}; // We are scaled in
+    static const PDRect _b = {.x = 0, .y = 0, .width = 400/2, .height = 240/2}; // We are scaled in
     // Based on playdate screen (rendered late, ignores side-scroll)
     int _x1 = SIZE;
     int _y1 = 0;
     int _x2 = SIZE;
     int _y2 = ( _b.height * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
-    _pd->graphics->drawLine(_x1, _y1, _x1, _y2, /*width=*/ 4, kColorWhite);
+    _pd->graphics->drawLine(_x1, _y1, _x2, _y2, /*width=*/ 4, kColorWhite);
   } else {
-    const static PDRect _b = {.x = 0, .y = 0, .width = 144, .height = 168}; 
+    static const PDRect _b = {.x = 0, .y = 0, .width = 144, .height = 168}; 
     // Based on pebble screen
     int _x1 = 0;
     int _w = _b.width;
@@ -374,7 +374,7 @@ void renderBoxGridBox(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, int8_t _o
 void renderGreekText(PlaydateAPI* _pd, const char* _msg, int _i) {
   PDRect _b = {.x = 8*SIZE, .y = 5*SIZE, .width = 6*SIZE, .height =2*SIZE};
   _b.y += 4*_i*SIZE;
-  const static int _text_y_offset = 2;
+  static const int _text_y_offset = 2;
   _pd->graphics->setDrawMode(kDrawModeFillBlack);
   _pd->graphics->setFont(m_fontGreek); /// xxx
   int _len = _pd->graphics->getTextWidth(m_fontGreek, _msg, strlen(_msg), kUTF8Encoding, /*tracking*/ 0);
@@ -403,14 +403,13 @@ void renderFrame(PlaydateAPI* _pd, PDRect _b) {
 }
 
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
-  const static int _text_y_offset = SIZE*2;
   _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorWhite);
   _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorBlack);
   renderText(_pd, _msg, _b, kDrawModeFillBlack);
 }
 
 void renderText(PlaydateAPI* _pd, const char* _msg, PDRect _b, LCDBitmapDrawMode _dm) {
-  const static int _text_y_offset = SIZE*2;
+  static const int _text_y_offset = SIZE*2;
   _pd->graphics->setDrawMode(_dm);
   _pd->graphics->setFont(m_fontMsg);
   int _len = _pd->graphics->getTextWidth(m_fontMsg, _msg, strlen(_msg), kASCIIEncoding, /*tracking*/ 0);
@@ -693,7 +692,7 @@ void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _b
 #define SIZE_FINE SIZE/2
 void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top) {
 
-  const static int8_t s_y1[SPIKES] = {0, SIZE_FINE*7, SIZE_FINE*14, SIZE_FINE*21};
+  static const int8_t s_y1[SPIKES] = {0, SIZE_FINE*7, SIZE_FINE*14, SIZE_FINE*21};
 
   for (int _x = 0; _x < 3; ++_x) {
     for (int _i = (_top ? 0 : 2); _i < (_top ? 2 : SPIKES); ++_i) {

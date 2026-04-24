@@ -251,7 +251,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
         if (_d < 6.0f && s_state != 99) {
           m_dungeon.m_gameOver = 1;
           setGameState(kFadeOut);
-          s_state == 99;
+          s_state = 99;
           m_dungeon.m_spinningDeath = true;
           fallSound();
         }

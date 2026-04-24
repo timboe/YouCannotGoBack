@@ -6,7 +6,7 @@ static uint16_t s_state = 0;
 static int8_t s_bomb = -1;
 static int8_t s_bomb2 = -1;
 static uint16_t s_tick = 0;
-const static uint16_t s_ticks[3] = {80, 60, 40};
+static const uint16_t s_ticks[3] = {80, 60, 40};
 
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))

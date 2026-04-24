@@ -86,7 +86,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
 
     bool _veto = false;
     for (int _c = 1; _c <= m_dungeon.m_roomsPerLevel[_level]; ++_c) {     // cycle rooms
-      if (_room >= _c && m_dungeon.m_rooms[_level][_room - _c] == _newRoom) _veto = true;
+      if (_room >= _c && m_dungeon.m_rooms[_level][_room - _c] == (int8_t) _newRoom) _veto = true;
     }
     if (_veto == true && ++_spin < 100) continue; // The "spin" var prevents us from having zero available rooms
 
