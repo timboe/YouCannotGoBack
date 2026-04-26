@@ -153,7 +153,7 @@ struct CBitmap* getFloor(bool _random, int8_t _level) {
   }
 }
 
-void initSprite(PlaydateAPI* _pd) {
+void initSprite_ycgb(PlaydateAPI* _pd) {
   m_grave = loadImageAtPath(_pd, "images/gameover");
   m_sawA = loadImageAtPath(_pd, "images/saw_a");
   m_sawB = loadImageAtPath(_pd, "images/saw_b");

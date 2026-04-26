@@ -65,7 +65,7 @@ void stopSounds(void) {
   pd->sound->sampleplayer->setVolume(m_loopPlayer, 1.0f, 1.0f);
 }
 
-void initSound(PlaydateAPI* _pd) {
+void initSound_ycgb(PlaydateAPI* _pd) {
   pd = _pd;
 
   for (int i=0; i<2; ++i) m_music[i] = pd->sound->fileplayer->newPlayer();

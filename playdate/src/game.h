@@ -142,9 +142,9 @@ extern Dungeon_t m_dungeon;
 extern Player_t m_player;
 extern Clutter_t m_clutter;
 
-void setPDPtr(PlaydateAPI* p);
+void setPDPtr_ycgb(PlaydateAPI* p);
 
-int gameLoop(void* data);
+int gameLoop_ycgb(void* data);
 
 int getFrameCount(void);
 bool getFlash(bool _constant);
@@ -162,7 +162,7 @@ int getShieldB(int _value);
 int getShieldC(int _value);
 
 void callbackReplacement(void);
-void gameWindowLoad(void);
+void gameWindowLoad_ycgb(void);
 void gameWindowUnload(void);
 void gameClickConfigHandler(uint32_t buttonPressed);
 void clickHandlerReplacement(void);

@@ -1,3 +1,6 @@
+// Being built under PlaydateGameSelect project when bundled
+#ifndef SDL2API
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -64,3 +67,5 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
   
   return 0;
 }
+
+#endif

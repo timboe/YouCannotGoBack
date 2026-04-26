@@ -45,31 +45,36 @@ void renderGameFrame(PlaydateAPI* _pd) {
   drawBitmapAbs(_pd, m_borderR, 144+128, 0);
   _pd->graphics->fillRect(128, 0, 144, 36, kColorBlack);
   _pd->graphics->fillRect(128, 52+168, 144, 20, kColorBlack);
-  static const char _portraitA[] = "Best";
-  static const char _portraitB[] = "Played In";
-  static const char _portraitC[] = "Portrait";
-  static const char _portraitD[] = "Mode!";
-#ifdef SCOREBOARD
-  static const char _portraitVersion[] = "v2.0c";
-#else
-  static const char _portraitVersion[] = "v2.0i";
-#endif
+  #ifdef SCOREBOARD
+    static const char _portraitVersion[] = "v2.1c";
+  #else
+    static const char _portraitVersion[] = "v2.1i";
+  #endif
+  //
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _vb = {.x = 32+16, .y = 0, .width = 32, .height = 16};
     renderText(_pd, _portraitVersion, _vb, kDrawModeFillWhite);
-    PDRect _b = {.x = 8, .y = 52, .width = 96+16, .height = 128+8};
-    renderTextInFrame(_pd, _portraitA, _b);
-    _b.y += 16;
-    renderText(_pd, _portraitB, _b, kDrawModeFillBlack);
-    _b.y += 16;
-    renderText(_pd, _portraitC, _b, kDrawModeFillBlack);
-    _b.y += 16;
-    renderText(_pd, _portraitD, _b, kDrawModeFillBlack);
-    static float rot = 0;
-    rot -= 4.0f;
-    if (rot < -90.0f) rot = 90.0f;
-    drawBitmapAbsRot(_pd, m_rotate, 64, 128+5+20, rot > 0.0f ? -90.0f : rot);
   }
+  #ifndef SDL2API
+    static const char _portraitA[] = "Best";
+    static const char _portraitB[] = "Played In";
+    static const char _portraitC[] = "Portrait";
+    static const char _portraitD[] = "Mode!";
+    if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
+      PDRect _b = {.x = 8, .y = 52, .width = 96+16, .height = 128+8};
+      renderTextInFrame(_pd, _portraitA, _b);
+      _b.y += 16;
+      renderText(_pd, _portraitB, _b, kDrawModeFillBlack);
+      _b.y += 16;
+      renderText(_pd, _portraitC, _b, kDrawModeFillBlack);
+      _b.y += 16;
+      renderText(_pd, _portraitD, _b, kDrawModeFillBlack);
+      static float rot = 0;
+      rot -= 4.0f;
+      if (rot < -90.0f) rot = 90.0f;
+      drawBitmapAbsRot(_pd, m_rotate, 64, 128+5+20, rot > 0.0f ? -90.0f : rot);
+    }
+  #endif
 }
 
 #ifdef SCOREBOARD
@@ -93,14 +98,18 @@ void renderScoresFrame(PlaydateAPI* _pd) {
 #endif
 
 void renderClear(PlaydateAPI* _pd, bool transparentCentre) {
+  uintptr_t c = (uintptr_t)kColorChekerboard;
+  #ifdef SDL2API
+    c = (uintptr_t)kColorBlack;
+  #endif
   if (transparentCentre) {
-    _pd->graphics->clear((uintptr_t)kColorChekerboard);
+    _pd->graphics->clear(c);
     _pd->graphics->fillRect(0, 0, SIZE*18, SIZE*2, kColorBlack);
     _pd->graphics->fillRect(0, 0, SIZE*2, SIZE*21, kColorBlack);
     _pd->graphics->fillRect(0, SIZE*20, SIZE*18, SIZE*(2+1), kColorBlack); // Extend the bottom
     _pd->graphics->fillRect(SIZE*17, 0, SIZE*1, SIZE*21, kColorBlack); 
   } else {
-    _pd->graphics->clear((uintptr_t)kColorChekerboard);
+    _pd->graphics->clear(c);
     _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*24, kColorBlack);
   }
 }

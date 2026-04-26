@@ -30,7 +30,11 @@
 #include "levels/shortcut.h"
 #include "levels/arrows.h"
 
-PlaydateAPI* pd = NULL;
+#ifdef SDL2API
+  #include "../srcgame/game.h"
+#else  
+  PlaydateAPI* pd = NULL;
+#endif
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
@@ -64,7 +68,7 @@ bool getFlash(bool _constant) {
   return _value;
 }
 
-void setPDPtr(PlaydateAPI* p) { pd = p; }
+void setPDPtr_ycgb(PlaydateAPI* p) { pd = p; }
 
 void gameClickConfigHandler(uint32_t buttonPressed) {
   clickSound();
@@ -229,11 +233,13 @@ void clickHandlerReplacement() {
   if (pushed & kButtonA) noSound(); // Button not used
   if (pushed & kButtonB) noSound(); // Button not used
 
-  static float fx, fy, fz;
-  if (m_autoRotation) {
-    pd->system->getAccelerometer(&fx, &fy, &fz);
-    m_rotated = fabs(fx) > fabs(fy);
-  }
+  #ifndef SDL2API
+    static float fx, fy, fz;
+    if (m_autoRotation) {
+      pd->system->getAccelerometer(&fx, &fy, &fz);
+      m_rotated = fabs(fx) > fabs(fy);
+    }
+  #endif
 }
 
 // We don't have timer callbacks, replaces endRenderMsg
@@ -244,7 +250,7 @@ void callbackReplacement() {
   }
 }
 
-int gameLoop(void* data) {
+int gameLoop_ycgb(void* data) {
 
   clickHandlerReplacement();
   callbackReplacement();
@@ -379,7 +385,7 @@ void menuOptionsCallbackAudio(void* userdata) {
   }
 }
 
-void gameWindowLoad() {
+void gameWindowLoad_ycgb(void) {
   setGameState(kIdle);
 
   m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
@@ -390,9 +396,11 @@ void gameWindowLoad() {
 
   pd->system->addMenuItem("restart", menuOptionsCallback, NULL);
 
-  static const char* options[] = {"Auto", "Landscape", "Portrait"};
-  PDMenuItem* _menu = pd->system->addOptionsMenuItem("rotate", options, 3, menuOptionsCallback, NULL);
-  pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
+  #ifndef SDL2API
+    static const char* options[] = {"Auto", "Landscape", "Portrait"};
+    PDMenuItem* _menu = pd->system->addOptionsMenuItem("rotate", options, 3, menuOptionsCallback, NULL);
+    pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
+  #endif
 
   pd->system->setPeripheralsEnabled(kAccelerometer);
   

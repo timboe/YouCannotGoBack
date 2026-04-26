@@ -9,7 +9,7 @@ make clean
 make
 rm YouCannotGoBack.pdx/titles/*_i.pdi
 rm YouCannotGoBack.pdx/titles/*_c.pdi
-zip -r -q YouCannotGoBack_v2.0c.pdx.zip YouCannotGoBack.pdx
+zip -r -q YouCannotGoBack_v2.1c.pdx.zip YouCannotGoBack.pdx
 
 ### 
 
@@ -24,4 +24,4 @@ make clean
 make
 rm YouCannotGoBack.pdx/titles/*_i.pdi
 rm YouCannotGoBack.pdx/titles/*_c.pdi
-zip -r -q YouCannotGoBack_v2.0i.pdx.zip YouCannotGoBack.pdx
+zip -r -q YouCannotGoBack_v2.1i.pdx.zip YouCannotGoBack.pdx
