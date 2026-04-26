@@ -14,9 +14,9 @@ __declspec(dllexport)
 #endif
 
 static void init(PlaydateAPI* _pd) {
-  initSprite(_pd);
-  initSound(_pd);
-  gameWindowLoad();
+  initSprite_ycgb(_pd);
+  initSound_ycgb(_pd);
+  gameWindowLoad_ycgb();
 }
 
 static void deinit(void) {
@@ -30,7 +30,7 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
     setPDPtr(playdate);
     init(playdate);
     playdate->display->setRefreshRate(20);
-    playdate->system->setUpdateCallback(gameLoop, NULL);
+    playdate->system->setUpdateCallback(gameLoop_ycgb, NULL);
     #ifdef DEV
     playdate->system->logToConsole("EH: init");
     #endif
