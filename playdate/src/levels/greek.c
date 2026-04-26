@@ -108,8 +108,8 @@ bool tickGreek(PlaydateAPI* _pd, bool _doInit) {
     populateScroll(_pd, s_strC, _lettersThisLevel, _cluePoint[2], s_choices[2], s_correct == 2);
 
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(6, 0, 20); // Only left
     return false;
   }

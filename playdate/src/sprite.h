@@ -42,9 +42,9 @@ extern LCDBitmap* m_bomb[4];
 extern LCDBitmap* m_spear;
 extern LCDBitmapTable* m_smask;
 
-extern LCDBitmap* m_hole;
+extern LCDBitmap* m_hole_ycgb;
 extern LCDBitmap* m_target;
-extern LCDBitmap* m_ball;
+extern LCDBitmap* m_ball_ycgb;
 extern LCDBitmap* m_danger;
 
 extern LCDBitmap* m_parchment;

@@ -19,9 +19,9 @@ void updateProcStart(PlaydateAPI* _pd) {
 bool tickStart(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_rotation = 0.0f;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_rotation = 0.0f;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
     return false;
   }

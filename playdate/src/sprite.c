@@ -18,9 +18,9 @@ LCDBitmap* m_rotate;
 LCDBitmap* m_spear;
 LCDBitmapTable* m_smask;
 
-LCDBitmap* m_hole;
+LCDBitmap* m_hole_ycgb;
 LCDBitmap* m_target;
-LCDBitmap* m_ball;
+LCDBitmap* m_ball_ycgb;
 LCDBitmap* m_danger;
 
 LCDBitmap* m_parchment;
@@ -171,9 +171,9 @@ void initSprite_ycgb(PlaydateAPI* _pd) {
 
   m_rotate = loadImageAtPath(_pd, "images/rotate");
 
-  m_hole = loadImageAtPath(_pd, "images/hole");
+  m_hole_ycgb = loadImageAtPath(_pd, "images/hole");
   m_target = loadImageAtPath(_pd, "images/target");
-  m_ball = loadImageAtPath(_pd, "images/ball");
+  m_ball_ycgb = loadImageAtPath(_pd, "images/ball");
   m_danger = loadImageAtPath(_pd, "images/danger");
 
   m_parchment = loadImageAtPath(_pd, "images/parchment");

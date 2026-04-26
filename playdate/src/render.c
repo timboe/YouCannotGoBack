@@ -646,12 +646,12 @@ void renderFinalPit(PlaydateAPI* _pd) {
 }
 
 void renderPlayer(PlaydateAPI* _pd) {
-  uint16_t _pos_x = m_player.m_position_x;
-  uint16_t _pos_y = m_player.m_position_y;
-  if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) --_pos_y;
-  LCDBitmap* _ps = _pd->graphics->getTableBitmap(m_playerTable, m_player.m_playerFrame);
-  if (m_player.m_rotation) {
-    drawBitmapAbsRot(_pd, _ps, _pos_x + 8, _pos_y + 8, m_player.m_rotation);
+  uint16_t _pos_x = m_player_ycgb.m_position_x;
+  uint16_t _pos_y = m_player_ycgb.m_position_y;
+  if (m_player_ycgb.m_playerFrame == 1 || m_player_ycgb.m_playerFrame == 4) --_pos_y;
+  LCDBitmap* _ps = _pd->graphics->getTableBitmap(m_playerTable, m_player_ycgb.m_playerFrame);
+  if (m_player_ycgb.m_rotation) {
+    drawBitmapAbsRot(_pd, _ps, _pos_x + 8, _pos_y + 8, m_player_ycgb.m_rotation);
   } else {
     drawBitmapAbs(_pd, _ps, _pos_x, _pos_y);
   }
@@ -717,13 +717,13 @@ void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top) {
 }
 
 
-void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
-  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y += 4;
+void renderFade_ycgb(PlaydateAPI* _pd, bool _in, bool _isRotated) {
+  if (_in == false && m_dungeon.m_fallingDeath == true) m_player_ycgb.m_position_y += 4;
 
   if (_in == false && (m_dungeon.m_fallingDeath == true 
-    || m_dungeon.m_spinningDeath == true)) m_player.m_rotation += 24.0f;
+    || m_dungeon.m_spinningDeath == true)) m_player_ycgb.m_rotation += 24.0f;
 
-  if (m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kShortcut) m_player.m_position_x += PLAYER_SPEED;
+  if (m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kShortcut) m_player_ycgb.m_position_x += PLAYER_SPEED;
 
   static int s_progress = 0;
   static int s_pattern = 0;

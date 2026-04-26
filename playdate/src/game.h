@@ -129,7 +129,7 @@ typedef struct {
   int16_t m_target_x;
   int16_t m_target_y;
   float m_rotation;
-} Player_t;
+} Player_ycgb_t;
 
 #define MAX_PLACE_CLUTTER 5
 typedef struct {
@@ -139,7 +139,7 @@ typedef struct {
 } Clutter_t;
 
 extern Dungeon_t m_dungeon;
-extern Player_t m_player;
+extern Player_ycgb_t m_player_ycgb;
 extern Clutter_t m_clutter;
 
 void setPDPtr_ycgb(PlaydateAPI* p);

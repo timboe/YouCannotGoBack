@@ -38,7 +38,7 @@
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
-Player_t m_player = {0};
+Player_ycgb_t m_player_ycgb = {0};
 static GameState_t s_gameState = kIdle;
 static int s_playerChoice = 0;
 static const char* s_displayMsg = NULL;
@@ -123,9 +123,9 @@ bool newRoom() {
 int getHorizontalOffset() {
   int off = 0;
   switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
-    case kStart: off = (m_player.m_position_x * -1) + 24; break;
+    case kStart: off = (m_player_ycgb.m_position_x * -1) + 24; break;
     case kEnd: off = -12; break;
-    default: off = m_player.m_position_x * -1;
+    default: off = m_player_ycgb.m_position_x * -1;
   }
   if (off > 0) off = 0;
   return off < -24 ? -24 : off;
@@ -206,8 +206,8 @@ void dungeonUpdateProc() {
   if (m_dungeon.m_gameOver == 0 && m_rotated) renderProgressBar(pd, m_rotated);
 
   // Do fade
-  if (s_gameState == kFadeIn) renderFade(pd, true, m_rotated);
-  else if (s_gameState == kFadeOut) renderFade(pd, false, m_rotated);
+  if (s_gameState == kFadeIn) renderFade_ycgb(pd, true, m_rotated);
+  else if (s_gameState == kFadeOut) renderFade_ycgb(pd, false, m_rotated);
 
   // Draw FPS indicator (dbg only)
   #ifdef DEBUG_MODE
@@ -326,28 +326,28 @@ int gameLoop_ycgb(void* data) {
 }
 
 bool atDestination() {
-  return (m_player.m_target_x == m_player.m_position_x && m_player.m_target_y == m_player.m_position_y);
+  return (m_player_ycgb.m_target_x == m_player_ycgb.m_position_x && m_player_ycgb.m_target_y == m_player_ycgb.m_position_y);
 }
 
 bool movePlayer() {
   if (s_frameCount % 3 == 0) {
-    if (++m_player.m_playerFrame == MAX_FRAMES) {
-      m_player.m_playerFrame = 0;
+    if (++m_player_ycgb.m_playerFrame == MAX_FRAMES) {
+      m_player_ycgb.m_playerFrame = 0;
     }
-    if (m_player.m_playerFrame % 2 == 0) footSound();
+    if (m_player_ycgb.m_playerFrame % 2 == 0) footSound();
   }
 
-  if      (m_player.m_target_x > m_player.m_position_x) m_player.m_position_x += PLAYER_SPEED;
-  if      (m_player.m_target_y > m_player.m_position_y) m_player.m_position_y += PLAYER_SPEED;
-  else if (m_player.m_target_y < m_player.m_position_y) m_player.m_position_y -= PLAYER_SPEED;
+  if      (m_player_ycgb.m_target_x > m_player_ycgb.m_position_x) m_player_ycgb.m_position_x += PLAYER_SPEED;
+  if      (m_player_ycgb.m_target_y > m_player_ycgb.m_position_y) m_player_ycgb.m_position_y += PLAYER_SPEED;
+  else if (m_player_ycgb.m_target_y < m_player_ycgb.m_position_y) m_player_ycgb.m_position_y -= PLAYER_SPEED;
   if (atDestination()) {
-    m_player.m_playerFrame = 0;
+    m_player_ycgb.m_playerFrame = 0;
     s_gameState = kLevelSpecific;
   }
   return true;
 }
 
-void menuOptionsCallback(void* userdata) {
+void menuOptionsCallback_ycgb(void* userdata) {
   if (userdata == NULL) {
     // chose reset
     return generate(pd);
@@ -368,7 +368,7 @@ void menuOptionsCallback(void* userdata) {
   }
 }
 
-void menuOptionsCallbackAudio(void* userdata) {
+void menuOptionsCallbackAudio_ycgb(void* userdata) {
   int _value = pd->system->getMenuItemValue((PDMenuItem*)userdata);
   if (_value == 0) {
     music(true);
@@ -391,14 +391,14 @@ void gameWindowLoad_ycgb(void) {
   m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
 
   static const char* options2[] = {"Music+SFX", "Music", "SFX", "None"};
-  PDMenuItem* _menu2 = pd->system->addOptionsMenuItem("audio", options2, 4, menuOptionsCallbackAudio, NULL);
+  PDMenuItem* _menu2 = pd->system->addOptionsMenuItem("audio", options2, 4, menuOptionsCallbackAudio_ycgb, NULL);
   pd->system->setMenuItemUserdata(_menu2, (void*) _menu2); // User data is a pointer to the menu itself
 
-  pd->system->addMenuItem("restart", menuOptionsCallback, NULL);
+  pd->system->addMenuItem("restart", menuOptionsCallback_ycgb, NULL);
 
   #ifndef SDL2API
     static const char* options[] = {"Auto", "Landscape", "Portrait"};
-    PDMenuItem* _menu = pd->system->addOptionsMenuItem("rotate", options, 3, menuOptionsCallback, NULL);
+    PDMenuItem* _menu = pd->system->addOptionsMenuItem("rotate", options, 3, menuOptionsCallback_ycgb, NULL);
     pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
   #endif
 

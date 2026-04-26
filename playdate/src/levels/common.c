@@ -3,11 +3,11 @@
 #include "../sound.h"
 
 void moveToExit(uint16_t* _state) {
-  m_player.m_target_x = SIZE*17;
+  m_player_ycgb.m_target_x = SIZE*17;
   switch (getPlayerChoice()) {
-    case 0: m_player.m_target_y = SIZE*5; break;
-    case 1: m_player.m_target_y = SIZE*9; break;
-    case 2: m_player.m_target_y = SIZE*13; break;
+    case 0: m_player_ycgb.m_target_y = SIZE*5; break;
+    case 1: m_player_ycgb.m_target_y = SIZE*9; break;
+    case 2: m_player_ycgb.m_target_y = SIZE*13; break;
   }
   setGameState(kMovePlayer);
   ++(*_state);
@@ -49,8 +49,8 @@ void addCluter(int _xMax, int _yUp, int _yDn) {
 }
 
 void enterRoom(uint16_t* _state) {
-  m_player.m_target_x = SIZE*3;
-  m_player.m_target_y = SIZE*9;
+  m_player_ycgb.m_target_x = SIZE*3;
+  m_player_ycgb.m_target_y = SIZE*9;
   setGameState(kMovePlayer);
   ++(*_state);
 }
@@ -108,12 +108,12 @@ void stonesCommon(uint16_t* _state, int8_t* _fire, int8_t* _correct, bool _dark)
   if ((*_state) == 13) {
     setGameState(kFadeOut);
   } else if ((*_state) % 2 == 1) { // ODD state
-    m_player.m_target_x = SIZE*_targetX;
+    m_player_ycgb.m_target_x = SIZE*_targetX;
     playerChoice = getPlayerChoice();
     switch (playerChoice) {
-      case 0: m_player.m_target_y = SIZE*5; break;
-      case 1: m_player.m_target_y = SIZE*9; break;
-      case 2: m_player.m_target_y = SIZE*13; break;
+      case 0: m_player_ycgb.m_target_y = SIZE*5; break;
+      case 1: m_player_ycgb.m_target_y = SIZE*9; break;
+      case 2: m_player_ycgb.m_target_y = SIZE*13; break;
     }
     setGameState(kMovePlayer);
     ++(*_state);

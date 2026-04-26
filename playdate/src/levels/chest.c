@@ -31,8 +31,8 @@ void updateProcChest(PlaydateAPI* _pd) {
 bool tickChest(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
     s_bad = rand() % 3;
     return false;
@@ -55,11 +55,11 @@ bool tickChest(bool _doInit) {
     setGameState(kAwaitInput);
     ++s_state;
   } else if (s_state == 2) {
-    m_player.m_target_x = SIZE*8;
+    m_player_ycgb.m_target_x = SIZE*8;
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target_y = SIZE*6; break;
-      case 1: m_player.m_target_y = SIZE*10; break;
-      case 2: m_player.m_target_y = SIZE*14; break;
+      case 0: m_player_ycgb.m_target_y = SIZE*6; break;
+      case 1: m_player_ycgb.m_target_y = SIZE*10; break;
+      case 2: m_player_ycgb.m_target_y = SIZE*14; break;
     }
     setGameState(kMovePlayer);
     ++s_state;

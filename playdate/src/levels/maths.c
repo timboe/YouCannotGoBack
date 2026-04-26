@@ -51,8 +51,8 @@ void updateProcMaths(PlaydateAPI* _pd) {
 bool tickMaths(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(5, 20, 1);
 
     s_puzzle = rand() % kNMathsPuzzles; // Choose seq
@@ -93,16 +93,16 @@ bool tickMaths(PlaydateAPI* _pd, bool _doInit) {
       else m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room + 1 ] = kDeath;
     }
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target_x = SIZE*17; m_player.m_target_y = SIZE*5; break;
-      case 1: m_player.m_target_x = SIZE*13; m_player.m_target_y = SIZE*11; break;
-      case 2: m_player.m_target_x = SIZE*17; m_player.m_target_y = SIZE*13; break;
+      case 0: m_player_ycgb.m_target_x = SIZE*17; m_player_ycgb.m_target_y = SIZE*5; break;
+      case 1: m_player_ycgb.m_target_x = SIZE*13; m_player_ycgb.m_target_y = SIZE*11; break;
+      case 2: m_player_ycgb.m_target_x = SIZE*17; m_player_ycgb.m_target_y = SIZE*13; break;
     }
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) {
     if (getPlayerChoice() == 1) {
-      m_player.m_target_x = SIZE*17;
-      m_player.m_target_y = SIZE*9;
+      m_player_ycgb.m_target_x = SIZE*17;
+      m_player_ycgb.m_target_y = SIZE*9;
       setGameState(kMovePlayer);
     }
     ++s_state;
