@@ -27,7 +27,7 @@ static void deinit(void) {
 
 int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
   if (event == kEventInit) {
-    setPDPtr(playdate);
+    setPDPtr_ycgb(playdate);
     init(playdate);
     playdate->display->setRefreshRate(20);
     playdate->system->setUpdateCallback(gameLoop_ycgb, NULL);
