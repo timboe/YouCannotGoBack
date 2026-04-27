@@ -22,7 +22,7 @@ void updateProcShapes(PlaydateAPI* _pd) {
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
 
-  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
+  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount_ycgb() < ANIM_FPS/2) {
     drawCBitmap(_pd, &m_arrow_u, 10, 5);
     drawCBitmap(_pd, &m_arrow_r, 12, 9);
     drawCBitmap(_pd, &m_arrow_d, 10, 13);

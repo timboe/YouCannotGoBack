@@ -262,7 +262,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
   // Player control
   if (s_state == 1) {
     // Manual move
-    movePlayer();
+    movePlayer_ycgb();
     if (atDestination()) s_state = 2; // move complete
 
   } else if (s_state == 2) {
@@ -283,7 +283,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
 
   } else if (s_state == 4) {
     // Manual move two
-    movePlayer();
+    movePlayer_ycgb();
     if (atDestination()) {
       setGameState(kLevelSpecificWButtons);
       s_state = 5; // move complete
@@ -309,7 +309,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
 
   } else if (s_state == 6) {
     // Manual move three
-    movePlayer();
+    movePlayer_ycgb();
     if (atDestination()) s_state = 7; // move complete
 
   } else if (s_state == 7) {
@@ -325,7 +325,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
 
   } else if (s_state == 8) {
     // Manual move four
-    movePlayer();
+    movePlayer_ycgb();
     if (atDestination()) s_state = 9; // move complete
 
   } else if (s_state == 9) {

@@ -81,7 +81,7 @@ void renderGameFrame(PlaydateAPI* _pd) {
 void renderScoresFrame(PlaydateAPI* _pd) {
   static char _buf[64*9 + 2];
   static bool flip = false;
-  if (!getFrameCount()) flip = !flip;
+  if (!getFrameCount_ycgb()) flip = !flip;
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _b = {.x = 144+128+8 , .y = 32-8, .width = 96+16, .height = 128+64};
     static const char _scoreA[] = "High Scores";
@@ -124,7 +124,7 @@ void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
 }
 
 void renderArrows2(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2, bool _force) {
-  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && (_force || getFrameCount() < ANIM_FPS/2)) {
+  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && (_force || getFrameCount_ycgb() < ANIM_FPS/2)) {
     if (_0) drawCBitmap(_pd, &m_arrow_u, _x, _yStart);
     if (_1) drawCBitmap(_pd, &m_arrow_r, _x, _yStart + _yAdd);
     if (_2) drawCBitmap(_pd, &m_arrow_d, _x, _yStart + _yAdd + _yAdd);
@@ -397,7 +397,7 @@ void renderGreekFrames(PlaydateAPI* _pd, const char* _a, const char* _b, const c
   for (int _i = 0; _i < 3; ++_i) {
     _pd->graphics->fillRect(_rect.x, _rect.y, _rect.width, _rect.height, kColorWhite);
     _pd->graphics->drawRect(_rect.x+2, _rect.y+2, _rect.width-4, _rect.height-4, kColorBlack);
-    drawBitmapAbs(_pd, m_parchment, _rect.x - 8, _rect.y - 4);
+    drawBitmapAbs(_pd, m_parchment_ycgb, _rect.x - 8, _rect.y - 4);
     _rect.y += 4*SIZE;
   }
   renderGreekText(_pd, _a, 0);

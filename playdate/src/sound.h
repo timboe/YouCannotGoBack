@@ -6,11 +6,11 @@ void initSound_ycgb(PlaydateAPI* _pd);
 void deinitSound(void);
 
 void music(bool _onoff);
-void sfx(bool _onoff);
+void sfx_ycgb(bool _onoff);
 
 void stopSounds(void);
 
-void updateMusic(uint8_t _status);
+void updateMusic_ycgb(uint8_t _status);
 
 void fireSound(void);
 void chestSound(void);

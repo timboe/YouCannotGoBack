@@ -11,4 +11,4 @@ typedef struct {
 
 #define HINT_CHANCE 50
 
-void generate(PlaydateAPI* pd);
+void generate_ycgb(PlaydateAPI* pd);

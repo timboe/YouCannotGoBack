@@ -5,7 +5,7 @@
 static uint16_t s_state = 0; // game state
 static int8_t s_offset = 0; // moving backdrop
 static float s_rotation = 0; // rotate status
-static int8_t s_type[10 + MAX_LEVELS] = {0}; // which blades
+static int8_t s_type[10 + MAX_LEVELS_YCGB] = {0}; // which blades
 static int16_t s_position = 0; //y axis
 static int8_t s_count = 0; // how many blades dodged
 
@@ -36,7 +36,7 @@ bool tickSaw(bool _doInit) {
     m_player_ycgb.m_position_y = SIZE*8;
     s_offset = 0; // moving backdrop
     s_rotation = 0; // rotate status
-    for (int _i = 0; _i < (10 + MAX_LEVELS); ++_i) {
+    for (int _i = 0; _i < (10 + MAX_LEVELS_YCGB); ++_i) {
       s_type[_i] = (rand() % 3) + 1;
       // Non-guarenteed way of trying to vary blades
       if (_i && s_type[_i] == s_type[_i-1]) s_type[_i] = (rand() % 3) + 1;
@@ -56,7 +56,7 @@ bool tickSaw(bool _doInit) {
   } else if (s_state == 1) {
     setGameState(kLevelSpecificWButtons);
     s_rotation += 5.0f + (m_dungeon.m_difficulty * 2.0f);
-    if (getFrameCount() % 3 == 0) {
+    if (getFrameCount_ycgb() % 3 == 0) {
       if (++m_player_ycgb.m_playerFrame == MAX_FRAMES) {
         m_player_ycgb.m_playerFrame = 0;
       }

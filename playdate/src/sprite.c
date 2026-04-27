@@ -23,7 +23,7 @@ LCDBitmap* m_target;
 LCDBitmap* m_ball_ycgb;
 LCDBitmap* m_danger;
 
-LCDBitmap* m_parchment;
+LCDBitmap* m_parchment_ycgb;
 
 LCDBitmap* m_wheel;
 LCDBitmap* m_spin[3];
@@ -82,7 +82,7 @@ struct CBitmap m_symbol[MAX_SYMBOL];
 struct CBitmap m_halfUpperWall[2];
 struct CBitmap m_halfLowerWall[2];
 
-LCDBitmap* loadImageAtPath(PlaydateAPI* _pd, const char* _path) {
+LCDBitmap* loadImageAtPath_ycgb(PlaydateAPI* _pd, const char* _path) {
   const char* _outErr = NULL;
   LCDBitmap* _img = _pd->graphics->loadBitmap(_path, &_outErr);
   if (_outErr != NULL) {
@@ -91,7 +91,7 @@ LCDBitmap* loadImageAtPath(PlaydateAPI* _pd, const char* _path) {
   return _img;
 }
 
-LCDBitmapTable* loadImageTableAtPath(PlaydateAPI* _pd, const char* _path) {
+LCDBitmapTable* loadImageTableAtPath_ycgb(PlaydateAPI* _pd, const char* _path) {
   const char* _outErr = NULL;
   LCDBitmapTable* _table = _pd->graphics->loadBitmapTable(_path, &_outErr);
   if (_outErr != NULL) {
@@ -100,7 +100,7 @@ LCDBitmapTable* loadImageTableAtPath(PlaydateAPI* _pd, const char* _path) {
   return _table;
 }
 
-LCDFont* loadFontAtPath(PlaydateAPI* _pd, const char* _path) {
+LCDFont* loadFontAtPath_ycgb(PlaydateAPI* _pd, const char* _path) {
   const char* _outErr = NULL;
   LCDFont* _f = _pd->graphics->loadFont(_path, &_outErr);
   if (_outErr != NULL) {
@@ -154,45 +154,45 @@ struct CBitmap* getFloor(bool _random, int8_t _level) {
 }
 
 void initSprite_ycgb(PlaydateAPI* _pd) {
-  m_grave = loadImageAtPath(_pd, "images/gameover");
-  m_sawA = loadImageAtPath(_pd, "images/saw_a");
-  m_sawB = loadImageAtPath(_pd, "images/saw_b");
-  m_treasureBanner = loadImageAtPath(_pd, "images/treasure");
-  m_borderL = loadImageAtPath(_pd, "images/border_left");
-  m_borderR = loadImageAtPath(_pd, "images/border_right");
+  m_grave = loadImageAtPath_ycgb(_pd, "images/gameover");
+  m_sawA = loadImageAtPath_ycgb(_pd, "images/saw_a");
+  m_sawB = loadImageAtPath_ycgb(_pd, "images/saw_b");
+  m_treasureBanner = loadImageAtPath_ycgb(_pd, "images/treasure");
+  m_borderL = loadImageAtPath_ycgb(_pd, "images/border_left");
+  m_borderR = loadImageAtPath_ycgb(_pd, "images/border_right");
 
-  m_bomb[0] = loadImageAtPath(_pd, "images/bomb0");
-  m_bomb[1] = loadImageAtPath(_pd, "images/bomb1");
-  m_bomb[2] = loadImageAtPath(_pd, "images/bomb2");
-  m_bomb[3] = loadImageAtPath(_pd, "images/explosion");
+  m_bomb[0] = loadImageAtPath_ycgb(_pd, "images/bomb0");
+  m_bomb[1] = loadImageAtPath_ycgb(_pd, "images/bomb1");
+  m_bomb[2] = loadImageAtPath_ycgb(_pd, "images/bomb2");
+  m_bomb[3] = loadImageAtPath_ycgb(_pd, "images/explosion");
 
-  m_spear = loadImageAtPath(_pd, "images/spear");
-  m_smask = loadImageTableAtPath(_pd, "images/smask");
+  m_spear = loadImageAtPath_ycgb(_pd, "images/spear");
+  m_smask = loadImageTableAtPath_ycgb(_pd, "images/smask");
 
-  m_rotate = loadImageAtPath(_pd, "images/rotate");
+  m_rotate = loadImageAtPath_ycgb(_pd, "images/rotate");
 
-  m_hole_ycgb = loadImageAtPath(_pd, "images/hole");
-  m_target = loadImageAtPath(_pd, "images/target");
-  m_ball_ycgb = loadImageAtPath(_pd, "images/ball");
-  m_danger = loadImageAtPath(_pd, "images/danger");
+  m_hole_ycgb = loadImageAtPath_ycgb(_pd, "images/hole");
+  m_target = loadImageAtPath_ycgb(_pd, "images/target");
+  m_ball_ycgb = loadImageAtPath_ycgb(_pd, "images/ball");
+  m_danger = loadImageAtPath_ycgb(_pd, "images/danger");
 
-  m_parchment = loadImageAtPath(_pd, "images/parchment");
+  m_parchment_ycgb = loadImageAtPath_ycgb(_pd, "images/parchment");
 
-  m_wheel = loadImageAtPath(_pd, "images/wheel_frame");
-  m_spin[0] = loadImageAtPath(_pd, "images/wheel_inner0");
-  m_spin[1] = loadImageAtPath(_pd, "images/wheel_inner1");
-  m_spin[2] = loadImageAtPath(_pd, "images/wheel_inner2");
+  m_wheel = loadImageAtPath_ycgb(_pd, "images/wheel_frame");
+  m_spin[0] = loadImageAtPath_ycgb(_pd, "images/wheel_inner0");
+  m_spin[1] = loadImageAtPath_ycgb(_pd, "images/wheel_inner1");
+  m_spin[2] = loadImageAtPath_ycgb(_pd, "images/wheel_inner2");
 
-  m_ycgb = loadImageAtPath(_pd, "images/ycgb");
+  m_ycgb = loadImageAtPath_ycgb(_pd, "images/ycgb");
 
-  m_floorArrow = loadImageTableAtPath(_pd, "images/floorArrow");
-  m_clack = loadImageTableAtPath(_pd, "images/clack");
-  m_playerTable = loadImageTableAtPath(_pd, "images/player");
-  m_spriteMap = loadImageTableAtPath(_pd, "images/spritesheet");
+  m_floorArrow = loadImageTableAtPath_ycgb(_pd, "images/floorArrow");
+  m_clack = loadImageTableAtPath_ycgb(_pd, "images/clack");
+  m_playerTable = loadImageTableAtPath_ycgb(_pd, "images/player");
+  m_spriteMap = loadImageTableAtPath_ycgb(_pd, "images/spritesheet");
 
-  m_fontMain = loadFontAtPath(_pd, "fonts/font-Bitmore-Medieval-Bold");
-  m_fontMsg = loadFontAtPath(_pd, "fonts/Roobert-9-Mono-Condensed");
-  m_fontGreek = loadFontAtPath(_pd, "fonts/Greek-8");
+  m_fontMain = loadFontAtPath_ycgb(_pd, "fonts/font-Bitmore-Medieval-Bold");
+  m_fontMsg = loadFontAtPath_ycgb(_pd, "fonts/Roobert-9-Mono-Condensed");
+  m_fontGreek = loadFontAtPath_ycgb(_pd, "fonts/Greek-8");
 
   _pd->graphics->setFont(m_fontMain);
 

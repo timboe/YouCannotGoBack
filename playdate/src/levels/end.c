@@ -29,7 +29,7 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
     static const char _end2[] = "RESTART";
     PDRect _rect2 = {.x = 28, .y = 125, .width = 88, .height = 43};
     renderTextInFrame(_pd, _end2, _rect2);
-    if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
+    if (getGameState() == kAwaitInput && getFrameCount_ycgb() < ANIM_FPS/2) {
       drawCBitmap(_pd, &m_arrow_d, 3, 13);
       drawCBitmap(_pd, &m_arrow_d, 13, 13);
     }
@@ -57,7 +57,7 @@ void updateProcEnd(PlaydateAPI* _pd, bool _isRotated) {
     _rect2.y += 14;
     renderBorderText(_pd, _rect2, m_fontMain, s_rankDisplay, 2, false);
 #endif
-    if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
+    if (getGameState() == kAwaitInput && getFrameCount_ycgb() < ANIM_FPS/2) {
       drawCBitmap(_pd, &m_arrow_d, 8, 12);
     }
   }
@@ -130,7 +130,7 @@ bool tickEnd(PlaydateAPI* _pd, bool _doInit) {
     }
     ++s_state;
   } else if (s_state == 1) { // restart
-    generate(_pd);
+    generate_ycgb(_pd);
   }
 
   return false;

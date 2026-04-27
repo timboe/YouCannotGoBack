@@ -29,7 +29,7 @@ void updateProcSpikes(PlaydateAPI* _pd) {
     renderWallClutter(_pd);
   }
 
-  if (getFrameCount() < ANIM_FPS/2) {
+  if (getFrameCount_ycgb() < ANIM_FPS/2) {
     switch (s_state) {
       case 2: drawCBitmap(_pd, &m_arrow_r,  7, 9); break;
       case 4: drawCBitmap(_pd, &m_arrow_r, 11, 9); break;
@@ -106,7 +106,7 @@ bool tickSpikes(bool _doInit) {
     }
 
     if (s_state % 2 == 1) {
-      if (getFrameCount() % 3 == 0 && ++m_player_ycgb.m_playerFrame == MAX_FRAMES) m_player_ycgb.m_playerFrame = 0;
+      if (getFrameCount_ycgb() % 3 == 0 && ++m_player_ycgb.m_playerFrame == MAX_FRAMES) m_player_ycgb.m_playerFrame = 0;
       m_player_ycgb.m_position_x += PLAYER_SPEED;
       switch (s_state) {
         case 3: if (m_player_ycgb.m_position_x > SIZE*7  - SIZE/2) ++s_state; break;

@@ -14,7 +14,9 @@
 #define ANIM_FPS 20
 #define ANIM_DELAY (1000/ANIM_FPS)
 
-#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#ifndef MIN
+  #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#endif
 
 typedef enum {
   kStart,    // Special
@@ -95,7 +97,7 @@ typedef enum {
   kNStoneTypes
 } StoneTypes_t;
 
-#define MAX_LEVELS 3
+#define MAX_LEVELS_YCGB 3
 #define MIN_ROOMS 6
 #define MAX_ROOMS 20
 typedef struct {
@@ -105,12 +107,12 @@ typedef struct {
   int8_t m_difficulty;
   int8_t m_totalRooms;
   int8_t m_roomsVisited;
-  int8_t m_roomsPerLevel[MAX_LEVELS];
-  int8_t m_rooms[MAX_LEVELS][MAX_ROOMS];
-  int8_t m_roomGiveHint[MAX_LEVELS][MAX_ROOMS];
-  int8_t m_roomGiveHintValue[MAX_LEVELS][MAX_ROOMS];
-  int8_t m_roomNeedHint[MAX_LEVELS][MAX_ROOMS];
-  int8_t m_roomNeedHintValue[MAX_LEVELS][MAX_ROOMS];
+  int8_t m_roomsPerLevel[MAX_LEVELS_YCGB];
+  int8_t m_rooms[MAX_LEVELS_YCGB][MAX_ROOMS];
+  int8_t m_roomGiveHint[MAX_LEVELS_YCGB][MAX_ROOMS];
+  int8_t m_roomGiveHintValue[MAX_LEVELS_YCGB][MAX_ROOMS];
+  int8_t m_roomNeedHint[MAX_LEVELS_YCGB][MAX_ROOMS];
+  int8_t m_roomNeedHintValue[MAX_LEVELS_YCGB][MAX_ROOMS];
   int8_t m_finalPuzzle;
   int8_t m_gameOver;
   int8_t m_fallingDeath;
@@ -146,7 +148,7 @@ void setPDPtr_ycgb(PlaydateAPI* p);
 
 int gameLoop_ycgb(void* data);
 
-int getFrameCount(void);
+int getFrameCount_ycgb(void);
 bool getFlash(bool _constant);
 int getPlayerChoice(void);
 void resetPlayerChoice(void);
@@ -164,10 +166,10 @@ int getShieldC(int _value);
 void callbackReplacement(void);
 void gameWindowLoad_ycgb(void);
 void gameWindowUnload(void);
-void gameClickConfigHandler(uint32_t buttonPressed);
-void clickHandlerReplacement(void);
+void gameClickConfigHandler_ycgb(uint32_t buttonPressed);
+void clickHandlerReplacement_ycgb(void);
 bool atDestination(void);
-bool movePlayer(void);
+bool movePlayer_ycgb(void);
 bool newRoom(void);
 int getHorizontalOffset(void);
 void dungeonUpdateProc(void);

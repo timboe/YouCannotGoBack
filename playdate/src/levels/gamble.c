@@ -96,7 +96,7 @@ void doShortcut(void) {
   for (int _r = m_dungeon.m_room + 1; _r < m_dungeon.m_roomsPerLevel[_level]; ++_r) {
     if (checkShortcutRoom(_level, _r)) return;
   }
-  for (int _l = _level + 1; _level < MAX_LEVELS; ++_l) {
+  for (int _l = _level + 1; _level < MAX_LEVELS_YCGB; ++_l) {
     for (int _r = 0; _r < m_dungeon.m_roomsPerLevel[_l]; ++_r) {
       if (checkShortcutRoom(_l, _r)) return;
     }

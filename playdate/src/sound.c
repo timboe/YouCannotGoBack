@@ -2,7 +2,7 @@
 
 static PlaydateAPI* pd = NULL;
 
-bool m_sfxOn = true;
+bool m_sfxOn_ycgb = true;
 bool m_musicOn = true;
 
 FilePlayer* m_music_ycgb[2];
@@ -45,16 +45,16 @@ AudioSample* m_noSound;
 void music(bool _onoff) {
   m_musicOn = _onoff;
   if (m_musicOn) {
-    updateMusic( m_dungeon.m_level == 2 ? 1 : 0 );
+    updateMusic_ycgb( m_dungeon.m_level == 2 ? 1 : 0 );
   } else {
     if (pd->sound->fileplayer->isPlaying(m_music_ycgb[0])) pd->sound->fileplayer->stop(m_music_ycgb[0]);
     if (pd->sound->fileplayer->isPlaying(m_music_ycgb[1])) pd->sound->fileplayer->stop(m_music_ycgb[1]);
   }
 }
 
-void sfx(bool _onoff) {
-  m_sfxOn = _onoff;
-  if (!m_sfxOn) {
+void sfx_ycgb(bool _onoff) {
+  m_sfxOn_ycgb = _onoff;
+  if (!m_sfxOn_ycgb) {
     stopSounds();
   }
 }
@@ -71,7 +71,7 @@ void initSound_ycgb(PlaydateAPI* _pd) {
   for (int i=0; i<2; ++i) m_music_ycgb[i] = pd->sound->fileplayer->newPlayer();
   int result = pd->sound->fileplayer->loadIntoPlayer(m_music_ycgb[0], "sounds/8bitDungeonLevel");
   result &= pd->sound->fileplayer->loadIntoPlayer(m_music_ycgb[1], "sounds/8bitDungeonBoss");
-  if (m_sfxOn) pd->sound->fileplayer->play(m_music_ycgb[0], 0);
+  if (m_sfxOn_ycgb) pd->sound->fileplayer->play(m_music_ycgb[0], 0);
   m_playing = 0;
   pd->system->logToConsole("Loaded audio %i", result);
 
@@ -124,7 +124,7 @@ void initSound_ycgb(PlaydateAPI* _pd) {
   pd->sound->sampleplayer->setSample(m_firePlayer, m_fireSample);
 }
 
-void updateMusic(uint8_t _status) {
+void updateMusic_ycgb(uint8_t _status) {
   if (!m_musicOn) return;
 
   if (_status == 0) {
@@ -150,53 +150,53 @@ void deinitSound() {
 }
 
 void noSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->play(m_noPlayer, 1, 1.0f);
 }
 
 void fireSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->play(m_firePlayer, 1, 1.0f);
 }
 
 void chestSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_chestSample);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void looseSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_looseSample);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void winSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_winSample);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void footSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_footPlayer, m_foot[rand() % 4]);
   pd->sound->sampleplayer->play(m_footPlayer, 1, 1.0f);
 }
 
 void stairsSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_stairsAudio);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void hitSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_hit);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void sawSound(bool _start) {
-  if (_start && m_sfxOn) {
+  if (_start && m_sfxOn_ycgb) {
     pd->sound->sampleplayer->setSample(m_loopPlayer, m_sawSample);
     pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
   } else {
@@ -211,60 +211,60 @@ void sawVolume(float _v) {
 }
 
 void darkSound(int _n) {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   if (_n > 2) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_dark[_n]);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void beepSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_beep);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void clickSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_click);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void debufSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_debuf);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void bufSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_buf);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void reminderSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_reminder);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void boomSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->play(m_boomPlayer, 1, 1.0f);
 }
 
 void fallSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->play(m_fallPlayer, 1, 1.0f);
 }
 
 void passwordSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->setSample(m_samplePlayer_ycgb, m_password);
   pd->sound->sampleplayer->play(m_samplePlayer_ycgb, 1, 1.0f);
 }
 
 void fuseSound(bool _start) {
-  if (_start && m_sfxOn) {
+  if (_start && m_sfxOn_ycgb) {
     pd->sound->sampleplayer->setSample(m_loopPlayer, m_fuse);
     pd->sound->sampleplayer->play(m_loopPlayer, 0, 1.0f);
     pd->sound->sampleplayer->setVolume(m_loopPlayer, 1.0f, 1.0f);
@@ -274,19 +274,19 @@ void fuseSound(bool _start) {
 }
 
 void targetSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->stop(m_targetPlayer);
   pd->sound->sampleplayer->play(m_targetPlayer, 1, 1.0f);
 }
 
 void clackSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->stop(m_clackPlayer);
   pd->sound->sampleplayer->play(m_clackPlayer, 1, 1.0f);
 }
 
 void bellSound() {
-  if (!m_sfxOn) return;
+  if (!m_sfxOn_ycgb) return;
   pd->sound->sampleplayer->play(m_bellPlayer, 1, 1.0f);
 }
 

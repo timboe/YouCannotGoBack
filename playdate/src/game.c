@@ -53,7 +53,7 @@ char s_scoreNames[9][64] = {}; // 9 slots of 64 char
 char s_scoreValues[9][64] = {};
 #endif
 
-int getFrameCount() { return s_frameCount; }
+int getFrameCount_ycgb() { return s_frameCount; }
 GameState_t getGameState() { return s_gameState; }
 void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; pd->system->resetElapsedTime(); }
 void setGameState(GameState_t _state) { s_gameState = _state; }
@@ -70,7 +70,7 @@ bool getFlash(bool _constant) {
 
 void setPDPtr_ycgb(PlaydateAPI* p) { pd = p; }
 
-void gameClickConfigHandler(uint32_t buttonPressed) {
+void gameClickConfigHandler_ycgb(uint32_t buttonPressed) {
   clickSound();
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
   if (getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) {
@@ -92,8 +92,8 @@ bool newRoom() {
     ++m_dungeon.m_difficulty;
     bellSound();
     m_dungeon.m_room = 0;
-    if (m_dungeon.m_level == MAX_LEVELS-1) {
-      updateMusic(1); // Moving in to the final level
+    if (m_dungeon.m_level == MAX_LEVELS_YCGB-1) {
+      updateMusic_ycgb(1); // Moving in to the final level
     }
   };
   ++m_dungeon.m_roomsVisited;
@@ -216,18 +216,18 @@ void dungeonUpdateProc() {
 }
 
 // Temporary until the playdate eventHandler is functional for inputs
-void clickHandlerReplacement() {
+void clickHandlerReplacement_ycgb() {
   PDButtons current, pushed, released = 0;
   pd->system->getButtonState(&current, &pushed, &released);
   if (m_rotated) {
     if (pushed & kButtonUp) noSound(); // Button not used
-    if (pushed & kButtonRight) gameClickConfigHandler(kButtonUp);
-    if (pushed & kButtonDown) gameClickConfigHandler(kButtonRight);
-    if (pushed & kButtonLeft) gameClickConfigHandler(kButtonDown);
+    if (pushed & kButtonRight) gameClickConfigHandler_ycgb(kButtonUp);
+    if (pushed & kButtonDown) gameClickConfigHandler_ycgb(kButtonRight);
+    if (pushed & kButtonLeft) gameClickConfigHandler_ycgb(kButtonDown);
   } else {
-    if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
-    if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
-    if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
+    if (pushed & kButtonUp) gameClickConfigHandler_ycgb(kButtonUp);
+    if (pushed & kButtonRight) gameClickConfigHandler_ycgb(kButtonRight);
+    if (pushed & kButtonDown) gameClickConfigHandler_ycgb(kButtonDown);
     if (pushed & kButtonLeft) noSound(); // Button not used
   }
   if (pushed & kButtonA) noSound(); // Button not used
@@ -252,7 +252,7 @@ void callbackReplacement() {
 
 int gameLoop_ycgb(void* data) {
 
-  clickHandlerReplacement();
+  clickHandlerReplacement_ycgb();
   callbackReplacement();
 
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
@@ -265,7 +265,7 @@ int gameLoop_ycgb(void* data) {
   switch (s_gameState) {
     case kIdle: break;
     case kNewRoom: requestRedraw = newRoom(); break;
-    case kMovePlayer: requestRedraw = movePlayer(); break;
+    case kMovePlayer: requestRedraw = movePlayer_ycgb(); break;
     case kAwaitInput: requestRedraw = (s_frameCount % (ANIM_FPS/4) == 0); break;
     case kFadeIn: case kFadeOut: requestRedraw = true; break;
     case kDisplayMsg: requestRedraw = true; break;
@@ -329,7 +329,7 @@ bool atDestination() {
   return (m_player_ycgb.m_target_x == m_player_ycgb.m_position_x && m_player_ycgb.m_target_y == m_player_ycgb.m_position_y);
 }
 
-bool movePlayer() {
+bool movePlayer_ycgb() {
   if (s_frameCount % 3 == 0) {
     if (++m_player_ycgb.m_playerFrame == MAX_FRAMES) {
       m_player_ycgb.m_playerFrame = 0;
@@ -350,7 +350,7 @@ bool movePlayer() {
 void menuOptionsCallback_ycgb(void* userdata) {
   if (userdata == NULL) {
     // chose reset
-    return generate(pd);
+    return generate_ycgb(pd);
   }
 
   int _value = pd->system->getMenuItemValue((PDMenuItem*)userdata);
@@ -372,16 +372,16 @@ void menuOptionsCallbackAudio_ycgb(void* userdata) {
   int _value = pd->system->getMenuItemValue((PDMenuItem*)userdata);
   if (_value == 0) {
     music(true);
-    sfx(true);
+    sfx_ycgb(true);
   } else if (_value == 1) {
     music(true);
-    sfx(false);
+    sfx_ycgb(false);
   } else if (_value == 2) {
     music(false);
-    sfx(true);
+    sfx_ycgb(true);
   } else {
     music(false);
-    sfx(false);
+    sfx_ycgb(false);
   }
 }
 
@@ -411,7 +411,7 @@ void gameWindowLoad_ycgb(void) {
   updateScores();
   #endif
 
-  generate(pd);
+  generate_ycgb(pd);
 }
 
 #ifdef SCOREBOARD

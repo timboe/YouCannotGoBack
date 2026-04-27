@@ -47,7 +47,7 @@ extern LCDBitmap* m_target;
 extern LCDBitmap* m_ball_ycgb;
 extern LCDBitmap* m_danger;
 
-extern LCDBitmap* m_parchment;
+extern LCDBitmap* m_parchment_ycgb;
 
 extern LCDBitmap* m_wheel;
 extern LCDBitmap* m_spin[3];
