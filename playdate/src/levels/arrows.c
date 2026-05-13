@@ -42,7 +42,7 @@ void updateProcArrows(PlaydateAPI* _pd) {
   renderPlayer(_pd);
 
   // render floor arrows
-  const bool _r = m_player.m_position_x > SIZE*8 && getFlash(true);
+  const bool _r = m_player_ycgb.m_position_x > SIZE*8 && getFlash(true);
   const int8_t MAX_X = (m_dungeon.m_difficulty == 0 ? 3 : 5);
   const int8_t MAX_Y = (m_dungeon.m_difficulty == 0 ? 3 : 7);
   for (int _x = 0; _x < MAX_X; ++_x) {
@@ -59,7 +59,7 @@ void updateProcArrows(PlaydateAPI* _pd) {
   _pd->graphics->setDrawMode(kDrawModeCopy);
 
   // Draw on top
-  if (m_player.m_position_x <= SIZE*4 && getFlash(true)) renderPlayer(_pd);
+  if (m_player_ycgb.m_position_x <= SIZE*4 && getFlash(true)) renderPlayer(_pd);
 
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
@@ -135,7 +135,6 @@ void gen(PlaydateAPI* _pd) {
   memset(&s_maze1, 0, sizeof(uint8_t)*5*7);
   memset(&s_stack, 0, sizeof(uint8_t)*5*7*2);
   const int8_t MAX_X = (m_dungeon.m_difficulty == 0 ? 3 : 5);
-  const int8_t MAX_Y = (m_dungeon.m_difficulty == 0 ? 3 : 7);
   uint8_t _begin, _end;
   // Modify entry and exit points for the larger maze
   if (m_dungeon.m_difficulty == 0) {
@@ -226,8 +225,8 @@ bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
     s_state = 0;
     s_tickA = TICK/3;
     s_tickB = TICK;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     s_start = rand() % 3; // entry point
     s_correct = rand() % 3; // exit point
 
@@ -267,11 +266,11 @@ bool tickArrows(PlaydateAPI* _pd, bool _doInit) {
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
-    m_player.m_target_x = SIZE*4;
+    m_player_ycgb.m_target_x = SIZE*4;
     switch (s_start) {
-      case 0: m_player.m_target_y = SIZE*5; break;
-      case 1: m_player.m_target_y = SIZE*9; break;
-      case 2: m_player.m_target_y = SIZE*13; break;
+      case 0: m_player_ycgb.m_target_y = SIZE*5; break;
+      case 1: m_player_ycgb.m_target_y = SIZE*9; break;
+      case 2: m_player_ycgb.m_target_y = SIZE*13; break;
     }
     setGameState(kMovePlayer);
     ++s_state;

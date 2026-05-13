@@ -30,11 +30,15 @@
 #include "levels/shortcut.h"
 #include "levels/arrows.h"
 
-PlaydateAPI* pd = NULL;
+#ifdef SDL2API
+  #include "../srcgame/game.h"
+#else  
+  PlaydateAPI* pd = NULL;
+#endif
 
 static int s_frameCount = 0;
 Dungeon_t m_dungeon = {0};
-Player_t m_player = {0};
+Player_ycgb_t m_player_ycgb = {0};
 static GameState_t s_gameState = kIdle;
 static int s_playerChoice = 0;
 static const char* s_displayMsg = NULL;
@@ -49,7 +53,7 @@ char s_scoreNames[9][64] = {}; // 9 slots of 64 char
 char s_scoreValues[9][64] = {};
 #endif
 
-int getFrameCount() { return s_frameCount; }
+int getFrameCount_ycgb() { return s_frameCount; }
 GameState_t getGameState() { return s_gameState; }
 void setDisplayMsg(const char* _msg) { s_displayMsg = _msg; pd->system->resetElapsedTime(); }
 void setGameState(GameState_t _state) { s_gameState = _state; }
@@ -64,9 +68,9 @@ bool getFlash(bool _constant) {
   return _value;
 }
 
-void setPDPtr(PlaydateAPI* p) { pd = p; }
+void setPDPtr_ycgb(PlaydateAPI* p) { pd = p; }
 
-void gameClickConfigHandler(uint32_t buttonPressed) {
+void gameClickConfigHandler_ycgb(uint32_t buttonPressed) {
   clickSound();
   if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
   if (getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) {
@@ -88,8 +92,8 @@ bool newRoom() {
     ++m_dungeon.m_difficulty;
     bellSound();
     m_dungeon.m_room = 0;
-    if (m_dungeon.m_level == MAX_LEVELS-1) {
-      updateMusic(1); // Moving in to the final level
+    if (m_dungeon.m_level == MAX_LEVELS_YCGB-1) {
+      updateMusic_ycgb(1); // Moving in to the final level
     }
   };
   ++m_dungeon.m_roomsVisited;
@@ -119,9 +123,9 @@ bool newRoom() {
 int getHorizontalOffset() {
   int off = 0;
   switch (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ]) {
-    case kStart: off = (m_player.m_position_x * -1) + 24; break;
+    case kStart: off = (m_player_ycgb.m_position_x * -1) + 24; break;
     case kEnd: off = -12; break;
-    default: off = m_player.m_position_x * -1;
+    default: off = m_player_ycgb.m_position_x * -1;
   }
   if (off > 0) off = 0;
   return off < -24 ? -24 : off;
@@ -202,8 +206,8 @@ void dungeonUpdateProc() {
   if (m_dungeon.m_gameOver == 0 && m_rotated) renderProgressBar(pd, m_rotated);
 
   // Do fade
-  if (s_gameState == kFadeIn) renderFade(pd, true, m_rotated);
-  else if (s_gameState == kFadeOut) renderFade(pd, false, m_rotated);
+  if (s_gameState == kFadeIn) renderFade_ycgb(pd, true, m_rotated);
+  else if (s_gameState == kFadeOut) renderFade_ycgb(pd, false, m_rotated);
 
   // Draw FPS indicator (dbg only)
   #ifdef DEBUG_MODE
@@ -212,28 +216,30 @@ void dungeonUpdateProc() {
 }
 
 // Temporary until the playdate eventHandler is functional for inputs
-void clickHandlerReplacement() {
+void clickHandlerReplacement_ycgb() {
   PDButtons current, pushed, released = 0;
   pd->system->getButtonState(&current, &pushed, &released);
   if (m_rotated) {
     if (pushed & kButtonUp) noSound(); // Button not used
-    if (pushed & kButtonRight) gameClickConfigHandler(kButtonUp);
-    if (pushed & kButtonDown) gameClickConfigHandler(kButtonRight);
-    if (pushed & kButtonLeft) gameClickConfigHandler(kButtonDown);
+    if (pushed & kButtonRight) gameClickConfigHandler_ycgb(kButtonUp);
+    if (pushed & kButtonDown) gameClickConfigHandler_ycgb(kButtonRight);
+    if (pushed & kButtonLeft) gameClickConfigHandler_ycgb(kButtonDown);
   } else {
-    if (pushed & kButtonUp) gameClickConfigHandler(kButtonUp);
-    if (pushed & kButtonRight) gameClickConfigHandler(kButtonRight);
-    if (pushed & kButtonDown) gameClickConfigHandler(kButtonDown);
+    if (pushed & kButtonUp) gameClickConfigHandler_ycgb(kButtonUp);
+    if (pushed & kButtonRight) gameClickConfigHandler_ycgb(kButtonRight);
+    if (pushed & kButtonDown) gameClickConfigHandler_ycgb(kButtonDown);
     if (pushed & kButtonLeft) noSound(); // Button not used
   }
   if (pushed & kButtonA) noSound(); // Button not used
   if (pushed & kButtonB) noSound(); // Button not used
 
-  static float fx, fy, fz;
-  if (m_autoRotation) {
-    pd->system->getAccelerometer(&fx, &fy, &fz);
-    m_rotated = fabs(fx) > fabs(fy);
-  }
+  #ifndef SDL2API
+    static float fx, fy, fz;
+    if (m_autoRotation) {
+      pd->system->getAccelerometer(&fx, &fy, &fz);
+      m_rotated = fabs(fx) > fabs(fy);
+    }
+  #endif
 }
 
 // We don't have timer callbacks, replaces endRenderMsg
@@ -244,9 +250,9 @@ void callbackReplacement() {
   }
 }
 
-int gameLoop(void* data) {
+int gameLoop_ycgb(void* data) {
 
-  clickHandlerReplacement();
+  clickHandlerReplacement_ycgb();
   callbackReplacement();
 
   if (++s_frameCount == ANIM_FPS) s_frameCount = 0;
@@ -259,7 +265,7 @@ int gameLoop(void* data) {
   switch (s_gameState) {
     case kIdle: break;
     case kNewRoom: requestRedraw = newRoom(); break;
-    case kMovePlayer: requestRedraw = movePlayer(); break;
+    case kMovePlayer: requestRedraw = movePlayer_ycgb(); break;
     case kAwaitInput: requestRedraw = (s_frameCount % (ANIM_FPS/4) == 0); break;
     case kFadeIn: case kFadeOut: requestRedraw = true; break;
     case kDisplayMsg: requestRedraw = true; break;
@@ -320,31 +326,31 @@ int gameLoop(void* data) {
 }
 
 bool atDestination() {
-  return (m_player.m_target_x == m_player.m_position_x && m_player.m_target_y == m_player.m_position_y);
+  return (m_player_ycgb.m_target_x == m_player_ycgb.m_position_x && m_player_ycgb.m_target_y == m_player_ycgb.m_position_y);
 }
 
-bool movePlayer() {
+bool movePlayer_ycgb() {
   if (s_frameCount % 3 == 0) {
-    if (++m_player.m_playerFrame == MAX_FRAMES) {
-      m_player.m_playerFrame = 0;
+    if (++m_player_ycgb.m_playerFrame == MAX_FRAMES) {
+      m_player_ycgb.m_playerFrame = 0;
     }
-    if (m_player.m_playerFrame % 2 == 0) footSound();
+    if (m_player_ycgb.m_playerFrame % 2 == 0) footSound();
   }
 
-  if      (m_player.m_target_x > m_player.m_position_x) m_player.m_position_x += PLAYER_SPEED;
-  if      (m_player.m_target_y > m_player.m_position_y) m_player.m_position_y += PLAYER_SPEED;
-  else if (m_player.m_target_y < m_player.m_position_y) m_player.m_position_y -= PLAYER_SPEED;
+  if      (m_player_ycgb.m_target_x > m_player_ycgb.m_position_x) m_player_ycgb.m_position_x += PLAYER_SPEED;
+  if      (m_player_ycgb.m_target_y > m_player_ycgb.m_position_y) m_player_ycgb.m_position_y += PLAYER_SPEED;
+  else if (m_player_ycgb.m_target_y < m_player_ycgb.m_position_y) m_player_ycgb.m_position_y -= PLAYER_SPEED;
   if (atDestination()) {
-    m_player.m_playerFrame = 0;
+    m_player_ycgb.m_playerFrame = 0;
     s_gameState = kLevelSpecific;
   }
   return true;
 }
 
-void menuOptionsCallback(void* userdata) {
+void menuOptionsCallback_ycgb(void* userdata) {
   if (userdata == NULL) {
     // chose reset
-    return generate(pd);
+    return generate_ycgb(pd);
   }
 
   int _value = pd->system->getMenuItemValue((PDMenuItem*)userdata);
@@ -362,37 +368,39 @@ void menuOptionsCallback(void* userdata) {
   }
 }
 
-void menuOptionsCallbackAudio(void* userdata) {
+void menuOptionsCallbackAudio_ycgb(void* userdata) {
   int _value = pd->system->getMenuItemValue((PDMenuItem*)userdata);
   if (_value == 0) {
     music(true);
-    sfx(true);
+    sfx_ycgb(true);
   } else if (_value == 1) {
     music(true);
-    sfx(false);
+    sfx_ycgb(false);
   } else if (_value == 2) {
     music(false);
-    sfx(true);
+    sfx_ycgb(true);
   } else {
     music(false);
-    sfx(false);
+    sfx_ycgb(false);
   }
 }
 
-void gameWindowLoad() {
+void gameWindowLoad_ycgb(void) {
   setGameState(kIdle);
 
   m_rotatedBitmap = pd->graphics->newBitmap(400, 240, kColorWhite);
 
   static const char* options2[] = {"Music+SFX", "Music", "SFX", "None"};
-  PDMenuItem* _menu2 = pd->system->addOptionsMenuItem("audio", options2, 4, menuOptionsCallbackAudio, NULL);
+  PDMenuItem* _menu2 = pd->system->addOptionsMenuItem("audio", options2, 4, menuOptionsCallbackAudio_ycgb, NULL);
   pd->system->setMenuItemUserdata(_menu2, (void*) _menu2); // User data is a pointer to the menu itself
 
-  pd->system->addMenuItem("restart", menuOptionsCallback, NULL);
+  pd->system->addMenuItem("restart", menuOptionsCallback_ycgb, NULL);
 
-  static const char* options[] = {"Auto", "Landscape", "Portrait"};
-  PDMenuItem* _menu = pd->system->addOptionsMenuItem("rotate", options, 3, menuOptionsCallback, NULL);
-  pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
+  #ifndef SDL2API
+    static const char* options[] = {"Auto", "Landscape", "Portrait"};
+    PDMenuItem* _menu = pd->system->addOptionsMenuItem("rotate", options, 3, menuOptionsCallback_ycgb, NULL);
+    pd->system->setMenuItemUserdata(_menu, (void*) _menu); // User data is a pointer to the menu itself
+  #endif
 
   pd->system->setPeripheralsEnabled(kAccelerometer);
   
@@ -403,7 +411,7 @@ void gameWindowLoad() {
   updateScores();
   #endif
 
-  generate(pd);
+  generate_ycgb(pd);
 }
 
 #ifdef SCOREBOARD

@@ -47,8 +47,8 @@ void updateProcBridge(PlaydateAPI* _pd) {
 bool tickBridge(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(4, 0, 20);
     s_correct = randomiseChoices(_pd, s_choices, 0);
     return false;
@@ -60,16 +60,16 @@ bool tickBridge(PlaydateAPI* _pd, bool _doInit) {
      setGameState(kAwaitInput);
      ++s_state;
   } else if (s_state == 2) { // Move to chosen bridge
-    m_player.m_target_x = SIZE*3;
+    m_player_ycgb.m_target_x = SIZE*3;
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target_y = SIZE*5; break;
-      case 1: m_player.m_target_y = SIZE*9; break;
-      case 2: m_player.m_target_y = SIZE*13; break;
+      case 0: m_player_ycgb.m_target_y = SIZE*5; break;
+      case 1: m_player_ycgb.m_target_y = SIZE*9; break;
+      case 2: m_player_ycgb.m_target_y = SIZE*13; break;
     }
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) { // move to center of bridge
-    m_player.m_target_x = SIZE*8;
+    m_player_ycgb.m_target_x = SIZE*8;
     s_breakPoint = 11;
     if (getPlayerChoice() == s_correct) s_state = 5;
     else { // Wrong choice!

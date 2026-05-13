@@ -58,7 +58,7 @@ void drawLine(PlaydateAPI* _pd, int _x1, int _y1, int _x2, int _y2, int _w, LCDC
 }
 
 void lines(PlaydateAPI* _pd, LCDColor _c, int _w) {
-  const bool _l = m_player.m_position_x < SIZE*8 || getFlash(true); 
+  const bool _l = m_player_ycgb.m_position_x < SIZE*8 || getFlash(true); 
   const bool _p0 = _l || s_path != 0;
   const bool _p1 = _l || s_path != 1;
   const bool _p2 = _l || s_path != 2;
@@ -98,8 +98,8 @@ void updateProcMaze(PlaydateAPI* _pd) {
 bool tickMaze(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(15, 20, 0);
     s_path = rand() % 3;
     s_maze = (m_dungeon.m_difficulty * 2) + (rand() % 4);
@@ -110,11 +110,11 @@ bool tickMaze(PlaydateAPI* _pd, bool _doInit) {
  if (s_state == 0) { // start initial move
    enterRoom(&s_state);
  } else if (s_state == 1) { // initial move is done
-   m_player.m_target_x = SIZE*3;
+   m_player_ycgb.m_target_x = SIZE*3;
    switch (s_path) {
-     case 0: m_player.m_target_y = SIZE*3; break;
-     case 1: m_player.m_target_y = SIZE*9; break;
-     case 2: m_player.m_target_y = SIZE*15; break;
+     case 0: m_player_ycgb.m_target_y = SIZE*3; break;
+     case 1: m_player_ycgb.m_target_y = SIZE*9; break;
+     case 2: m_player_ycgb.m_target_y = SIZE*15; break;
    }
    setGameState(kMovePlayer);
    ++s_state;

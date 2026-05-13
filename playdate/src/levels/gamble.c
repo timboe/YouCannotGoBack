@@ -96,7 +96,7 @@ void doShortcut(void) {
   for (int _r = m_dungeon.m_room + 1; _r < m_dungeon.m_roomsPerLevel[_level]; ++_r) {
     if (checkShortcutRoom(_level, _r)) return;
   }
-  for (int _l = _level + 1; _level < MAX_LEVELS; ++_l) {
+  for (int _l = _level + 1; _level < MAX_LEVELS_YCGB; ++_l) {
     for (int _r = 0; _r < m_dungeon.m_roomsPerLevel[_l]; ++_r) {
       if (checkShortcutRoom(_l, _r)) return;
     }
@@ -107,8 +107,8 @@ bool tickGamble(bool _doInit) {
   const Hints_t _hint = m_dungeon.m_roomNeedHint[m_dungeon.m_level][m_dungeon.m_room];
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
     s_v = 50.0f;
     // 0.5 - 1.5 is a little over one full revolution,
@@ -135,14 +135,14 @@ bool tickGamble(bool _doInit) {
     if (getPlayerChoice() == 0) { 
       s_state = 10; // leave  
     } else {
-      m_player.m_target_x = SIZE*3;
-      m_player.m_target_y = SIZE*15;
+      m_player_ycgb.m_target_x = SIZE*3;
+      m_player_ycgb.m_target_y = SIZE*15;
       setGameState(kMovePlayer);
       s_state = 3;
     }
   } else if (s_state == 3) {
-    m_player.m_target_x = SIZE*9;
-    m_player.m_target_y = SIZE*15;
+    m_player_ycgb.m_target_x = SIZE*9;
+    m_player_ycgb.m_target_y = SIZE*15;
     setGameState(kMovePlayer);
     s_state = 4;
   } else if (s_state == 4) {
@@ -211,13 +211,13 @@ bool tickGamble(bool _doInit) {
     setGameState(kDisplayMsg);
     ++s_state;
   } else if (s_state == 7) {
-    m_player.m_target_x = SIZE*12;
-    m_player.m_target_y = SIZE*15;
+    m_player_ycgb.m_target_x = SIZE*12;
+    m_player_ycgb.m_target_y = SIZE*15;
     setGameState(kMovePlayer);
     s_state = 8;
   } else if (s_state == 8) {
-    m_player.m_target_x = SIZE*17;
-    m_player.m_target_y = SIZE*13;
+    m_player_ycgb.m_target_x = SIZE*17;
+    m_player_ycgb.m_target_y = SIZE*13;
     setGameState(kMovePlayer);
     s_state = 11;
 

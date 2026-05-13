@@ -50,8 +50,8 @@ void updateProcFinal(PlaydateAPI* _pd) {
 bool tickFinal(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     s_fire_x[0] = 1*SIZE;
     s_fire_y[0] = 2*SIZE;
     s_fire_x[1] = 1*SIZE;
@@ -68,11 +68,11 @@ bool tickFinal(bool _doInit) {
     setGameState(kAwaitInput);
     ++s_state;
   } else if (s_state == 2) {
-    m_player.m_target_x = SIZE*5;
+    m_player_ycgb.m_target_x = SIZE*5;
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target_y = SIZE*5; break;
-      case 1: m_player.m_target_y = SIZE*9; break;
-      case 2: m_player.m_target_y = SIZE*13; break;
+      case 0: m_player_ycgb.m_target_y = SIZE*5; break;
+      case 1: m_player_ycgb.m_target_y = SIZE*9; break;
+      case 2: m_player_ycgb.m_target_y = SIZE*13; break;
     }
     setGameState(kMovePlayer);
     ++s_state;
@@ -88,14 +88,14 @@ bool tickFinal(bool _doInit) {
     // LOOSE move fires
     for (int _f = 0; _f < 2; ++_f) {
       bool _move = false;
-      if (s_fire_x[_f] < m_player.m_position_x - SIZE) {
+      if (s_fire_x[_f] < m_player_ycgb.m_position_x - SIZE) {
         ++s_fire_x[_f];
         _move = true;
       }
-      if (s_fire_y[_f] < m_player.m_position_y) {
+      if (s_fire_y[_f] < m_player_ycgb.m_position_y) {
         ++s_fire_y[_f];
         _move = true;
-      } else if (s_fire_y[_f] > m_player.m_position_y) {
+      } else if (s_fire_y[_f] > m_player_ycgb.m_position_y) {
         --s_fire_y[_f];
         _move = true;
       }
@@ -107,8 +107,8 @@ bool tickFinal(bool _doInit) {
     }
     return true; //redraw
   } else if (s_state == 6) {
-    m_player.m_target_x = SIZE*12;
-    m_player.m_target_y = SIZE*9;
+    m_player_ycgb.m_target_x = SIZE*12;
+    m_player_ycgb.m_target_y = SIZE*9;
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 7) {
@@ -117,7 +117,7 @@ bool tickFinal(bool _doInit) {
     bufSound();
     ++s_state;
   } else if (s_state == 8) {
-    m_player.m_target_x = SIZE*15;
+    m_player_ycgb.m_target_x = SIZE*15;
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 9) {

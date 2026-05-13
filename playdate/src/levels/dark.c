@@ -35,8 +35,8 @@ void updateProcDark(PlaydateAPI* _pd) {
 bool tickDark(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = SIZE*3;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = SIZE*3;
+    m_player_ycgb.m_position_y = SIZE*9;
     s_fire = -1;
     s_ringSize = 0;
     for (int _i = 0; _i < 3; ++_i) {

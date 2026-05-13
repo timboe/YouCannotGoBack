@@ -45,38 +45,43 @@ void renderGameFrame(PlaydateAPI* _pd) {
   drawBitmapAbs(_pd, m_borderR, 144+128, 0);
   _pd->graphics->fillRect(128, 0, 144, 36, kColorBlack);
   _pd->graphics->fillRect(128, 52+168, 144, 20, kColorBlack);
-  static const char _portraitA[] = "Best";
-  static const char _portraitB[] = "Played In";
-  static const char _portraitC[] = "Portrait";
-  static const char _portraitD[] = "Mode!";
-#ifdef SCOREBOARD
-  static const char _portraitVersion[] = "v2.0c";
-#else
-  static const char _portraitVersion[] = "v2.0i";
-#endif
+  #ifdef SCOREBOARD
+    static const char _portraitVersion[] = "v2.1c";
+  #else
+    static const char _portraitVersion[] = "v2.1i";
+  #endif
+  //
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _vb = {.x = 32+16, .y = 0, .width = 32, .height = 16};
     renderText(_pd, _portraitVersion, _vb, kDrawModeFillWhite);
-    PDRect _b = {.x = 8, .y = 52, .width = 96+16, .height = 128+8};
-    renderTextInFrame(_pd, _portraitA, _b);
-    _b.y += 16;
-    renderText(_pd, _portraitB, _b, kDrawModeFillBlack);
-    _b.y += 16;
-    renderText(_pd, _portraitC, _b, kDrawModeFillBlack);
-    _b.y += 16;
-    renderText(_pd, _portraitD, _b, kDrawModeFillBlack);
-    static float rot = 0;
-    rot -= 4.0f;
-    if (rot < -90.0f) rot = 90.0f;
-    drawBitmapAbsRot(_pd, m_rotate, 64, 128+5+20, rot > 0.0f ? -90.0f : rot);
   }
+  #ifndef SDL2API
+    static const char _portraitA[] = "Best";
+    static const char _portraitB[] = "Played In";
+    static const char _portraitC[] = "Portrait";
+    static const char _portraitD[] = "Mode!";
+    if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
+      PDRect _b = {.x = 8, .y = 52, .width = 96+16, .height = 128+8};
+      renderTextInFrame(_pd, _portraitA, _b);
+      _b.y += 16;
+      renderText(_pd, _portraitB, _b, kDrawModeFillBlack);
+      _b.y += 16;
+      renderText(_pd, _portraitC, _b, kDrawModeFillBlack);
+      _b.y += 16;
+      renderText(_pd, _portraitD, _b, kDrawModeFillBlack);
+      static float rot = 0;
+      rot -= 4.0f;
+      if (rot < -90.0f) rot = 90.0f;
+      drawBitmapAbsRot(_pd, m_rotate, 64, 128+5+20, rot > 0.0f ? -90.0f : rot);
+    }
+  #endif
 }
 
 #ifdef SCOREBOARD
 void renderScoresFrame(PlaydateAPI* _pd) {
   static char _buf[64*9 + 2];
   static bool flip = false;
-  if (!getFrameCount()) flip = !flip;
+  if (!getFrameCount_ycgb()) flip = !flip;
   if (m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ] == kStart) {
     PDRect _b = {.x = 144+128+8 , .y = 32-8, .width = 96+16, .height = 128+64};
     static const char _scoreA[] = "High Scores";
@@ -93,14 +98,18 @@ void renderScoresFrame(PlaydateAPI* _pd) {
 #endif
 
 void renderClear(PlaydateAPI* _pd, bool transparentCentre) {
+  uintptr_t c = (uintptr_t)kColorChekerboard;
+  #ifdef SDL2API
+    c = (uintptr_t)kColorBlack;
+  #endif
   if (transparentCentre) {
-    _pd->graphics->clear((uintptr_t)kColorChekerboard);
+    _pd->graphics->clear(c);
     _pd->graphics->fillRect(0, 0, SIZE*18, SIZE*2, kColorBlack);
     _pd->graphics->fillRect(0, 0, SIZE*2, SIZE*21, kColorBlack);
     _pd->graphics->fillRect(0, SIZE*20, SIZE*18, SIZE*(2+1), kColorBlack); // Extend the bottom
     _pd->graphics->fillRect(SIZE*17, 0, SIZE*1, SIZE*21, kColorBlack); 
   } else {
-    _pd->graphics->clear((uintptr_t)kColorChekerboard);
+    _pd->graphics->clear(c);
     _pd->graphics->fillRect(0, 0, SIZE*19, SIZE*24, kColorBlack);
   }
 }
@@ -115,7 +124,7 @@ void renderArrows(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd) {
 }
 
 void renderArrows2(PlaydateAPI* _pd, int8_t _x, int8_t _yStart, int8_t _yAdd, bool _0, bool _1, bool _2, bool _force) {
-  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && (_force || getFrameCount() < ANIM_FPS/2)) {
+  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && (_force || getFrameCount_ycgb() < ANIM_FPS/2)) {
     if (_0) drawCBitmap(_pd, &m_arrow_u, _x, _yStart);
     if (_1) drawCBitmap(_pd, &m_arrow_r, _x, _yStart + _yAdd);
     if (_2) drawCBitmap(_pd, &m_arrow_d, _x, _yStart + _yAdd + _yAdd);
@@ -153,15 +162,15 @@ void renderClutter(PlaydateAPI* _pd) {
 void renderProgressBar(PlaydateAPI* _pd, bool isRotated) {
   _pd->graphics->setLineCapStyle(kLineCapStyleRound);
   if (isRotated) {
-    const static PDRect _b = {.x = 0, .y = 0, .width = 400/2, .height = 240/2}; // We are scaled in
+    static const PDRect _b = {.x = 0, .y = 0, .width = 400/2, .height = 240/2}; // We are scaled in
     // Based on playdate screen (rendered late, ignores side-scroll)
     int _x1 = SIZE;
     int _y1 = 0;
     int _x2 = SIZE;
     int _y2 = ( _b.height * m_dungeon.m_roomsVisited ) / m_dungeon.m_totalRooms;
-    _pd->graphics->drawLine(_x1, _y1, _x1, _y2, /*width=*/ 4, kColorWhite);
+    _pd->graphics->drawLine(_x1, _y1, _x2, _y2, /*width=*/ 4, kColorWhite);
   } else {
-    const static PDRect _b = {.x = 0, .y = 0, .width = 144, .height = 168}; 
+    static const PDRect _b = {.x = 0, .y = 0, .width = 144, .height = 168}; 
     // Based on pebble screen
     int _x1 = 0;
     int _w = _b.width;
@@ -374,7 +383,7 @@ void renderBoxGridBox(PlaydateAPI* _pd, int _x1, int _y1, LCDColor _c, int8_t _o
 void renderGreekText(PlaydateAPI* _pd, const char* _msg, int _i) {
   PDRect _b = {.x = 8*SIZE, .y = 5*SIZE, .width = 6*SIZE, .height =2*SIZE};
   _b.y += 4*_i*SIZE;
-  const static int _text_y_offset = 2;
+  static const int _text_y_offset = 2;
   _pd->graphics->setDrawMode(kDrawModeFillBlack);
   _pd->graphics->setFont(m_fontGreek); /// xxx
   int _len = _pd->graphics->getTextWidth(m_fontGreek, _msg, strlen(_msg), kUTF8Encoding, /*tracking*/ 0);
@@ -388,7 +397,7 @@ void renderGreekFrames(PlaydateAPI* _pd, const char* _a, const char* _b, const c
   for (int _i = 0; _i < 3; ++_i) {
     _pd->graphics->fillRect(_rect.x, _rect.y, _rect.width, _rect.height, kColorWhite);
     _pd->graphics->drawRect(_rect.x+2, _rect.y+2, _rect.width-4, _rect.height-4, kColorBlack);
-    drawBitmapAbs(_pd, m_parchment, _rect.x - 8, _rect.y - 4);
+    drawBitmapAbs(_pd, m_parchment_ycgb, _rect.x - 8, _rect.y - 4);
     _rect.y += 4*SIZE;
   }
   renderGreekText(_pd, _a, 0);
@@ -403,14 +412,13 @@ void renderFrame(PlaydateAPI* _pd, PDRect _b) {
 }
 
 void renderTextInFrame(PlaydateAPI* _pd, const char* _msg, PDRect _b) {
-  const static int _text_y_offset = SIZE*2;
   _pd->graphics->fillRect(_b.x, _b.y, _b.width, _b.height, kColorWhite);
   _pd->graphics->drawRect(_b.x+2, _b.y+2, _b.width-4, _b.height-4, kColorBlack);
   renderText(_pd, _msg, _b, kDrawModeFillBlack);
 }
 
 void renderText(PlaydateAPI* _pd, const char* _msg, PDRect _b, LCDBitmapDrawMode _dm) {
-  const static int _text_y_offset = SIZE*2;
+  static const int _text_y_offset = SIZE*2;
   _pd->graphics->setDrawMode(_dm);
   _pd->graphics->setFont(m_fontMsg);
   int _len = _pd->graphics->getTextWidth(m_fontMsg, _msg, strlen(_msg), kASCIIEncoding, /*tracking*/ 0);
@@ -638,12 +646,12 @@ void renderFinalPit(PlaydateAPI* _pd) {
 }
 
 void renderPlayer(PlaydateAPI* _pd) {
-  uint16_t _pos_x = m_player.m_position_x;
-  uint16_t _pos_y = m_player.m_position_y;
-  if (m_player.m_playerFrame == 1 || m_player.m_playerFrame == 4) --_pos_y;
-  LCDBitmap* _ps = _pd->graphics->getTableBitmap(m_playerTable, m_player.m_playerFrame);
-  if (m_player.m_rotation) {
-    drawBitmapAbsRot(_pd, _ps, _pos_x + 8, _pos_y + 8, m_player.m_rotation);
+  uint16_t _pos_x = m_player_ycgb.m_position_x;
+  uint16_t _pos_y = m_player_ycgb.m_position_y;
+  if (m_player_ycgb.m_playerFrame == 1 || m_player_ycgb.m_playerFrame == 4) --_pos_y;
+  LCDBitmap* _ps = _pd->graphics->getTableBitmap(m_playerTable, m_player_ycgb.m_playerFrame);
+  if (m_player_ycgb.m_rotation) {
+    drawBitmapAbsRot(_pd, _ps, _pos_x + 8, _pos_y + 8, m_player_ycgb.m_rotation);
   } else {
     drawBitmapAbs(_pd, _ps, _pos_x, _pos_y);
   }
@@ -693,7 +701,7 @@ void renderBorderText(PlaydateAPI* _pd, PDRect _loc, LCDFont* _f, const char* _b
 #define SIZE_FINE SIZE/2
 void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top) {
 
-  const static int8_t s_y1[SPIKES] = {0, SIZE_FINE*7, SIZE_FINE*14, SIZE_FINE*21};
+  static const int8_t s_y1[SPIKES] = {0, SIZE_FINE*7, SIZE_FINE*14, SIZE_FINE*21};
 
   for (int _x = 0; _x < 3; ++_x) {
     for (int _i = (_top ? 0 : 2); _i < (_top ? 2 : SPIKES); ++_i) {
@@ -709,13 +717,13 @@ void renderSpikes(PlaydateAPI* _pd, float* _off, bool _top) {
 }
 
 
-void renderFade(PlaydateAPI* _pd, bool _in, bool _isRotated) {
-  if (_in == false && m_dungeon.m_fallingDeath == true) m_player.m_position_y += 4;
+void renderFade_ycgb(PlaydateAPI* _pd, bool _in, bool _isRotated) {
+  if (_in == false && m_dungeon.m_fallingDeath == true) m_player_ycgb.m_position_y += 4;
 
   if (_in == false && (m_dungeon.m_fallingDeath == true 
-    || m_dungeon.m_spinningDeath == true)) m_player.m_rotation += 24.0f;
+    || m_dungeon.m_spinningDeath == true)) m_player_ycgb.m_rotation += 24.0f;
 
-  if (m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kShortcut) m_player.m_position_x += PLAYER_SPEED;
+  if (m_dungeon.m_rooms[m_dungeon.m_level][m_dungeon.m_room] == kShortcut) m_player_ycgb.m_position_x += PLAYER_SPEED;
 
   static int s_progress = 0;
   static int s_pattern = 0;

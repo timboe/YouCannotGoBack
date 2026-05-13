@@ -23,7 +23,7 @@ void renderSpikeballLower(PlaydateAPI* _pd, int8_t _x, int8_t _y) {
 
   const uint16_t _status = s_s[_x][_y];
   if (_status > 35) {
-    drawBitmapAbsRot(_pd, m_hole, s_x[_x] * SIZE, s_y[_y] * SIZE, s_r[_x][_y]);
+    drawBitmapAbsRot(_pd, m_hole_ycgb, s_x[_x] * SIZE, s_y[_y] * SIZE, s_r[_x][_y]);
   }
 }
 
@@ -51,7 +51,7 @@ void renderSpikeballUpper(PlaydateAPI* _pd, int8_t _x, int8_t _y) {
   } else if (_status <= (14 + 16)) {
     if (_status == 15) fallSound();
     const int16_t _y_off = 32 - (_status + 10) * 2;
-    drawBitmapAbs(_pd, m_ball, (s_x[_x]-2) * SIZE, (s_y[_y]-8) * SIZE - _y_off);
+    drawBitmapAbs(_pd, m_ball_ycgb, (s_x[_x]-2) * SIZE, (s_y[_y]-8) * SIZE - _y_off);
   } else if (_status <= 32) {
     if (_status == (14 + 16 + 1)) boomSound();
     drawBitmap(_pd, m_bomb[3], s_x[_x]-4, s_y[_y]-4);
@@ -143,10 +143,10 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
     } 
     s_state = 0;
     s_frame = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
-    m_player.m_target_x = SIZE*3;
-    m_player.m_target_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
+    m_player_ycgb.m_target_x = SIZE*3;
+    m_player_ycgb.m_target_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
 
     // Choose spike drop order
@@ -245,13 +245,13 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
   for (int _x = 0; _x < 3; ++_x) {
     for (int _y = 0; _y < 3; ++_y) {
       if (s_s[_x][_y] >= 32) {
-        const float _dx = m_player.m_position_x - (s_x[_x]-1)*SIZE;
-        const float _dy = m_player.m_position_y - (s_y[_y]-1)*SIZE;
+        const float _dx = m_player_ycgb.m_position_x - (s_x[_x]-1)*SIZE;
+        const float _dy = m_player_ycgb.m_position_y - (s_y[_y]-1)*SIZE;
         const float _d = sqrt( _dx*_dx + _dy*_dy );
         if (_d < 6.0f && s_state != 99) {
           m_dungeon.m_gameOver = 1;
           setGameState(kFadeOut);
-          s_state == 99;
+          s_state = 99;
           m_dungeon.m_spinningDeath = true;
           fallSound();
         }
@@ -262,7 +262,7 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
   // Player control
   if (s_state == 1) {
     // Manual move
-    movePlayer();
+    movePlayer_ycgb();
     if (atDestination()) s_state = 2; // move complete
 
   } else if (s_state == 2) {
@@ -272,18 +272,18 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
 
   } else if (s_state == 3 && getPlayerChoice() != -1) {
     // Initial move
-    m_player.m_target_x = (s_x[1]-1)*SIZE;
+    m_player_ycgb.m_target_x = (s_x[1]-1)*SIZE;
     switch (getPlayerChoice()) {
-      case 0: m_player.m_target_y = (s_y[0]-1)*SIZE; m_location = 0; break;
-      case 1: m_player.m_target_y = (s_y[1]-1)*SIZE; m_location = 1; break;
-      case 2: m_player.m_target_y = (s_y[2]-1)*SIZE; m_location = 2; break;
+      case 0: m_player_ycgb.m_target_y = (s_y[0]-1)*SIZE; m_location = 0; break;
+      case 1: m_player_ycgb.m_target_y = (s_y[1]-1)*SIZE; m_location = 1; break;
+      case 2: m_player_ycgb.m_target_y = (s_y[2]-1)*SIZE; m_location = 2; break;
     }
     resetPlayerChoice();
     s_state = 4;
 
   } else if (s_state == 4) {
     // Manual move two
-    movePlayer();
+    movePlayer_ycgb();
     if (atDestination()) {
       setGameState(kLevelSpecificWButtons);
       s_state = 5; // move complete
@@ -298,34 +298,34 @@ bool tickSpikeball(PlaydateAPI* _pd, bool _doInit) {
       _pc = 1; // Set to the middle instead
     }
 
-    m_player.m_target_x = (s_x[2]-1)*SIZE;
+    m_player_ycgb.m_target_x = (s_x[2]-1)*SIZE;
     switch (_pc) {
-      case 0: m_player.m_target_y = (s_y[0]-1)*SIZE; m_location = 0; break;
-      case 1: m_player.m_target_y = (s_y[1]-1)*SIZE; m_location = 1; break;
-      case 2: m_player.m_target_y = (s_y[2]-1)*SIZE; m_location = 2; break;
+      case 0: m_player_ycgb.m_target_y = (s_y[0]-1)*SIZE; m_location = 0; break;
+      case 1: m_player_ycgb.m_target_y = (s_y[1]-1)*SIZE; m_location = 1; break;
+      case 2: m_player_ycgb.m_target_y = (s_y[2]-1)*SIZE; m_location = 2; break;
     }
     resetPlayerChoice();
     s_state = 6;
 
   } else if (s_state == 6) {
     // Manual move three
-    movePlayer();
+    movePlayer_ycgb();
     if (atDestination()) s_state = 7; // move complete
 
   } else if (s_state == 7) {
     // Set end destination
 
-    m_player.m_target_x = SIZE*17;
+    m_player_ycgb.m_target_x = SIZE*17;
     switch (m_location) {
-      case 0: m_player.m_target_y = SIZE*5; break;
-      case 1: m_player.m_target_y = SIZE*9; break;
-      case 2: m_player.m_target_y = SIZE*13; break;
+      case 0: m_player_ycgb.m_target_y = SIZE*5; break;
+      case 1: m_player_ycgb.m_target_y = SIZE*9; break;
+      case 2: m_player_ycgb.m_target_y = SIZE*13; break;
     }
     s_state = 8; 
 
   } else if (s_state == 8) {
     // Manual move four
-    movePlayer();
+    movePlayer_ycgb();
     if (atDestination()) s_state = 9; // move complete
 
   } else if (s_state == 9) {

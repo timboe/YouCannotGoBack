@@ -39,8 +39,8 @@ void updateProcPword(PlaydateAPI* _pd) {
 bool tickPword(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(4, 0, 20);
     s_correct = randomiseChoices(_pd, s_choices, 0);
     return false;
@@ -51,13 +51,13 @@ bool tickPword(PlaydateAPI* _pd, bool _doInit) {
   if (s_state == 0) { // start initial move
     enterRoom(&s_state);
   } else if (s_state == 1) { // initial move is done
-    m_player.m_target_x = SIZE*3; // move down
-    m_player.m_target_y = SIZE*12; // move down
+    m_player_ycgb.m_target_x = SIZE*3; // move down
+    m_player_ycgb.m_target_y = SIZE*12; // move down
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 2) {
-    m_player.m_target_x = SIZE*6; // move right
-    m_player.m_target_y = SIZE*12; // move right
+    m_player_ycgb.m_target_x = SIZE*6; // move right
+    m_player_ycgb.m_target_y = SIZE*12; // move right
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) { // display msg
@@ -77,20 +77,20 @@ bool tickPword(PlaydateAPI* _pd, bool _doInit) {
       boomSound();
     }
   } else if (s_state == 6) { // DEATH MOVE
-    m_player.m_position_y -= 1;
-    if (m_player.m_position_y < 8*SIZE) {
+    m_player_ycgb.m_position_y -= 1;
+    if (m_player_ycgb.m_position_y < 8*SIZE) {
       setGameState(kFadeOut);
       m_dungeon.m_gameOver = true;
     }
     return true;
   } else if (s_state == 7) { // WIN MOVE
-    m_player.m_target_x = SIZE*9;
-    m_player.m_target_y = SIZE*12;
+    m_player_ycgb.m_target_x = SIZE*9;
+    m_player_ycgb.m_target_y = SIZE*12;
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 8) { // WIN MOVE
-    m_player.m_target_x = SIZE*16;
-    m_player.m_target_y = SIZE*9;
+    m_player_ycgb.m_target_x = SIZE*16;
+    m_player_ycgb.m_target_y = SIZE*9;
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 9) {

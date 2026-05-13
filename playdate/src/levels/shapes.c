@@ -22,7 +22,7 @@ void updateProcShapes(PlaydateAPI* _pd) {
   renderWalls(_pd, true, true, true, true);
   renderWallClutter(_pd);
 
-  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount() < ANIM_FPS/2) {
+  if ((getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) && getFrameCount_ycgb() < ANIM_FPS/2) {
     drawCBitmap(_pd, &m_arrow_u, 10, 5);
     drawCBitmap(_pd, &m_arrow_r, 12, 9);
     drawCBitmap(_pd, &m_arrow_d, 10, 13);
@@ -36,8 +36,8 @@ bool tickShapes(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
     s_win = rand() % 3;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(4, 0, 20); // Only left
 
     if (s_shapes_rot[3] == NULL) {
@@ -93,8 +93,8 @@ bool tickShapes(PlaydateAPI* _pd, bool _doInit) {
 
 
   if (s_state == 0) { // start initial move
-    m_player.m_target_x = SIZE*5;
-    m_player.m_target_y = SIZE*9;
+    m_player_ycgb.m_target_x = SIZE*5;
+    m_player_ycgb.m_target_y = SIZE*9;
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 1) { // initial move is done

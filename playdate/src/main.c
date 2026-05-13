@@ -1,3 +1,6 @@
+// Being built under PlaydateGameSelect project when bundled
+#ifndef SDL2API
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,9 +14,9 @@ __declspec(dllexport)
 #endif
 
 static void init(PlaydateAPI* _pd) {
-  initSprite(_pd);
-  initSound(_pd);
-  gameWindowLoad();
+  initSprite_ycgb(_pd);
+  initSound_ycgb(_pd);
+  gameWindowLoad_ycgb();
 }
 
 static void deinit(void) {
@@ -24,10 +27,10 @@ static void deinit(void) {
 
 int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
   if (event == kEventInit) {
-    setPDPtr(playdate);
+    setPDPtr_ycgb(playdate);
     init(playdate);
     playdate->display->setRefreshRate(20);
-    playdate->system->setUpdateCallback(gameLoop, NULL);
+    playdate->system->setUpdateCallback(gameLoop_ycgb, NULL);
     #ifdef DEV
     playdate->system->logToConsole("EH: init");
     #endif
@@ -64,3 +67,5 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
   
   return 0;
 }
+
+#endif

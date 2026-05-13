@@ -17,14 +17,14 @@ void updateProcShortcut(PlaydateAPI* _pd) {
 bool tickShortcut(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = -2*SIZE;
-    m_player.m_position_y = SIZE*8;
+    m_player_ycgb.m_position_x = -2*SIZE;
+    m_player_ycgb.m_position_y = SIZE*8;
     return false;
   }
 
   if (s_state == 0) { // start initial move
-     m_player.m_target_x = SIZE*8;
-     m_player.m_target_y = SIZE*8;
+     m_player_ycgb.m_target_x = SIZE*8;
+     m_player_ycgb.m_target_y = SIZE*8;
      setGameState(kMovePlayer);
      ++s_state;
   } else if (s_state == 1) {

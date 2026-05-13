@@ -19,8 +19,8 @@ void updateProcStones(PlaydateAPI* _pd) {
 bool tickStones(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     s_fire = -1;
     s_correct[0] = randomiseChoices(_pd, s_coloursA, 0);
     s_correct[1] = randomiseChoices(_pd, s_coloursB, 1);

@@ -18,8 +18,8 @@ void updateProcBoxes(PlaydateAPI* _pd) {
 bool tickBoxes(PlaydateAPI* _pd, bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     s_correct = rand() % 3;
 
     const int8_t _answer = m_dungeon.m_roomNeedHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ];

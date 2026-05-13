@@ -75,7 +75,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     // } else if (TESTING && _level == 0 && _room == 4) {
     //   _newRoom = kGamble; // TESTING
 
-    } else if (_level == (MAX_LEVELS - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
+    } else if (_level == (MAX_LEVELS_YCGB - 1) && _room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of game
       _newRoom = kFinal;
     } else if (_room == m_dungeon.m_roomsPerLevel[_level] - 1) { // End of floor
       _newRoom = kStairs;
@@ -86,7 +86,7 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
 
     bool _veto = false;
     for (int _c = 1; _c <= m_dungeon.m_roomsPerLevel[_level]; ++_c) {     // cycle rooms
-      if (_room >= _c && m_dungeon.m_rooms[_level][_room - _c] == _newRoom) _veto = true;
+      if (_room >= _c && m_dungeon.m_rooms[_level][_room - _c] == (int8_t) _newRoom) _veto = true;
     }
     if (_veto == true && ++_spin < 100) continue; // The "spin" var prevents us from having zero available rooms
 
@@ -107,10 +107,10 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
   }
 }
 
-void generate(PlaydateAPI* _pd) {
+void generate_ycgb(PlaydateAPI* _pd) {
 
   memset(&m_dungeon, 0, sizeof(Dungeon_t));
-  memset(&m_player, 0, sizeof(Player_t));
+  memset(&m_player_ycgb, 0, sizeof(Player_ycgb_t));
   m_dungeon.m_seed = _pd->system->getSecondsSinceEpoch(NULL);
   srand(m_dungeon.m_seed);
   m_dungeon.m_finalPuzzle = rand() % 3;
@@ -120,7 +120,7 @@ void generate(PlaydateAPI* _pd) {
   }
   m_dungeon.m_room = -1; // Will be incremented on kNewLevel
   m_dungeon.m_lives = 0; // New for 2.0 - don't start with a life, now an extra way to get one
-  updateMusic(0); // Reset
+  updateMusic_ycgb(0); // Reset
   stopSounds(); // Reset
 
   #ifdef DEV
@@ -140,7 +140,7 @@ void generate(PlaydateAPI* _pd) {
   m_dungeon.m_roomsPerLevel[1] = ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
   m_dungeon.m_roomsPerLevel[2] = TOT_ROOMS - m_dungeon.m_roomsPerLevel[1] - m_dungeon.m_roomsPerLevel[0];
 
-  for (int _level = 0; _level < MAX_LEVELS; ++_level) {
+  for (int _level = 0; _level < MAX_LEVELS_YCGB; ++_level) {
     if (m_dungeon.m_roomsPerLevel[_level] >= MAX_ROOMS) {
       _pd->system->error("Rooms %i greater than max %i", m_dungeon.m_roomsPerLevel[_level], MAX_ROOMS);
       return;

@@ -6,7 +6,7 @@ static uint16_t s_state = 0;
 static int8_t s_bomb = -1;
 static int8_t s_bomb2 = -1;
 static uint16_t s_tick = 0;
-const static uint16_t s_ticks[3] = {80, 60, 40};
+static const uint16_t s_ticks[3] = {80, 60, 40};
 
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
@@ -33,7 +33,7 @@ void bombTimer() {
 
   // Ran into bomb
   if (getGameState() == kMovePlayer 
-      && m_player.m_position_x > SIZE*9
+      && m_player_ycgb.m_position_x > SIZE*9
       && (getPlayerChoice() == s_bomb
           || (m_dungeon.m_difficulty >= 2 
               && getPlayerChoice() == s_bomb2
@@ -56,8 +56,8 @@ bool tickBomb(bool _doInit) {
       s_bomb2 = s_bomb;
       while (s_bomb2 == s_bomb) { s_bomb2 = rand() % 3; }
     }
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(8, 0, 20); // Only left half
     fuseSound(true);
     return false;

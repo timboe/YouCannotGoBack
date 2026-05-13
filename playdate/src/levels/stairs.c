@@ -17,7 +17,7 @@ void updateProcStairs(PlaydateAPI* _pd) {
   drawCBitmap(_pd, getFloor(true, _level), 11, 12);
   drawCBitmap(_pd, getFloor(true, _level), 9, 12);
 
-  if (getGameState() == kAwaitInput && getFrameCount() < ANIM_FPS/2) {
+  if (getGameState() == kAwaitInput && getFrameCount_ycgb() < ANIM_FPS/2) {
     drawCBitmap(_pd, &m_arrow_d, 9, 9);
   }
 
@@ -26,8 +26,8 @@ void updateProcStairs(PlaydateAPI* _pd) {
 bool tickStairs(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    m_player.m_position_x = 0;
-    m_player.m_position_y = SIZE*9;
+    m_player_ycgb.m_position_x = 0;
+    m_player_ycgb.m_position_y = SIZE*9;
     addCluter(6, 5, 13);
     return false;
   }
@@ -38,13 +38,13 @@ bool tickStairs(bool _doInit) {
     setGameState(kAwaitInput);
     ++s_state;
   } else if (s_state == 2) { // move onto stairs
-    m_player.m_target_x = SIZE*9;
-    m_player.m_target_y = SIZE*9;
+    m_player_ycgb.m_target_x = SIZE*9;
+    m_player_ycgb.m_target_y = SIZE*9;
     setGameState(kMovePlayer);
     ++s_state;
   } else if (s_state == 3) { // move down stairs
-    m_player.m_target_x = SIZE*11;
-    m_player.m_target_y = SIZE*11;
+    m_player_ycgb.m_target_x = SIZE*11;
+    m_player_ycgb.m_target_y = SIZE*11;
     stairsSound();
     setGameState(kMovePlayer);
     ++s_state;

@@ -12,7 +12,7 @@
 #define SSHEET_X 32
 #define SSHEET_Y 32
 
-void initSprite(PlaydateAPI* _pd);
+void initSprite_ycgb(PlaydateAPI* _pd);
 void deinitSprite(void);
 
 #define CBITMAP_MAX 6
@@ -42,12 +42,12 @@ extern LCDBitmap* m_bomb[4];
 extern LCDBitmap* m_spear;
 extern LCDBitmapTable* m_smask;
 
-extern LCDBitmap* m_hole;
+extern LCDBitmap* m_hole_ycgb;
 extern LCDBitmap* m_target;
-extern LCDBitmap* m_ball;
+extern LCDBitmap* m_ball_ycgb;
 extern LCDBitmap* m_danger;
 
-extern LCDBitmap* m_parchment;
+extern LCDBitmap* m_parchment_ycgb;
 
 extern LCDBitmap* m_wheel;
 extern LCDBitmap* m_spin[3];
