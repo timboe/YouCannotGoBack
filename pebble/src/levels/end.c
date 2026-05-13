@@ -77,7 +77,11 @@ void updateProcEnd(GContext* _ctx) {
 bool tickEnd(bool _doInit) {
   if (_doInit == true) {
     s_state = 0;
-    if (m_dungeon.m_gameOver == 2) {
+    if (m_dungeon.m_gameOver == 1) {
+      #ifdef PBL_RGB_BACKLIGHT
+        light_set_color(GColorRed);
+      #endif
+    } else if (m_dungeon.m_gameOver == 2) {
       if (persist_exists(PERSIST_KEY_VICTORY)) s_wincount = persist_read_int(PERSIST_KEY_VICTORY);
       persist_write_int(PERSIST_KEY_VICTORY, ++s_wincount);
       snprintf(s_victories, 20, "VICTORIES: %i", s_wincount);
@@ -97,6 +101,9 @@ bool tickEnd(bool _doInit) {
     setGameState(kAwaitInput);
     ++s_state;
   } else if (s_state == 1) { // restart
+    #ifdef PBL_RGB_BACKLIGHT
+      light_set_system_color();
+    #endif
     generate();
   }
 

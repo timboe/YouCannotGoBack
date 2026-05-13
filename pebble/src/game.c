@@ -42,11 +42,11 @@ static AppTimer* s_gameLoopTimer = NULL;
 static Layer* s_dungeonLayer;
 bool movePlayer();
 
-#ifdef DEBUG_MODE
-static AppTimer* s_FPSTimer = NULL;
-static int s_FPS = 0;
-static int s_lastSecondFPS = 0;
-void FPSTimer(void* data);
+#ifdef DEV
+  static AppTimer* s_FPSTimer = NULL;
+  static int s_FPS = 0;
+  static int s_lastSecondFPS = 0;
+  void FPSTimer(void* data);
 #endif
 
 int getFrameCount(void) { return s_frameCount; }
@@ -73,6 +73,20 @@ void gameClickConfigHandler(ClickRecognizerRef _recognizer, void* _context) {
   }
 }
 
+#ifdef PBL_TOUCH
+  void touchHandler(const TouchEvent* event, void* context) {
+    if (event->type == TouchEvent_Touchdown || event->type == TouchEvent_PositionUpdate) {
+      if (getGameState() == kDisplayingMsg) setGameState(kLevelSpecific); // break out of message display
+      if (getGameState() == kAwaitInput || getGameState() == kLevelSpecificWButtons) {
+        if (event->y < PBL_DISPLAY_HEIGHT/3) s_playerChoice = 0;
+        else if (event->y < (2*PBL_DISPLAY_HEIGHT)/3) s_playerChoice = 1;
+        else  s_playerChoice = 2;
+        setGameState(kLevelSpecific);
+      }
+    }
+  }
+#endif
+
 bool newRoom() {
   if (m_dungeon.m_gameOver > 0) { // PLAYER HAS WON OR LOST
     m_dungeon.m_level = 0;
@@ -92,12 +106,12 @@ bool newRoom() {
   s_gameState = kDoInit;
   s_playerChoice = 1;
   #ifdef DEV
-  APP_LOG(APP_LOG_LEVEL_WARNING,"ENTER %i [Give:%i val:%i] [Need:%i val:%i] ",
-    m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ],
-    m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room ],
-    m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ],
-    m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room ],
-    m_dungeon.m_roomNeedHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ]);
+    APP_LOG(APP_LOG_LEVEL_WARNING,"ENTER %i [Give:%i val:%i] [Need:%i val:%i] ",
+      m_dungeon.m_rooms[ m_dungeon.m_level ][ m_dungeon.m_room ],
+      m_dungeon.m_roomGiveHint[ m_dungeon.m_level ][ m_dungeon.m_room ],
+      m_dungeon.m_roomGiveHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ],
+      m_dungeon.m_roomNeedHint[ m_dungeon.m_level ][ m_dungeon.m_room ],
+      m_dungeon.m_roomNeedHintValue[ m_dungeon.m_level ][ m_dungeon.m_room ]);
   #endif
   return false;
 }
@@ -112,14 +126,27 @@ void gameLoop(void* data) {
   bool requestRedraw = false;
   if (s_gameState != kFadeIn && s_gameState != kFadeOut) ++m_dungeon.m_ticksInLevel;
   #ifdef DEV
-  if (s_frameCount == 0)  APP_LOG(APP_LOG_LEVEL_INFO,"f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
+    if (s_frameCount == 0)  APP_LOG(APP_LOG_LEVEL_INFO,"f:%i GS:%i used:%i free:%i",s_frameCount, s_gameState, heap_bytes_used(), heap_bytes_free());
   #endif
 
-  #ifdef DEBUG_MODE
-  ++s_FPS;
+  #ifdef DEV
+    ++s_FPS;
   #endif
 
-  //APP_LOG(APP_LOG_LEVEL_INFO,"GS: %i", (int) s_gameState);
+  #ifdef PBL_TOUCH
+    static bool touchEnabled = false;
+    if (s_gameState == kAwaitInput || s_gameState == kLevelSpecificWButtons) {
+      if (!touchEnabled && touch_service_is_enabled()) {
+        touchEnabled = true;
+        touch_service_subscribe(touchHandler, NULL);
+      }
+    } else {
+      if (touchEnabled) {
+        touchEnabled = false;
+        touch_service_unsubscribe();
+      }
+    }
+  #endif
 
   bool _doInit = false;
   switch (s_gameState) {
@@ -234,8 +261,8 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
   else if (s_gameState == kFadeOut) renderFade(_thisLayer, _ctx, false);
 
   // On round and high res we need some masking borders
-  GRect _b = layer_get_bounds(_thisLayer);
   #ifdef PBL_ROUND
+    GRect _b = layer_get_bounds(_thisLayer);
     graphics_context_set_fill_color(_ctx, GColorBlack);
     #if defined(PBL_PLATFORM_GABBRO)
       const uint16_t _blankingWidth = GLOBAL_OFFSET_X + 2;
@@ -245,26 +272,30 @@ void dungeonUpdateProc(Layer* _thisLayer, GContext* _ctx) {
     graphics_fill_rect(_ctx, GRect(0,                        0, _blankingWidth, _b.size.h), 0, GCornerNone);
     graphics_fill_rect(_ctx, GRect(_b.size.w-_blankingWidth, 0, _blankingWidth, _b.size.h), 0, GCornerNone);
   #elif defined HIGH_RES
+    GRect _b = layer_get_bounds(_thisLayer);
     graphics_context_set_fill_color(_ctx, GColorBlack);
     graphics_fill_rect(_ctx, GRect(_b.size.w - 1, 0, 1, _b.size.h), 0, GCornerNone);
   #endif
 
-  // Frame debug TODO mark debug
-  graphics_context_set_fill_color(_ctx, GColorYellow);
-  static uint32_t _frameTick = 0;
-  graphics_fill_circle(_ctx, GPoint(_b.size.w/2 + (++_frameTick%8 * SIZE/2), _b.size.h - (SIZE/2)), SIZE/4);
+  // Frame debug
+  #ifdef DEV
+    graphics_context_set_fill_color(_ctx, GColorYellow);
+    static uint32_t _frameTick = 0;
+    GRect _bnd = layer_get_bounds(_thisLayer);
+    graphics_fill_circle(_ctx, GPoint(_bnd.size.w/2 + (++_frameTick%8 * SIZE/2), _bnd.size.h - (SIZE/2)), SIZE/4);
+  #endif
 
   // Draw FPS indicator (dbg only)
-  #ifdef DEBUG_MODE
-  static char FPSBuffer[16];
-  snprintf(FPSBuffer, 16, "%i/%i %i L:%i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS, m_dungeon.m_lives);
-#ifdef HIGH_RES
-  GRect _fpsRect = GRect( 75, 210, 100, 15);
-#else
-  GRect _fpsRect = GRect( 50, 155, 100, 15);
-#endif
-  graphics_context_set_text_color(_ctx, GColorWhite);
-  graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_SMALL), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+  #ifdef DEV
+    static char FPSBuffer[32];
+    snprintf(FPSBuffer, 32, "%i/%i %i L:%i", m_dungeon.m_room, m_dungeon.m_level, s_lastSecondFPS, m_dungeon.m_lives);
+    #ifdef HIGH_RES
+      GRect _fpsRect = GRect( 10, 210, 100, 15);
+    #else
+      GRect _fpsRect = GRect( 10, 155, 100, 15);
+    #endif
+    graphics_context_set_text_color(_ctx, GColorWhite);
+    graphics_draw_text(_ctx, FPSBuffer, fonts_get_system_font(FONT_KEY_SMALL), _fpsRect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
   #endif
 }
 
@@ -299,8 +330,8 @@ void gameWindowLoad(Window* _window) {
   generate();
 
   gameLoop(NULL);
-  #ifdef DEBUG_MODE
-  FPSTimer(NULL);
+  #ifdef DEV
+    FPSTimer(NULL);
   #endif
 }
 
@@ -314,12 +345,12 @@ void gameClickConfigProvider(Window* _window) {
   window_single_click_subscribe(BUTTON_ID_SELECT, gameClickConfigHandler);
 }
 
-#ifdef DEBUG_MODE
-void FPSTimer(void* data) {
-  s_lastSecondFPS = s_FPS;
-  s_FPS = 0;
-  s_FPSTimer = app_timer_register(1000, FPSTimer, NULL);
-}
+#ifdef DEV
+  void FPSTimer(void* data) {
+    s_lastSecondFPS = s_FPS;
+    s_FPS = 0;
+    s_FPSTimer = app_timer_register(1000, FPSTimer, NULL);
+  }
 #endif
 
 int getHintValueMax(Hints_t _hint) {

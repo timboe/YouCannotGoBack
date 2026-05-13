@@ -1,8 +1,7 @@
 #pragma once
 #include <pebble.h>
 
-// #define DEBUG_MODE
-// #define DEV
+//#define DEV
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
@@ -188,7 +187,7 @@ typedef enum {
 
 #define MAX_LEVELS 3
 #define MIN_ROOMS 5
-#define MAX_ROOMS 16
+#define MAX_ROOMS 11
 #define MIN_ROOM_SEP 5
 typedef struct {
   int8_t m_level;

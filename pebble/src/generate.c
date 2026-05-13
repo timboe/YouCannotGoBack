@@ -71,7 +71,15 @@ Rooms_t getRoom(int _level, int _room, Hints_t* _consumeHint, bool* _consumeItem
     for (int _c = 1; _c <= m_dungeon.m_roomsPerLevel[_level]; ++_c) {     // cycle rooms
       if (_room >= _c && m_dungeon.m_rooms[_level][_room - _c] == _newRoom) _veto = true;
     }
-    if (_veto == true && ++_spin < 100) continue; // The "spin" var prevents us from having zero available rooms
+    if (_veto == true) {
+      if (++_spin < 100) {
+        continue; // The "spin" var prevents us from having zero available rooms
+      } else {
+        #ifdef DEV
+          APP_LOG(APP_LOG_LEVEL_WARNING,"Did not veto placing %i due to spin=%i", _newRoom, _spin);
+        #endif
+      }
+    }
 
     // Check if needs hint
     bool _needsHint = false;
@@ -128,19 +136,20 @@ void generate() {
   #endif
 
   #ifdef DEV
-  APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
+    APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
   #endif
 
   // Keep the total number of rooms consistent
-  #define TOT_ROOMS 35
-  #define ROOM_MIN 11
-  #define ROOM_VAR 3
+  // #define TOT_ROOMS 35
+  // #define ROOM_MIN 11
+  // #define ROOM_VAR 3
   // Level 0, 1: 10-12 rooms
   // Level 2: 11-15 (deliberate skew)
-  m_dungeon.m_totalRooms = TOT_ROOMS;
-  m_dungeon.m_roomsPerLevel[0] = ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
-  m_dungeon.m_roomsPerLevel[1] = ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
-  m_dungeon.m_roomsPerLevel[2] = TOT_ROOMS - m_dungeon.m_roomsPerLevel[1] - m_dungeon.m_roomsPerLevel[0];
+  // Trying instead with fixed. CAREFUL: change MAX_ROOMS if modifying this
+  m_dungeon.m_totalRooms = 8+9+10;
+  m_dungeon.m_roomsPerLevel[0] = 8; //ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
+  m_dungeon.m_roomsPerLevel[1] = 9; //ROOM_MIN - ((ROOM_VAR - 1)/2) + (rand() % ROOM_VAR);
+  m_dungeon.m_roomsPerLevel[2] = 10; //TOT_ROOMS - m_dungeon.m_roomsPerLevel[1] - m_dungeon.m_roomsPerLevel[0];
 
   for (int _level = 0; _level < MAX_LEVELS; ++_level) {
     if (m_dungeon.m_roomsPerLevel[_level] > MAX_ROOMS) {
@@ -149,7 +158,7 @@ void generate() {
     }
 
     #ifdef DEV
-    APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
+      APP_LOG(APP_LOG_LEVEL_INFO," -- L%i R%i", _level, m_dungeon.m_roomsPerLevel[_level]);
     #endif
     for (int _room = 0; _room < m_dungeon.m_roomsPerLevel[_level]; ++_room) {
 
@@ -159,7 +168,7 @@ void generate() {
       m_dungeon.m_rooms[_level][_room] = _roomType;
 
       #ifdef DEV
-      APP_LOG(APP_LOG_LEVEL_INFO,"[%i][%i] = t:%i", _level, _room, (int)_roomType);
+        APP_LOG(APP_LOG_LEVEL_INFO,"[%i][%i] = t:%i", _level, _room, (int)_roomType);
       #endif
 
       // Can we add a hint to this room?
@@ -172,7 +181,7 @@ void generate() {
         m_dungeon.m_roomGiveHint[_level][_room] = _addHint;
         m_dungeon.m_roomGiveHintValue[_level][_room] = m_hintValue[_addHint];
         #ifdef DEV
-        APP_LOG(APP_LOG_LEVEL_INFO,"      >> A t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
+          APP_LOG(APP_LOG_LEVEL_INFO,"      >> A t:%i v:%i", (int)_addHint, (int)m_hintValue[_addHint]);
         #endif
       }
 
@@ -181,7 +190,7 @@ void generate() {
         m_dungeon.m_roomNeedHint[_level][_room] = _consumeHint;
         m_dungeon.m_roomNeedHintValue[_level][_room] = m_hintValue[_consumeHint];
         #ifdef DEV
-        APP_LOG(APP_LOG_LEVEL_INFO,"      << C t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
+          APP_LOG(APP_LOG_LEVEL_INFO,"      << C t:%i v:%i", (int)_consumeHint, (int)m_hintValue[_consumeHint]);
         #endif
 
         --m_hintsInPlay;
