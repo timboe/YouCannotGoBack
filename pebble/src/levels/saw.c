@@ -52,6 +52,14 @@ bool tickSaw(bool _doInit) {
      ++s_state;
   } else if (s_state == 1) {
     setGameState(kLevelSpecificWButtons);
+
+    #ifdef SS_MODE
+      static uint16_t _c = 0;
+      if (++_c > 20 && _c < 120) {
+        return true;
+      }
+    #endif
+
     //if (getFrameCount() % 2 == 0 && ++s_rotation == 2) s_rotation = 0;
     if (getFrameCount() % 3 == 0 && ++m_player.m_playerFrame == MAX_FRAMES) m_player.m_playerFrame = 0;
     if (++s_offset == (2*SIZE)) s_offset = 0;
@@ -87,6 +95,10 @@ bool tickSaw(bool _doInit) {
       if (m_player.m_position.x > 20*SIZE) setGameState(kFadeOut);
     }
   } else if (s_state == 2) {
+    #ifdef SS_MODE
+      setGameState(kFadeOut);
+      return true;
+    #endif
     m_dungeon.m_gameOver = 1;
     vibes_long_pulse();
     setGameState(kFadeOut);

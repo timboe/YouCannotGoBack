@@ -139,6 +139,39 @@ void generate() {
     APP_LOG(APP_LOG_LEVEL_INFO,"win:%i, seed:%i", m_dungeon.m_finalPuzzle, (int)m_dungeon.m_seed);
   #endif
 
+  #ifdef SS_MODE
+    m_dungeon.m_totalRooms = 3+2+2;
+    m_dungeon.m_roomsPerLevel[0] = 3;
+    m_dungeon.m_roomsPerLevel[1] = 2;
+    m_dungeon.m_roomsPerLevel[2] = 2;
+
+    m_dungeon.m_rooms[0][0] = kStart;
+    #ifdef HIGH_RES
+      m_dungeon.m_rooms[0][1] = kGamble;
+    #else
+      m_dungeon.m_rooms[0][1] = kMaze;
+    #endif
+    m_dungeon.m_rooms[0][2] = kStairs;
+
+    m_dungeon.m_roomGiveHint[0][1] = kShield;
+    m_dungeon.m_roomGiveHintValue[0][1] = 1;
+
+    m_dungeon.m_rooms[1][0] = kStones;
+    m_dungeon.m_rooms[1][1] = kStairs;
+
+    m_dungeon.m_roomNeedHint[1][0] = kShield;
+    m_dungeon.m_roomNeedHintValue[1][0] = 1;
+
+    m_dungeon.m_rooms[2][0] = kSaw;
+    m_dungeon.m_rooms[2][1] = kFinal;
+
+    setGameState(kNewRoom);
+
+    APP_LOG(APP_LOG_LEVEL_INFO,"Screenshot Mode - Minimal Dungeon Loaded");
+    return;
+  #endif
+
+
   // Keep the total number of rooms consistent
   // #define TOT_ROOMS 35
   // #define ROOM_MIN 11

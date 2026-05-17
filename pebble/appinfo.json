@@ -21,7 +21,8 @@
       { "file": "images/treasure.png", "name": "TREASURE", "type": "png" },
       { "file": "images/ycgb.png", "name": "YCGB", "type": "png", "targetPlatforms": ["emery", "flint", "diorite", "gabbro"] },
       { "file": "images/wheel_frame.png", "name": "WHEELFRAME", "type": "png", "targetPlatforms": ["emery", "flint", "diorite", "gabbro"] },
-      { "file": "images/warning.png", "name": "WARNING", "type": "png", "targetPlatforms": ["emery", "flint", "diorite", "gabbro"] }
+      { "file": "images/warning.png", "name": "WARNING", "type": "png", "targetPlatforms": ["emery", "flint", "diorite", "gabbro"] },
+      { "file": "images/icon.png", "name": "APP_ICON", "type": "png", "menuIcon": true}
     ]
   }
 }

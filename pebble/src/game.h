@@ -3,6 +3,8 @@
 
 //#define DEV
 
+#define SS_MODE
+
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
 #if PBL_DISPLAY_WIDTH >= 200
